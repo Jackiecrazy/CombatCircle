@@ -8,8 +8,22 @@ package jackiecrazy.combatcircle.utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.entity.boss.dragon.EnderDragonEntity;
+import net.minecraft.entity.monster.AbstractSkeletonEntity;
+import net.minecraft.entity.monster.CreeperEntity;
+import net.minecraft.entity.monster.WitherSkeletonEntity;
+import net.minecraft.entity.monster.ZombieEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.vector.Vector3d;
@@ -19,10 +33,17 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 public class GeneralUtils {
+    public static double getSpeedSq(Entity e) {
+        if (e.getRidingEntity() != null)
+            return e.getLowestRidingEntity().getMotion().lengthSquared();
+        return e.getMotion().lengthSquared();
+    }
+
     @Nullable
     public static EntityType getEntityTypeFromResourceLocation(ResourceLocation rl) {
         if (ForgeRegistries.ENTITIES.containsKey(rl))
@@ -47,16 +68,16 @@ public class GeneralUtils {
     @Nonnull
     public static RayTraceResult raytraceAnything(World world, LivingEntity attacker, double range) {
         Vector3d start = attacker.getEyePosition(0.5f);
-        Vector3d look = attacker.getLookAngle().scale(range + 2);
+        Vector3d look = attacker.getLookVec().scale(range + 2);
         Vector3d end = start.add(look);
         Entity entity = null;
-        List<Entity> list = world.getEntities(attacker, attacker.getBoundingBox().expandTowards(look.x, look.y, look.z).inflate(1.0D), null);
+        List<Entity> list = world.getEntitiesInAABBexcluding(attacker, attacker.getBoundingBox().expand(look.x, look.y, look.z).grow(1.0D), null);
         double d0 = 0.0D;
 
         for (Entity entity1 : list) {
             if (entity1 != attacker) {
                 AxisAlignedBB axisalignedbb = entity1.getBoundingBox();
-                Optional<Vector3d> raytraceresult = axisalignedbb.clip(start, end);
+                Optional<Vector3d> raytraceresult = axisalignedbb.rayTrace(start, end);
                 if (raytraceresult.isPresent()) {
                     double d1 = getDistSqCompensated(entity1, attacker);
 
@@ -68,9 +89,9 @@ public class GeneralUtils {
             }
         }
         if (entity != null) return new EntityRayTraceResult(entity);
-        look = attacker.getLookAngle().scale(range);
+        look = attacker.getLookVec().scale(range);
         end = start.add(look);
-        RayTraceResult rtr = world.clip(new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, null));
+        RayTraceResult rtr = world.rayTraceBlocks(new RayTraceContext(start, end, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, null));
         if (rtr != null) {
             return rtr;
         }
@@ -81,15 +102,15 @@ public class GeneralUtils {
      * modified getdistancesq to account for thicc mobs
      */
     public static double getDistSqCompensated(Entity from, Entity to) {
-        double x = from.getX() - to.getX();
-        x = Math.max(Math.abs(x) - ((from.getBbWidth() / 2) + (to.getBbWidth() / 2)), 0);
+        double x = from.getPosX() - to.getPosX();
+        x = Math.max(Math.abs(x) - ((from.getWidth() / 2) + (to.getWidth() / 2)), 0);
         //stupid inconsistent game
-        double y = (from.getY() + from.getBbHeight() / 2) - (to.getY() + to.getBbHeight() / 2);
-        y = Math.max(Math.abs(y) - (from.getBbHeight() / 2 + to.getBbHeight() / 2), 0);
-        double z = from.getZ() - to.getZ();
-        z = Math.max(Math.abs(z) - (from.getBbWidth() / 2 + to.getBbWidth() / 2), 0);
+        double y = (from.getPosY() + from.getHeight() / 2) - (to.getPosY() + to.getHeight() / 2);
+        y = Math.max(Math.abs(y) - (from.getHeight() / 2 + to.getHeight() / 2), 0);
+        double z = from.getPosZ() - to.getPosZ();
+        z = Math.max(Math.abs(z) - (from.getWidth() / 2 + to.getWidth() / 2), 0);
         double me = x * x + y * y + z * z;
-        double you = from.distanceToSqr(to);
+        double you = from.getDistanceSq(to);
         return Math.min(me, you);
     }
 
@@ -97,13 +118,13 @@ public class GeneralUtils {
      * modified getdistancesq to account for thicc mobs
      */
     public static double getDistSqCompensated(Entity from, Vector3d to) {
-        double x = from.getX() - to.x;
-        x = Math.max(Math.abs(x) - ((from.getBbWidth() / 2)), 0);
+        double x = from.getPosX() - to.x;
+        x = Math.max(Math.abs(x) - ((from.getWidth() / 2)), 0);
         //stupid inconsistent game
-        double y = (from.getY() + from.getBbHeight() / 2) - (to.y);
-        y = Math.max(Math.abs(y) - (from.getBbHeight() / 2), 0);
-        double z = from.getZ() - to.z;
-        z = Math.max(Math.abs(z) - (from.getBbWidth() / 2), 0);
+        double y = (from.getPosY() + from.getHeight() / 2) - (to.y);
+        y = Math.max(Math.abs(y) - (from.getHeight() / 2), 0);
+        double z = from.getPosZ() - to.z;
+        z = Math.max(Math.abs(z) - (from.getWidth() / 2), 0);
         return x * x + y * y + z * z;
     }
 
@@ -111,28 +132,28 @@ public class GeneralUtils {
      * modified getdistancesq to account for thicc mobs
      */
     public static double getDistSqCompensated(Entity from, BlockPos to) {
-        double x = from.getX() - to.getX();
-        x = Math.max(Math.abs(x) - ((from.getBbWidth() / 2)), 0);
+        double x = from.getPosX() - to.getX();
+        x = Math.max(Math.abs(x) - ((from.getWidth() / 2)), 0);
         //stupid inconsistent game
-        double y = (from.getY() + from.getBbHeight() / 2) - (to.getY());
-        y = Math.max(Math.abs(y) - (from.getBbHeight() / 2), 0);
-        double z = from.getZ() - to.getZ();
-        z = Math.max(Math.abs(z) - (from.getBbWidth() / 2), 0);
+        double y = (from.getPosY() + from.getHeight() / 2) - (to.getY());
+        y = Math.max(Math.abs(y) - (from.getHeight() / 2), 0);
+        double z = from.getPosZ() - to.getZ();
+        z = Math.max(Math.abs(z) - (from.getWidth() / 2), 0);
         return x * x + y * y + z * z;
     }
 
     public static Entity raytraceEntity(World world, LivingEntity attacker, double range) {
         Vector3d start = attacker.getEyePosition(0.5f);
-        Vector3d look = attacker.getLookAngle().scale(range + 2);
+        Vector3d look = attacker.getLookVec().scale(range + 2);
         Vector3d end = start.add(look);
         Entity entity = null;
-        List<Entity> list = world.getEntities(attacker, attacker.getBoundingBox().expandTowards(look.x, look.y, look.z).inflate(1.0D), null);
+        List<Entity> list = world.getEntitiesInAABBexcluding(attacker, attacker.getBoundingBox().expand(look.x, look.y, look.z).grow(1.0D), null);
         double d0 = -1.0D;//necessary to prevent small derps
 
         for (Entity entity1 : list) {
             if (entity1 != attacker) {
                 AxisAlignedBB axisalignedbb = entity1.getBoundingBox();
-                Optional<Vector3d> raytraceresult = axisalignedbb.clip(start, end);
+                Optional<Vector3d> raytraceresult = axisalignedbb.rayTrace(start, end);
                 if (raytraceresult.isPresent()) {
                     double d1 = getDistSqCompensated(entity1, attacker);
 
@@ -148,15 +169,15 @@ public class GeneralUtils {
 
     public static List<Entity> raytraceEntities(World world, LivingEntity attacker, double range) {
         Vector3d start = attacker.getEyePosition(0.5f);
-        Vector3d look = attacker.getLookAngle().scale(range + 2);
+        Vector3d look = attacker.getLookVec().scale(range + 2);
         Vector3d end = start.add(look);
         ArrayList<Entity> ret = new ArrayList<>();
-        List<Entity> list = world.getEntities(attacker, attacker.getBoundingBox().expandTowards(look.x, look.y, look.z).inflate(1.0D), EntityPredicates.ENTITY_STILL_ALIVE);
+        List<Entity> list = world.getEntitiesInAABBexcluding(attacker, attacker.getBoundingBox().expand(look.x, look.y, look.z).grow(1.0D), EntityPredicates.IS_ALIVE);
 
         for (Entity entity1 : list) {
             if (entity1 != attacker && getDistSqCompensated(attacker, entity1) < range * range) {
                 AxisAlignedBB axisalignedbb = entity1.getBoundingBox();
-                Optional<Vector3d> raytraceresult = axisalignedbb.clip(start, end);
+                Optional<Vector3d> raytraceresult = axisalignedbb.rayTrace(start, end);
                 if (raytraceresult.isPresent()) {
                     ret.add(entity1);
                 }
@@ -166,8 +187,8 @@ public class GeneralUtils {
     }
 
     public static Vector3d getPointInFrontOf(Entity target, Entity from, double distance) {
-        Vector3d end = target.position().add(from.position().subtract(target.position()).normalize().scale(distance));
-        return getClosestAirSpot(from.position(), end, from);
+        Vector3d end = target.getPositionVec().add(from.getPositionVec().subtract(target.getPositionVec()).normalize().scale(distance));
+        return getClosestAirSpot(from.getPositionVec(), end, from);
     }
 
     /**
@@ -182,18 +203,18 @@ public class GeneralUtils {
         Vector3d ret = to;
         //extend the to vector slightly to make it hit what it originally hit
         to = to.add(to.subtract(from).normalize().scale(2));
-        double widthParse = e.getBbWidth() / 2;
-        double heightParse = e.getBbHeight();
+        double widthParse = e.getWidth() / 2;
+        double heightParse = e.getHeight();
         if (widthParse <= 0.5) widthParse = 0;
         if (heightParse <= 1) heightParse = 0;
         for (double addX = -widthParse; addX <= widthParse; addX += 0.5) {
             for (double addZ = -widthParse; addZ <= widthParse; addZ += 0.5) {
-                for (double addY = e.getBbHeight() / 2; addY <= heightParse; addY += 0.5) {
+                for (double addY = e.getHeight() / 2; addY <= heightParse; addY += 0.5) {
                     Vector3d mod = new Vector3d(addX, addY, addZ);
-                    BlockRayTraceResult r = e.level.clip(new RayTraceContext(from.add(mod), to.add(mod), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.ANY, e));
-                    if (r != null && r.getType() == RayTraceResult.Type.BLOCK && !r.getLocation().equals(from.add(mod))) {
-                        Vector3d hit = r.getLocation().subtract(mod);
-                        switch (r.getDirection()) {
+                    BlockRayTraceResult r = e.world.rayTraceBlocks(new RayTraceContext(from.add(mod), to.add(mod), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.ANY, e));
+                    if (r != null && r.getType() == RayTraceResult.Type.BLOCK && !r.getHitVec().equals(from.add(mod))) {
+                        Vector3d hit = r.getHitVec().subtract(mod);
+                        switch (r.getFace()) {
                             case NORTH:
                                 hit = hit.add(0, 0, -1);
                                 break;
@@ -213,7 +234,7 @@ public class GeneralUtils {
                                 hit = hit.add(0, -1, 0);
                                 break;
                         }
-                        if (from.distanceToSqr(hit) < from.distanceToSqr(ret)) {
+                        if (from.squareDistanceTo(hit) < from.squareDistanceTo(ret)) {
                             ret = hit;
                         }
                     }
@@ -237,12 +258,12 @@ public class GeneralUtils {
     public static boolean isFacingEntity(Entity entity1, Entity entity2, int angle) {
         if (angle >= 360) return true;//well, duh.
         if (angle < 0) return isBehindEntity(entity2, entity1, -angle);
-        Vector3d posVec = entity2.position().add(0, entity2.getEyeHeight(), 0);
-        Vector3d lookVec = entity1.getEyePosition(1.0F);
-        Vector3d relativePosVec = (entity1.position().add(0, entity1.getEyeHeight(), 0)).subtract(posVec).normalize();
+        Vector3d posVec = entity2.getPositionVec().add(0, entity2.getEyeHeight(), 0);
+        Vector3d lookVec = entity1.getLook(1.0F);
+        Vector3d relativePosVec = posVec.subtractReverse(entity1.getPositionVec().add(0, entity1.getEyeHeight(), 0)).normalize();
         //relativePosVec = new Vector3d(relativePosVec.x, 0.0D, relativePosVec.z);
 
-        double dotsq = ((relativePosVec.dot(lookVec) * Math.abs(relativePosVec.dot(lookVec))) / (relativePosVec.lengthSqr() * lookVec.lengthSqr()));
+        double dotsq = ((relativePosVec.dotProduct(lookVec) * Math.abs(relativePosVec.dotProduct(lookVec))) / (relativePosVec.lengthSquared() * lookVec.lengthSquared()));
         double cos = MathHelper.cos(rad(angle / 2f));
         return dotsq < -(cos * cos);
     }
@@ -252,11 +273,11 @@ public class GeneralUtils {
      */
     public static boolean isBehindEntity(Entity entity, Entity reference, int angle) {
         if (angle >= 360) return true;//well, duh.
-        Vector3d posVec = entity.position().add(0, entity.getEyeHeight(), 0);
+        Vector3d posVec = entity.getPositionVec().add(0, entity.getEyeHeight(), 0);
         Vector3d lookVec = getBodyOrientation(reference);
-        Vector3d relativePosVec = (reference.position().add(0, reference.getEyeHeight(), 0)).subtract(posVec).normalize();
+        Vector3d relativePosVec = posVec.subtractReverse(reference.getPositionVec().add(0, reference.getEyeHeight(), 0)).normalize();
         relativePosVec = new Vector3d(relativePosVec.x, 0.0D, relativePosVec.z);
-        double dotsq = ((relativePosVec.dot(lookVec) * Math.abs(relativePosVec.dot(lookVec))) / (relativePosVec.lengthSqr() * lookVec.lengthSqr()));
+        double dotsq = ((relativePosVec.dotProduct(lookVec) * Math.abs(relativePosVec.dotProduct(lookVec))) / (relativePosVec.lengthSquared() * lookVec.lengthSquared()));
         double cos = MathHelper.cos(rad(angle / 2f));
         return dotsq > cos * cos;
     }
@@ -266,13 +287,13 @@ public class GeneralUtils {
     }
 
     /**
-     * literally a copy-paste of {@link Entity#getLookAngle()} for {@link LivingEntity}, since they calculate from their head instead
+     * literally a copy-paste of {@link Entity#getLookVec()} for {@link LivingEntity}, since they calculate from their head instead
      */
     public static Vector3d getBodyOrientation(Entity e) {
-        float f = MathHelper.cos(-e.yRot * 0.017453292F - (float) Math.PI);
-        float f1 = MathHelper.sin(-e.yRot * 0.017453292F - (float) Math.PI);
-        float f2 = -MathHelper.cos(-e.xRot * 0.017453292F);
-        float f3 = MathHelper.sin(-e.xRot * 0.017453292F);
+        float f = MathHelper.cos(-e.rotationYaw * 0.017453292F - (float) Math.PI);
+        float f1 = MathHelper.sin(-e.rotationYaw * 0.017453292F - (float) Math.PI);
+        float f2 = -MathHelper.cos(-e.rotationPitch * 0.017453292F);
+        float f3 = MathHelper.sin(-e.rotationPitch * 0.017453292F);
         return new Vector3d((double) (f1 * f2), (double) f3, (double) (f * f2));
     }
 
@@ -288,25 +309,25 @@ public class GeneralUtils {
         horAngle = Math.min(horAngle, 360);
         vertAngle = Math.min(vertAngle, 360);
         if (horAngle < 0) return isBehindEntity(entity2, entity1, -horAngle, Math.abs(vertAngle));
-        double xDiff = entity1.getX() - entity2.getX(), zDiff = entity1.getZ() - entity2.getZ();
+        double xDiff = entity1.getPosX() - entity2.getPosX(), zDiff = entity1.getPosZ() - entity2.getPosZ();
         if (vertAngle != 360) {
-            Vector3d posVec = entity2.position().add(0, entity2.getEyeHeight(), 0);
+            Vector3d posVec = entity2.getPositionVec().add(0, entity2.getEyeHeight(), 0);
             //y calculations
             double distIgnoreY = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
-            double relativeHeadVec = entity2.getY() - entity1.getY() - entity1.getEyeHeight() + entity2.getBbHeight();
-            double relativeFootVec = entity2.getY() - entity1.getY() - entity1.getEyeHeight();
+            double relativeHeadVec = entity2.getPosY() - entity1.getPosY() - entity1.getEyeHeight() + entity2.getHeight();
+            double relativeFootVec = entity2.getPosY() - entity1.getPosY() - entity1.getEyeHeight();
             double angleHead = -MathHelper.atan2(relativeHeadVec, distIgnoreY);
             double angleFoot = -MathHelper.atan2(relativeFootVec, distIgnoreY);
             //straight up is -90 and straight down is 90
-            double maxRot = rad(entity1.xRot + vertAngle / 2f);
-            double minRot = rad(entity1.xRot - vertAngle / 2f);
+            double maxRot = rad(entity1.rotationPitch + vertAngle / 2f);
+            double minRot = rad(entity1.rotationPitch - vertAngle / 2f);
             if (angleHead > maxRot || angleFoot < minRot) return false;
         }
-        Vector3d lookVec = entity1.getEyePosition(1.0F);
+        Vector3d lookVec = entity1.getLook(1.0F);
         Vector3d bodyVec = getBodyOrientation(entity1);
         //lookVec=new Vector3d(lookVec.x, 0, lookVec.z);
         //bodyVec=new Vector3d(bodyVec.x, 0, bodyVec.z);
-        Vector3d relativePosVec = entity2.position().subtract(entity1.position());
+        Vector3d relativePosVec = entity2.getPositionVec().subtract(entity1.getPositionVec());
         double angleLook = MathHelper.atan2(lookVec.z, lookVec.x);
         double angleBody = MathHelper.atan2(bodyVec.z, bodyVec.x);
         double anglePos = MathHelper.atan2(relativePosVec.z, relativePosVec.x);
@@ -319,37 +340,37 @@ public class GeneralUtils {
 
     public static boolean isBehindEntity(Entity entity, Entity reference, int horAngle, int vertAngle) {
         if (horAngle < 0) return isFacingEntity(reference, entity, -horAngle, Math.abs(vertAngle));
-        Vector3d posVec = reference.position().add(0, reference.getEyeHeight(), 0);
+        Vector3d posVec = reference.getPositionVec().add(0, reference.getEyeHeight(), 0);
         //y calculations
-        double xDiff = reference.getX() - entity.getX(), zDiff = reference.getZ() - entity.getZ();
+        double xDiff = reference.getPosX() - entity.getPosX(), zDiff = reference.getPosZ() - entity.getPosZ();
         double distIgnoreY = Math.sqrt(xDiff * xDiff + zDiff * zDiff);
-        double relativeHeadVec = reference.getY() - entity.getY() - entity.getEyeHeight() + reference.getBbHeight();
-        double relativeFootVec = reference.getY() - entity.getY() - entity.getEyeHeight();
+        double relativeHeadVec = reference.getPosY() - entity.getPosY() - entity.getEyeHeight() + reference.getHeight();
+        double relativeFootVec = reference.getPosY() - entity.getPosY() - entity.getEyeHeight();
         double angleHead = -MathHelper.atan2(relativeHeadVec, distIgnoreY);
         double angleFoot = -MathHelper.atan2(relativeFootVec, distIgnoreY);
         //straight up is -90 and straight down is 90
-        double maxRot = rad(reference.xRot + vertAngle / 2f);
-        double minRot = rad(reference.xRot - vertAngle / 2f);
+        double maxRot = rad(reference.rotationPitch + vertAngle / 2f);
+        double minRot = rad(reference.rotationPitch - vertAngle / 2f);
         if (angleHead > maxRot || angleFoot < minRot) return false;
         //xz begins
         //subtract half of width from calculations in the xz plane so wide mobs that are barely in frame still get lambasted
         double xDiffCompensated;
         if (xDiff < 0) {
-            xDiffCompensated = Math.min(-0.1, xDiff + entity.getBbWidth() / 2 + reference.getBbWidth() / 2);
+            xDiffCompensated = Math.min(-0.1, xDiff + entity.getWidth() / 2 + reference.getWidth() / 2);
         } else {
-            xDiffCompensated = Math.max(0.1, xDiff - entity.getBbWidth() / 2 - reference.getBbWidth() / 2);
+            xDiffCompensated = Math.max(0.1, xDiff - entity.getWidth() / 2 - reference.getWidth() / 2);
         }
         double zDiffCompensated;
         if (zDiff < 0) {
-            zDiffCompensated = Math.min(-0.1, zDiff + entity.getBbWidth() / 2 + reference.getBbWidth() / 2);
+            zDiffCompensated = Math.min(-0.1, zDiff + entity.getWidth() / 2 + reference.getWidth() / 2);
         } else {
-            zDiffCompensated = Math.max(0.1, zDiff - entity.getBbWidth() / 2 - reference.getBbWidth() / 2);
+            zDiffCompensated = Math.max(0.1, zDiff - entity.getWidth() / 2 - reference.getWidth() / 2);
         }
         Vector3d bodyVec = getBodyOrientation(reference);
-        Vector3d lookVec = reference.getEyePosition(1f);
+        Vector3d lookVec = reference.getLook(1f);
         Vector3d relativePosVec = new Vector3d(xDiffCompensated, 0, zDiffCompensated);
-        double dotsqLook = ((relativePosVec.dot(lookVec) * Math.abs(relativePosVec.dot(lookVec))) / (relativePosVec.lengthSqr() * lookVec.lengthSqr()));
-        double dotsqBody = ((relativePosVec.dot(bodyVec) * Math.abs(relativePosVec.dot(bodyVec))) / (relativePosVec.lengthSqr() * bodyVec.lengthSqr()));
+        double dotsqLook = ((relativePosVec.dotProduct(lookVec) * Math.abs(relativePosVec.dotProduct(lookVec))) / (relativePosVec.lengthSquared() * lookVec.lengthSquared()));
+        double dotsqBody = ((relativePosVec.dotProduct(bodyVec) * Math.abs(relativePosVec.dotProduct(bodyVec))) / (relativePosVec.lengthSquared() * bodyVec.lengthSquared()));
         double cos = MathHelper.cos(rad(horAngle / 2f));
         return dotsqBody > cos * cos || dotsqLook > cos * cos;
     }
@@ -383,8 +404,60 @@ public class GeneralUtils {
     }
 
     public static float getCosAngleSq(Vector3d from, Vector3d to) {
-        double top = from.dot(to) * from.dot(to);
-        double bot = from.lengthSqr() * to.lengthSqr();
+        double top = from.dotProduct(to) * from.dotProduct(to);
+        double bot = from.lengthSquared() * to.lengthSquared();
         return (float) (top / bot);
+    }
+
+    /**
+     * drops a skull of the given type. For players it will retrieve their skin
+     */
+    public static ItemStack dropSkull(LivingEntity elb) {
+        ItemStack ret = null;
+        if (elb instanceof AbstractSkeletonEntity) {
+            if (elb instanceof WitherSkeletonEntity)
+                ret = new ItemStack(Items.WITHER_SKELETON_SKULL);
+            else ret = new ItemStack(Items.SKELETON_SKULL);
+        } else if (elb instanceof ZombieEntity)
+            ret = new ItemStack(Items.ZOMBIE_HEAD);
+        else if (elb instanceof CreeperEntity)
+            ret = new ItemStack(Items.CREEPER_HEAD);
+        else if (elb instanceof EnderDragonEntity)
+            ret = new ItemStack(Items.DRAGON_HEAD);
+        else if (elb instanceof PlayerEntity) {
+            PlayerEntity p = (PlayerEntity) elb;
+            ret = new ItemStack(Items.PLAYER_HEAD);
+            ret.setTag(new CompoundNBT());
+            ret.getTag().putString("SkullOwner", p.getName().getString());
+        }
+        return ret;
+    }
+
+    public static double getAttributeValueHandSensitive(LivingEntity e, Attribute a, Hand h) {
+        if (e.getAttribute(a) == null) return 4;
+        if (h == Hand.MAIN_HAND) return getAttributeValueSafe(e, a);
+        ModifiableAttributeInstance mai = new ModifiableAttributeInstance(a, (n) -> {
+        });
+        Collection<AttributeModifier> ignore = e.getHeldItemMainhand().getAttributeModifiers(EquipmentSlotType.MAINHAND).get(a);
+        apply:
+        for (AttributeModifier am : e.getAttribute(a).getModifierListCopy()) {
+            for (AttributeModifier f : ignore) if (f.getID().equals(am.getID())) continue apply;
+            mai.applyNonPersistentModifier(am);
+        }
+        for (AttributeModifier f : e.getHeldItemOffhand().getAttributeModifiers(EquipmentSlotType.MAINHAND).get(a)) {
+            mai.removeModifier(f.getID());
+            mai.applyNonPersistentModifier(f);
+        }
+        return mai.getValue();
+    }
+
+    public static double getAttributeValueSafe(LivingEntity e, Attribute a) {
+        if (e.getAttribute(a) != null) return e.getAttributeValue(a);
+        return 0;
+    }
+
+    public static boolean isKitMain(ItemStack is) {
+        //if (is.getItem() == Items.IRON_AXE) return true;
+        return is.getTag() != null && is.getTag().getBoolean("kit");
     }
 }

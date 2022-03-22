@@ -12,11 +12,45 @@ public class DelayedAttack {
     private int damageTime;
     private int moveWeight;
     private float radius;
-    private float healthDamage;
-    private float postureDamage;//negative damage to heal self
+    private float healthDamage;//negative damage to use default
+    private float postureDamage;//negative damage to use default
+    private float healthMultiplier=1, postureMultiplier=1;
+    private float selfHealing;
     private float interruptHealthThreshold;
     private float interruptPostureThreshold;
-    private boolean canMove, canTurn, freeWill, indiscriminate, difficultyScalingHealth, difficultyScalingPosture;
+    private boolean canMove;
+    private boolean canTurn;
+    private boolean freeWill;
+    private boolean indiscriminate;
+
+    public float getHealthMultiplier() {
+        return healthMultiplier;
+    }
+
+    public DelayedAttack setHealthMultiplier(float healthMultiplier) {
+        this.healthMultiplier = healthMultiplier;
+        return this;
+    }
+
+    public float getPostureMultiplier() {
+        return postureMultiplier;
+    }
+
+    public DelayedAttack setPostureMultiplier(float postureMultiplier) {
+        this.postureMultiplier = postureMultiplier;
+        return this;
+    }
+
+    public float getSelfHealing() {
+        return selfHealing;
+    }
+
+    public DelayedAttack setSelfHealing(float selfHealing) {
+        this.selfHealing = selfHealing;
+        return this;
+    }
+
+    private boolean difficultyScalingPosture;
     private TaskType taskType;
     private Vector3d startVec, windupVec, hitVec, endVec;//y is up and down, z is forward backward, x is side to side
 
@@ -175,15 +209,6 @@ public class DelayedAttack {
 
     DelayedAttack setIndiscriminate(boolean indiscriminate) {
         this.indiscriminate = indiscriminate;
-        return this;
-    }
-
-    public boolean isHealthDamageScaling() {
-        return difficultyScalingHealth;
-    }
-
-    DelayedAttack setDifficultyScalingHealth(boolean difficultyScalingHealth) {
-        this.difficultyScalingHealth = difficultyScalingHealth;
         return this;
     }
 
