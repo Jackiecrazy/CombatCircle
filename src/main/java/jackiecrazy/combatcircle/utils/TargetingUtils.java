@@ -7,11 +7,11 @@ import net.minecraft.entity.passive.TameableEntity;
 public class TargetingUtils {
     public static boolean isAlly(Entity entity, Entity of) {
         if (of == entity) return true;
-        if (entity instanceof TameableEntity && of instanceof LivingEntity && ((TameableEntity) entity).isOwner((LivingEntity) of))
+        if (entity instanceof TameableEntity && of instanceof LivingEntity && ((TameableEntity) entity).isOwnedBy((LivingEntity) of))
             return true;
-        if (of instanceof TameableEntity && entity instanceof LivingEntity && ((TameableEntity) of).isOwner((LivingEntity) entity))
+        if (of instanceof TameableEntity && entity instanceof LivingEntity && ((TameableEntity) of).isOwnedBy((LivingEntity) entity))
             return true;
-        if (entity.isOnSameTeam(of)) return true;
+        if (entity.isAlliedTo(of)) return true;
         return false;
     }
 }

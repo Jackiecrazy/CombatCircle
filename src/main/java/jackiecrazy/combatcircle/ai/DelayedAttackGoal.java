@@ -8,9 +8,9 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.DamageSource;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 public class DelayedAttackGoal extends Goal {
@@ -27,45 +27,48 @@ public class DelayedAttackGoal extends Goal {
     }
 
     @Override
-    public boolean shouldExecute() {
-        LivingEntity target = wielder.getAttackTarget();
+    public boolean canUse() {
+        LivingEntity target = wielder.getTarget();
+        if (ordinal >= attackChain.length) return false;
         DelayedAttack move = attackChain[ordinal];
         switch (move.getTaskType()) {
             case MELEEATTACK:
             case MELEEDEFENSE:
             case RANGEDATTACK:
             case RANGEDDEFENSE:
-                return target != null && wielder.getDistanceSq(target) < move.getRadius() * move.getRadius();
+                return target != null && wielder.distanceToSqr(target) < move.getInitiationRadius() * move.getInitiationRadius();
             case RANDOM:
-                return wielder.getRNG().nextInt(move.getMoveWeight()) == 0;
+                return wielder.getRandom().nextInt(move.getMoveWeight()) == 0;
         }
         return true;
     }
 
-    public boolean shouldContinueExecuting() {
+    public boolean canContinueToUse() {
         if (ordinal >= attackChain.length) return false;
-        return !attackChain[ordinal].canEndEarly() | shouldExecute();
+        return !attackChain[ordinal].canEndEarly() | canUse();
     }
 
-    public boolean isPreemptible() {
+    public boolean isInterruptable() {
         return false;
     }
 
-    public void startExecuting() {
+    public void start() {
         ordinal = 0;
         resetTransients();
     }
 
-    public void resetTask() {
+    public void stop() {
         ordinal = 0;
         resetTransients();
     }
 
     public void tick() {
+        if (ordinal >= attackChain.length) return;
+        System.out.println("ticking lunge...");
         DelayedAttack move = attackChain[ordinal];
         if (ticker == 0) {//begin move in moveset
             ticker++;
-            wielder.setMotion(MotionUtils.convertToFacing(wielder, move.getStartVec()));
+            wielder.setDeltaMovement(MotionUtils.convertToFacing(wielder, move.getStartVec()));
             return;
         }
         int timestamp = move.getFillTime();
@@ -73,28 +76,30 @@ public class DelayedAttackGoal extends Goal {
             ticker++;
             return;
         }
-        if (phase < 1) {
+        if (phase < 1) {//windup-damage transition velocity
             phase = 1;
-            wielder.setMotion(MotionUtils.convertToFacing(wielder, move.getWindupVec()));
+            wielder.setDeltaMovement(MotionUtils.convertToFacing(wielder, move.getWindupVec()));
         }
         timestamp += move.getDamageTime();
         if (ticker < timestamp) {//deal damage
             ticker++;
             if (move.isIndiscriminate()) {
-                for (Entity e : wielder.world.getEntitiesInAABBexcluding(wielder, wielder.getBoundingBox().grow(move.getRadius()), null)) {
-                    if(GeneralUtils.isFacingEntity(wielder, e, move.getHorAngle(), move.getVertAngle())){
+                for (Entity e : wielder.level.getEntities(wielder, wielder.getBoundingBox().inflate(move.getAttackRadius()), null)) {
+                    if (!hitList.contains(e) && GeneralUtils.isFacingEntity(wielder, e, move.getHorAngle() + move.getHorAngleOffset(), move.getVertAngle() + move.getVertAngleOffset())) {
                         attack(e, move.getHealthDamage(), move.getHealthMultiplier());
                         hitList.add(e);
                     }
                 }
-            } else if (wielder.getAttackTarget() != null && wielder.getAttackTarget().getDistanceSq(wielder) < move.getRadius() * move.getRadius()) {
-                wielder.attackEntityAsMob(wielder.getAttackTarget());
+            } else if (wielder.getTarget() != null && !hitList.contains(wielder.getTarget()) && wielder.getTarget().distanceToSqr(wielder) < move.getAttackRadius() * move.getAttackRadius()) {
+                attack(wielder.getTarget(), move.getHealthDamage(), move.getHealthMultiplier());
+                hitList.add(wielder.getTarget());
             }
+            wielder.heal(move.getSelfHealing());
             return;
         }
-        if (phase < 2) {
+        if (phase < 2) {//damage-cooldown transition velocity
             phase = 2;
-            wielder.setMotion(MotionUtils.convertToFacing(wielder, move.getHitVec()));
+            wielder.setDeltaMovement(MotionUtils.convertToFacing(wielder, move.getHitVec()));
         }
         timestamp += move.getEmptyTime();
         if (ticker < timestamp) {//cooldown
@@ -102,18 +107,18 @@ public class DelayedAttackGoal extends Goal {
             return;
         }
         //entire move ended
-        wielder.setMotion(MotionUtils.convertToFacing(wielder, move.getEndVec()));
+        wielder.setDeltaMovement(MotionUtils.convertToFacing(wielder, move.getEndVec()));
         ordinal++;
         resetTransients();
     }
 
-    private void attack(Entity target, double basedmg, double multiplier){//TODO should this be a damage multiplier instead?
-        AttributeModifier am=new AttributeModifier("temporary damage bonus", multiplier-1, AttributeModifier.Operation.MULTIPLY_BASE);
-        double temp=wielder.getBaseAttributeValue(Attributes.ATTACK_DAMAGE);
-        if(basedmg>0)
-        wielder.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(basedmg);//FIXME does this update the value?
-        wielder.getAttribute(Attributes.ATTACK_DAMAGE).applyNonPersistentModifier(am);
-        wielder.attackEntityAsMob(target);
+    private void attack(Entity target, double basedmg, double multiplier) {//TODO should this be a damage multiplier instead?
+        AttributeModifier am = new AttributeModifier("temporary damage bonus", multiplier - 1, AttributeModifier.Operation.MULTIPLY_BASE);
+        double temp = wielder.getAttributeBaseValue(Attributes.ATTACK_DAMAGE);
+        if (basedmg > 0)
+            wielder.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(basedmg);//FIXME does this update the value?
+        wielder.getAttribute(Attributes.ATTACK_DAMAGE).addTransientModifier(am);
+        wielder.doHurtTarget(target);
         wielder.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(temp);
         wielder.getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(am);
     }
@@ -121,5 +126,15 @@ public class DelayedAttackGoal extends Goal {
     private void resetTransients() {
         ticker = phase = 0;
         hitList.clear();
+    }
+
+    @Override
+    public EnumSet<Flag> getFlags() {
+        EnumSet<Flag> ret = EnumSet.noneOf(Flag.class);
+        if (ordinal >= attackChain.length) return ret;
+        DelayedAttack da = attackChain[ordinal];
+        if (!da.canMove()) ret.add(Flag.MOVE);
+        if (!da.canTurn()) ret.add(Flag.LOOK);
+        return ret;
     }
 }

@@ -10,18 +10,26 @@ public class DelayedAttack {
     private int fillTime;
     private int emptyTime;
     private int damageTime;
-    private int moveWeight;
-    private float radius;
+    private int moveWeight = 0;
+    private float iradius = 1;
+    private float aradius = 1;
     private float healthDamage;//negative damage to use default
     private float postureDamage;//negative damage to use default
-    private float healthMultiplier=1, postureMultiplier=1;
+    private float healthMultiplier = 1, postureMultiplier = 1;
     private float selfHealing;
-    private float interruptHealthThreshold;
-    private float interruptPostureThreshold;
-    private boolean canMove;
-    private boolean canTurn;
-    private boolean freeWill;
-    private boolean indiscriminate;
+    private float interruptHealthThreshold = 9999;
+    private float interruptPostureThreshold = 9999;
+    private boolean canMove = false;
+    private boolean canTurn = false;
+    private boolean freeWill = false;
+    private boolean indiscriminate = false;
+    private boolean difficultyScalingPosture = false;
+    private TaskType taskType = TaskType.MELEEATTACK;
+    private Vector3d startVec = Vector3d.ZERO, windupVec = Vector3d.ZERO, hitVec = Vector3d.ZERO, endVec = Vector3d.ZERO;//y is up and down, z is forward backward, x is side to side
+
+    public DelayedAttack(int initial, int hurt, int cool) {
+        setFillTime(initial).setDamageTime(hurt).setEmptyTime(cool);
+    }
 
     public float getHealthMultiplier() {
         return healthMultiplier;
@@ -49,10 +57,6 @@ public class DelayedAttack {
         this.selfHealing = selfHealing;
         return this;
     }
-
-    private boolean difficultyScalingPosture;
-    private TaskType taskType;
-    private Vector3d startVec, windupVec, hitVec, endVec;//y is up and down, z is forward backward, x is side to side
 
     public int getDamageTime() {
         return damageTime;
@@ -133,19 +137,28 @@ public class DelayedAttack {
 
     public int getMoveWeight() {
         return moveWeight;
-    }
+    }//fixme
 
     DelayedAttack setMoveWeight(int moveWeight) {
         this.moveWeight = moveWeight;
         return this;
     }
 
-    public float getRadius() {
-        return radius;
+    public float getInitiationRadius() {
+        return iradius;
     }
 
-    DelayedAttack setRadius(float radius) {
-        this.radius = radius;
+    DelayedAttack setInitiationRadius(float radius) {
+        this.iradius = radius;
+        return this;
+    }
+
+    public float getAttackRadius() {
+        return aradius;
+    }
+
+    DelayedAttack setAttackRadius(float radius) {
+        this.aradius = radius;
         return this;
     }
 

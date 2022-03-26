@@ -1,9 +1,13 @@
 package jackiecrazy.combatcircle;
 
+import jackiecrazy.combatcircle.ai.LungeGoal;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -48,7 +52,7 @@ public class CombatCircle
 
     private void doClientStuff(final FMLClientSetupEvent event) {
         // do something that can only be done on the client
-        LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
+        LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().options);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event)
@@ -73,12 +77,13 @@ public class CombatCircle
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
     // Event bus for receiving Registry Events)
-    @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
-    public static class RegistryEvents {
+    @Mod.EventBusSubscriber
+    public static class TestEvents {
         @SubscribeEvent
-        public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
-            // register a new block here
-            LOGGER.info("HELLO from Register Block");
+        public static void onBlocksRegistry(final EntityJoinWorldEvent e) {
+            if(e.getEntity() instanceof ZombieEntity){
+                ((ZombieEntity) e.getEntity()).goalSelector.addGoal(0, new LungeGoal((MobEntity) e.getEntity()));
+            }
         }
     }
 }
