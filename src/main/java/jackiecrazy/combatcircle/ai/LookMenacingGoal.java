@@ -11,11 +11,9 @@ import java.util.EnumSet;
 
 public class LookMenacingGoal extends LookAtGoal {
     static final EnumSet<Flag> mutex = EnumSet.allOf(Flag.class);
-    private boolean inner;
 
-    public LookMenacingGoal(MobEntity bind, boolean inner) {
-        super(bind, PlayerEntity.class, inner ? CombatCircle.INNER_DISTANCE : CombatCircle.OUTER_DISTANCE, 1);
-        this.inner = inner;
+    public LookMenacingGoal(MobEntity bind) {
+        super(bind, PlayerEntity.class, CombatCircle.CIRCLE_SIZE, 1);
     }
 
     @Override
@@ -23,7 +21,7 @@ public class LookMenacingGoal extends LookAtGoal {
         lookAt = mob.getTarget();
         if (mob.getTarget() == null) return false;
         CombatManager cm = CombatManager.getManagerFor(mob.getTarget());
-        return (inner ? !cm.hasAttacker(mob) : !cm.hasMob(mob)) && GoalUtils.socialDistancing(mob);
+        return !cm.hasAttacker(mob) && GoalUtils.socialDistancing(mob);
     }
 
     @Override

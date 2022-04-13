@@ -49,7 +49,6 @@ public class CombatManager {
 
     public boolean addMob(MobEntity m) {
         if (isCooling(m)) return false;
-        if (hasAttacker(m)) return true;
         if (hasMob(m)) return true;
         float weight = getMobWeight(m);
         if (mlimit < currentMob + weight) return false;
@@ -60,10 +59,11 @@ public class CombatManager {
 
     public boolean addAttacker(MobEntity m, OldMove move) {
         if (isCooling(m)) return false;
-        if (!hasMob(m)) return false;
+        //if (!hasMob(m)) return false;
         if (hasAttacker(m)) return true;
         float weight = getAttackWeight(m, move);
         if (alimit < currentAttack + weight) return false;
+        if(!addMob(m))return false;
         attackList.put(m, m.tickCount);
         currentAttack += weight;
         return true;
@@ -96,7 +96,7 @@ public class CombatManager {
     }
 
     private float getMobWeight(MobEntity m) {
-        return m.getBbWidth();
+        return 1;//m.getBbWidth();
     }
 
     private float getAttackWeight(MobEntity m, OldMove move) {
@@ -106,17 +106,17 @@ public class CombatManager {
     public void tick() {
         purge.clear();
         attackList.forEach((a, b) -> {
-            if (!a.isAlive() || a.distanceToSqr(target) > CombatCircle.INNER_DISTANCE * CombatCircle.OUTER_DISTANCE || a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtByMobTimestamp() > b || a.getLastHurtMobTimestamp() > b) {
+            if (!a.isAlive()  || a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtByMobTimestamp() > b || a.getLastHurtMobTimestamp() > b) {
                 purge.add(a);
+                purgeTimer=0;
             }
         });
         purge.forEach(this::removeMob);
         purgeTimer++;
-        if (purgeTimer > 40) {
+        if (purgeTimer > 30) {
             if (!coolingList.isEmpty()) {
                 MobEntity m = coolingList.peek();
-                if (!m.isAlive() || m.distanceToSqr(target) > (CombatCircle.INNER_DISTANCE * CombatCircle.OUTER_DISTANCE)) {
-
+                if (!m.isAlive() || m.distanceToSqr(target) > (CombatCircle.CIRCLE_SIZE * CombatCircle.CIRCLE_SIZE)) {
                     coolingList.poll();
                 }
             }

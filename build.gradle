@@ -129,6 +129,8 @@ repositories {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.2.8'
     compile fg.deobf("curse.maven:footwork-608407:3742224")
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    testAnnotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
 }
 

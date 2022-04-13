@@ -20,6 +20,6 @@ public class GoalUtils {
     }
 
     public static boolean socialDistancing(LivingEntity mob) {
-        return getCrowd(mob.level, mob.blockPosition(), CombatCircle.INNER_DISTANCE).size() == 1;
+        return getCrowd(mob.level, mob.blockPosition(), CombatCircle.SHORT_DISTANCE).size() == 1;
     }
 }

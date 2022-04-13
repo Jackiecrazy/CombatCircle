@@ -1,18 +1,11 @@
 package jackiecrazy.combatcircle;
 
-import jackiecrazy.combatcircle.ai.DoubleAvoidEntityGoal;
+import jackiecrazy.combatcircle.ai.StrafeGoal;
 import jackiecrazy.combatcircle.ai.LookMenacingGoal;
 import jackiecrazy.combatcircle.utils.CombatManager;
-import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.utils.GeneralUtils;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.monster.MonsterEntity;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -37,10 +30,10 @@ import java.util.stream.Collectors;
 public class CombatCircle {
     public static final String MODID = "combatcircle";
 
-    public static final int INNER_DISTANCE = 3;
-    public static final int OUTER_DISTANCE = 8;
+    public static final int SHORT_DISTANCE = 1;
+    public static final int CIRCLE_SIZE = 3;
     public static final int MAXIMUM_CHASE_TIME = 100;
-    public static final int MOB_LIMIT = 4;
+    public static final int MOB_LIMIT = 2;//5
     public static final int ATTACK_LIMIT = 2;
 
     // Directly reference a log4j logger.
@@ -100,10 +93,8 @@ public class CombatCircle {
         @SubscribeEvent
         public static void spread(final EntityJoinWorldEvent e) {
             if (e.getEntity() instanceof CreatureEntity) {
-                ((MobEntity) e.getEntity()).goalSelector.addGoal(1, new DoubleAvoidEntityGoal.OuterStrafeGoal((CreatureEntity) e.getEntity()));
-                ((MobEntity) e.getEntity()).goalSelector.addGoal(0, new DoubleAvoidEntityGoal.InnerStrafeGoal((CreatureEntity) e.getEntity()));
-                ((MobEntity) e.getEntity()).goalSelector.addGoal(1, new LookMenacingGoal((CreatureEntity) e.getEntity(), true));
-                ((MobEntity) e.getEntity()).goalSelector.addGoal(2, new LookMenacingGoal((CreatureEntity) e.getEntity(), false));
+                ((MobEntity) e.getEntity()).goalSelector.addGoal(0, new StrafeGoal((CreatureEntity) e.getEntity()));
+                ((MobEntity) e.getEntity()).goalSelector.addGoal(1, new LookMenacingGoal((CreatureEntity) e.getEntity()));
             }
         }
 
