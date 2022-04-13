@@ -48,8 +48,8 @@ public class MoveManager extends JsonReloadListener {
               distance offset
 
     maneuver:
-      time (0 for one and done act)
-      interval
+      time (0 to skip)
+      interval (0 for one-and-done at the start)
       damage interrupt threshold
       posture interrupt threshold
       cancel condition (default null)
