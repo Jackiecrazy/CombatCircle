@@ -2,7 +2,7 @@ package jackiecrazy.combatcircle.ai;
 
 import net.minecraft.util.math.vector.Vector3d;
 
-public class DelayedAttack {
+public class OldMove {
     private int vertAngle;
     private int horAngle;
     private int vertAngleOffset;
@@ -27,15 +27,15 @@ public class DelayedAttack {
     private TaskType taskType = TaskType.MELEEATTACK;
     private Vector3d startVec = Vector3d.ZERO, windupVec = Vector3d.ZERO, hitVec = Vector3d.ZERO, endVec = Vector3d.ZERO;//y is up and down, z is forward backward, x is side to side
 
-    public DelayedAttack(int initial, int hurt, int cool) {
-        setFillTime(initial).setDamageTime(hurt).setEmptyTime(cool);
+    public OldMove(int initial, int hurt, int recover) {
+        setFillTime(initial).setDamageTime(hurt).setEmptyTime(recover);
     }
 
     public float getHealthMultiplier() {
         return healthMultiplier;
     }
 
-    public DelayedAttack setHealthMultiplier(float healthMultiplier) {
+    public OldMove setHealthMultiplier(float healthMultiplier) {
         this.healthMultiplier = healthMultiplier;
         return this;
     }
@@ -44,7 +44,7 @@ public class DelayedAttack {
         return postureMultiplier;
     }
 
-    public DelayedAttack setPostureMultiplier(float postureMultiplier) {
+    public OldMove setPostureMultiplier(float postureMultiplier) {
         this.postureMultiplier = postureMultiplier;
         return this;
     }
@@ -53,7 +53,7 @@ public class DelayedAttack {
         return selfHealing;
     }
 
-    public DelayedAttack setSelfHealing(float selfHealing) {
+    public OldMove setSelfHealing(float selfHealing) {
         this.selfHealing = selfHealing;
         return this;
     }
@@ -62,7 +62,7 @@ public class DelayedAttack {
         return damageTime;
     }
 
-    public DelayedAttack setDamageTime(int damageTime) {
+    public OldMove setDamageTime(int damageTime) {
         this.damageTime = damageTime;
         return this;
     }
@@ -71,7 +71,7 @@ public class DelayedAttack {
         return startVec;
     }
 
-    public DelayedAttack setStartVec(Vector3d startVec) {
+    public OldMove setStartVec(Vector3d startVec) {
         this.startVec = startVec;
         return this;
     }
@@ -80,7 +80,7 @@ public class DelayedAttack {
         return vertAngleOffset;
     }
 
-    DelayedAttack setVertAngleOffset(int vertAngleOffset) {
+    OldMove setVertAngleOffset(int vertAngleOffset) {
         this.vertAngleOffset = vertAngleOffset;
         return this;
     }
@@ -89,7 +89,7 @@ public class DelayedAttack {
         return horAngleOffset;
     }
 
-    DelayedAttack setHorAngleOffset(int horAngleOffset) {
+    OldMove setHorAngleOffset(int horAngleOffset) {
         this.horAngleOffset = horAngleOffset;
         return this;
     }
@@ -103,7 +103,7 @@ public class DelayedAttack {
         return vertAngle;
     }
 
-    DelayedAttack setVertAngle(int vertAngle) {
+    OldMove setVertAngle(int vertAngle) {
         this.vertAngle = vertAngle;
         return this;
     }
@@ -112,7 +112,7 @@ public class DelayedAttack {
         return horAngle;
     }
 
-    DelayedAttack setHorAngle(int horAngle) {
+    OldMove setHorAngle(int horAngle) {
         this.horAngle = horAngle;
         return this;
     }
@@ -121,7 +121,7 @@ public class DelayedAttack {
         return fillTime;
     }
 
-    DelayedAttack setFillTime(int fillTime) {
+    OldMove setFillTime(int fillTime) {
         this.fillTime = fillTime;
         return this;
     }
@@ -130,7 +130,7 @@ public class DelayedAttack {
         return emptyTime;
     }
 
-    DelayedAttack setEmptyTime(int emptyTime) {
+    OldMove setEmptyTime(int emptyTime) {
         this.emptyTime = emptyTime;
         return this;
     }
@@ -139,7 +139,7 @@ public class DelayedAttack {
         return moveWeight;
     }//fixme
 
-    DelayedAttack setMoveWeight(int moveWeight) {
+    OldMove setMoveWeight(int moveWeight) {
         this.moveWeight = moveWeight;
         return this;
     }
@@ -148,7 +148,7 @@ public class DelayedAttack {
         return iradius;
     }
 
-    DelayedAttack setInitiationRadius(float radius) {
+    OldMove setInitiationRadius(float radius) {
         this.iradius = radius;
         return this;
     }
@@ -157,7 +157,7 @@ public class DelayedAttack {
         return aradius;
     }
 
-    DelayedAttack setAttackRadius(float radius) {
+    OldMove setAttackRadius(float radius) {
         this.aradius = radius;
         return this;
     }
@@ -166,7 +166,7 @@ public class DelayedAttack {
         return healthDamage;
     }
 
-    DelayedAttack setHealthDamage(float healthDamage) {
+    OldMove setHealthDamage(float healthDamage) {
         this.healthDamage = healthDamage;
         return this;
     }
@@ -175,7 +175,7 @@ public class DelayedAttack {
         return postureDamage;
     }
 
-    DelayedAttack setPostureDamage(float postureDamage) {
+    OldMove setPostureDamage(float postureDamage) {
         this.postureDamage = postureDamage;
         return this;
     }
@@ -184,7 +184,7 @@ public class DelayedAttack {
         return interruptHealthThreshold;
     }
 
-    DelayedAttack setInterruptHealthThreshold(float interruptHealthThreshold) {
+    OldMove setInterruptHealthThreshold(float interruptHealthThreshold) {
         this.interruptHealthThreshold = interruptHealthThreshold;
         return this;
     }
@@ -193,7 +193,7 @@ public class DelayedAttack {
         return interruptPostureThreshold;
     }
 
-    DelayedAttack setInterruptPostureThreshold(float interruptPostureThreshold) {
+    OldMove setInterruptPostureThreshold(float interruptPostureThreshold) {
         this.interruptPostureThreshold = interruptPostureThreshold;
         return this;
     }
@@ -202,7 +202,7 @@ public class DelayedAttack {
         return canMove;
     }
 
-    DelayedAttack setCanMove(boolean canMove) {
+    OldMove setCanMove(boolean canMove) {
         this.canMove = canMove;
         return this;
     }
@@ -211,7 +211,7 @@ public class DelayedAttack {
         return canTurn;
     }
 
-    DelayedAttack setCanTurn(boolean canTurn) {
+    OldMove setCanTurn(boolean canTurn) {
         this.canTurn = canTurn;
         return this;
     }
@@ -220,7 +220,7 @@ public class DelayedAttack {
         return indiscriminate;
     }
 
-    DelayedAttack setIndiscriminate(boolean indiscriminate) {
+    OldMove setIndiscriminate(boolean indiscriminate) {
         this.indiscriminate = indiscriminate;
         return this;
     }
@@ -229,7 +229,7 @@ public class DelayedAttack {
         return difficultyScalingPosture;
     }
 
-    DelayedAttack setDifficultyScalingPosture(boolean difficultyScalingPosture) {
+    OldMove setDifficultyScalingPosture(boolean difficultyScalingPosture) {
         this.difficultyScalingPosture = difficultyScalingPosture;
         return this;
     }
@@ -238,7 +238,7 @@ public class DelayedAttack {
         return taskType;
     }
 
-    DelayedAttack setTaskType(TaskType taskType) {
+    OldMove setTaskType(TaskType taskType) {
         this.taskType = taskType;
         return this;
     }
@@ -247,7 +247,7 @@ public class DelayedAttack {
         return windupVec;
     }
 
-    DelayedAttack setWindupVec(Vector3d windupVec) {
+    OldMove setWindupVec(Vector3d windupVec) {
         this.windupVec = windupVec;
         return this;
     }
@@ -256,7 +256,7 @@ public class DelayedAttack {
         return hitVec;
     }
 
-    DelayedAttack setHitVec(Vector3d hitVec) {
+    OldMove setHitVec(Vector3d hitVec) {
         this.hitVec = hitVec;
         return this;
     }
@@ -265,7 +265,7 @@ public class DelayedAttack {
         return endVec;
     }
 
-    DelayedAttack setEndVec(Vector3d endVec) {
+    OldMove setEndVec(Vector3d endVec) {
         this.endVec = endVec;
         return this;
     }
@@ -274,7 +274,7 @@ public class DelayedAttack {
         return freeWill;
     }
 
-    DelayedAttack setCanEndEarly(boolean freeWill) {
+    OldMove setCanEndEarly(boolean freeWill) {
         this.freeWill = freeWill;
         return this;
     }

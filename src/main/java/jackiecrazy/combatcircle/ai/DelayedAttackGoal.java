@@ -1,6 +1,5 @@
 package jackiecrazy.combatcircle.ai;
 
-import jackiecrazy.combatcircle.utils.GeneralUtils;
 import jackiecrazy.combatcircle.utils.MotionUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -14,23 +13,27 @@ import java.util.EnumSet;
 import java.util.List;
 
 public class DelayedAttackGoal extends Goal {
-    private final DelayedAttack[] attackChain;
+    private final OldMove[] attackChain;
     private final MobEntity wielder;
     private final List<Entity> hitList = new ArrayList<>();
+    private final int cooldown;
     private int ordinal;
     private int ticker;
     private int phase;
+    private int cooldownTicker;
 
-    public DelayedAttackGoal(MobEntity host, DelayedAttack... pattern) {
+    public DelayedAttackGoal(MobEntity host, int cooldown, OldMove... pattern) {
         wielder = host;
+        this.cooldown = cooldown;
         attackChain = pattern;
     }
 
     @Override
     public boolean canUse() {
         LivingEntity target = wielder.getTarget();
+        if (cooldownTicker > 0) return false;
         if (ordinal >= attackChain.length) return false;
-        DelayedAttack move = attackChain[ordinal];
+        OldMove move = attackChain[ordinal];
         switch (move.getTaskType()) {
             case MELEEATTACK:
             case MELEEDEFENSE:
@@ -64,8 +67,7 @@ public class DelayedAttackGoal extends Goal {
 
     public void tick() {
         if (ordinal >= attackChain.length) return;
-        System.out.println("ticking lunge...");
-        DelayedAttack move = attackChain[ordinal];
+        OldMove move = attackChain[ordinal];
         if (ticker == 0) {//begin move in moveset
             ticker++;
             wielder.setDeltaMovement(MotionUtils.convertToFacing(wielder, move.getStartVec()));
@@ -79,13 +81,14 @@ public class DelayedAttackGoal extends Goal {
         if (phase < 1) {//windup-damage transition velocity
             phase = 1;
             wielder.setDeltaMovement(MotionUtils.convertToFacing(wielder, move.getWindupVec()));
+            wielder.heal(move.getSelfHealing());
         }
         timestamp += move.getDamageTime();
         if (ticker < timestamp) {//deal damage
             ticker++;
             if (move.isIndiscriminate()) {
                 for (Entity e : wielder.level.getEntities(wielder, wielder.getBoundingBox().inflate(move.getAttackRadius()), null)) {
-                    if (!hitList.contains(e) && GeneralUtils.isFacingEntity(wielder, e, move.getHorAngle() + move.getHorAngleOffset(), move.getVertAngle() + move.getVertAngleOffset())) {
+                    if (!hitList.contains(e) && .isFacingEntity(wielder, e, move.getHorAngle() + move.getHorAngleOffset(), move.getVertAngle() + move.getVertAngleOffset())) {
                         attack(e, move.getHealthDamage(), move.getHealthMultiplier());
                         hitList.add(e);
                     }
@@ -94,7 +97,6 @@ public class DelayedAttackGoal extends Goal {
                 attack(wielder.getTarget(), move.getHealthDamage(), move.getHealthMultiplier());
                 hitList.add(wielder.getTarget());
             }
-            wielder.heal(move.getSelfHealing());
             return;
         }
         if (phase < 2) {//damage-cooldown transition velocity
@@ -126,13 +128,14 @@ public class DelayedAttackGoal extends Goal {
     private void resetTransients() {
         ticker = phase = 0;
         hitList.clear();
+        cooldownTicker = cooldown;
     }
 
     @Override
     public EnumSet<Flag> getFlags() {
         EnumSet<Flag> ret = EnumSet.noneOf(Flag.class);
         if (ordinal >= attackChain.length) return ret;
-        DelayedAttack da = attackChain[ordinal];
+        OldMove da = attackChain[ordinal];
         if (!da.canMove()) ret.add(Flag.MOVE);
         if (!da.canTurn()) ret.add(Flag.LOOK);
         return ret;

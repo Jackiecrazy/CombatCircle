@@ -5,7 +5,7 @@ import net.minecraft.util.math.vector.Vector3d;
 
 public class LungeGoal extends DelayedAttackGoal{
     public LungeGoal(MobEntity host) {
-        super(host, new DelayedAttack(20, 3, 10)
+        super(host, new OldMove(20, 5, 10)
                 .setInitiationRadius(5)
                 .setAttackRadius(1)
                 .setCanTurn(true)
