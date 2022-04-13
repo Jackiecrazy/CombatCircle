@@ -21,57 +21,57 @@ public class MoveManager extends JsonReloadListener {
       move sequence
         move
           inherits (so you can point it to another move and override as needed)
-          initiation: point action
-          perform: timed action
-          recovery: point action
+          color
+          windup
+            maneuver
+          action
+            maneuver
+          cooldown
+            maneuver
+          shape:
+            origin: user/target
+            none: only selects origin
+            ray:
+              distance
+              width
+              angle offset
+              distance offset
+              action on impact
+              piercing
+            circle:
+              radius
+              distance offset
+            cone:
+              horizontal angle
+              vertical angle
+              angle offset
+              distance offset
 
-    actions:
-
-    action over time:
-      time
+    maneuver:
+      time (0 for one and done act)
       interval
       damage interrupt threshold
       posture interrupt threshold
       cancel condition (default null)
       can turn
       can move
-      can perform other moves
       tick action
       interrupt action
       cancel action
-    area of effect:
-      conditions
-      action
+
+    actions:
+    deal damage
+      amount
+      posture amount
+      multiplier
+      posture multiplier
+      action on attack
+      action on damage
     add potion effect
+    attribute modifier
     set fire
     record damage
     knockback
-    damage
-      condition
-      color
-      windup time
-      damage time
-      cooldown time
-      shape:
-        origin: user/target
-        ray:
-          distance
-          width
-          angle offset
-          distance offset
-          action on impact
-          piercing
-        circle:
-          radius
-          distance offset
-        cone:
-          horizontal angle
-          vertical angle
-          angle offset
-          distance offset
-      action on attack
-      action on damage
-      indiscriminate
     summon mob
       mob type
       distance offset
@@ -83,8 +83,7 @@ public class MoveManager extends JsonReloadListener {
     place block
     emit particles
     play sound
-    stall
-      time
+    do nothing
     invoke other move (both on others and self)
       recursion limit
 
