@@ -25,20 +25,20 @@ public class MoveManager extends JsonReloadListener {
           perform: timed action
           recovery: point action
 
-    point:
-      actions
-        type etc
-    timed:
+    actions:
+
+    action over time:
       time
+      interval
       damage interrupt threshold
       posture interrupt threshold
       cancel condition (default null)
       can turn
       can move
-      actions
-        type etc
-
-    actions:
+      can perform other moves
+      tick action
+      interrupt action
+      cancel action
     area of effect:
       conditions
       action
