@@ -1,4 +1,4 @@
-package jackiecrazy.combatcircle.ai;
+package jackiecrazy.combatcircle.move;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,6 +28,9 @@ public class MoveManager extends JsonReloadListener {
             maneuver
           cooldown
             maneuver
+          tracking speed
+            max angle per tick (ignored for circle)
+            tick delay (will target the spot the origin was at x ticks ago)
           shape:
             origin: user/target
             none: only selects origin
@@ -44,18 +47,19 @@ public class MoveManager extends JsonReloadListener {
             cone:
               horizontal angle
               vertical angle
-              angle offset
               distance offset
+              angle offset
 
     maneuver:
       time (0 to skip)
-      interval (0 for one-and-done at the start)
       damage interrupt threshold
       posture interrupt threshold
       cancel condition (default null)
       can turn
       can move
       tick action
+      scheduled action
+        timestamp
       interrupt action
       cancel action
 
@@ -81,7 +85,10 @@ public class MoveManager extends JsonReloadListener {
       distance offset
       angle offset
     place block
+    break block
     emit particles
+      vector offset
+      particle type
     play sound
     do nothing
     invoke other move (both on others and self)

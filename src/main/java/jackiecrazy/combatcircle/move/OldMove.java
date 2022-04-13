@@ -1,4 +1,4 @@
-package jackiecrazy.combatcircle.ai;
+package jackiecrazy.combatcircle.move;
 
 import net.minecraft.util.math.vector.Vector3d;
 

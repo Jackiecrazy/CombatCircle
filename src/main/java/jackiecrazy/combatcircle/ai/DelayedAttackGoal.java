@@ -1,6 +1,8 @@
 package jackiecrazy.combatcircle.ai;
 
+import jackiecrazy.combatcircle.move.OldMove;
 import jackiecrazy.combatcircle.utils.MotionUtils;
+import jackiecrazy.footwork.utils.GeneralUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
@@ -88,7 +90,7 @@ public class DelayedAttackGoal extends Goal {
             ticker++;
             if (move.isIndiscriminate()) {
                 for (Entity e : wielder.level.getEntities(wielder, wielder.getBoundingBox().inflate(move.getAttackRadius()), null)) {
-                    if (!hitList.contains(e) && .isFacingEntity(wielder, e, move.getHorAngle() + move.getHorAngleOffset(), move.getVertAngle() + move.getVertAngleOffset())) {
+                    if (!hitList.contains(e) && GeneralUtils.isFacingEntity(wielder, e, move.getHorAngle() + move.getHorAngleOffset(), move.getVertAngle() + move.getVertAngleOffset())) {
                         attack(e, move.getHealthDamage(), move.getHealthMultiplier());
                         hitList.add(e);
                     }

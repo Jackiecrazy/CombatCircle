@@ -1,4 +1,4 @@
-package jackiecrazy.combatcircle.ai;
+package jackiecrazy.combatcircle.move;
 
 public enum TaskType {
     MELEEATTACK,

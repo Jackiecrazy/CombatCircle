@@ -8,4 +8,5 @@ public class MotionUtils {
     public static Vector3d convertToFacing(LivingEntity mover, Vector3d moveVec) {
         return moveVec.yRot(GeneralUtils.rad(-mover.yHeadRot)).xRot(GeneralUtils.rad(-mover.xRot));
     }
+
 }
