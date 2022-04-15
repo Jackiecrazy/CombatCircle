@@ -70,8 +70,13 @@ public class StrafeGoal extends Goal {
 
     @Override
     public boolean canContinueToUse() {
-        BlockPos bp = mob.blockPosition();
-        return !pathNav.isDone() && toAvoid == mob.level.getNearestEntity(MobEntity.class, SAME_TARGET, mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE));// && !GoalUtils.socialDistancing(mob);
+        if (this.mob.getTarget() == null) {
+            return false;
+        }
+        if (CombatManager.getManagerFor(this.mob.getTarget()).hasAttacker(mob)) {
+            return false;
+        }
+        return !pathNav.isDone();// && toAvoid == mob.level.getNearestEntity(MobEntity.class, SAME_TARGET, mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE));// && !GoalUtils.socialDistancing(mob);
     }
 
     public boolean cannotApproach(LivingEntity target) {

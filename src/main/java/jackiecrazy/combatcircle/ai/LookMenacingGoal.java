@@ -6,11 +6,14 @@ import jackiecrazy.combatcircle.utils.GoalUtils;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.EnumSet;
 
 public class LookMenacingGoal extends LookAtGoal {
     static final EnumSet<Flag> mutex = EnumSet.allOf(Flag.class);
+    int strafeTick = 0;
+    boolean flip = false;
 
     public LookMenacingGoal(MobEntity bind) {
         super(bind, PlayerEntity.class, CombatCircle.CIRCLE_SIZE, 1);
@@ -25,6 +28,11 @@ public class LookMenacingGoal extends LookAtGoal {
     }
 
     @Override
+    public boolean canContinueToUse() {
+        return canUse();
+    }
+
+    @Override
     public boolean isInterruptable() {
         return false;
     }
@@ -32,5 +40,29 @@ public class LookMenacingGoal extends LookAtGoal {
     @Override
     public EnumSet<Flag> getFlags() {
         return mutex;
+    }
+
+    @Override
+    public void start() {
+        super.start();
+        strafeTick = 0;
+    }
+
+    @Override
+    public void stop() {
+        strafeTick = 0;
+        super.stop();
+    }
+
+    @Override
+    public void tick() {
+        strafeTick++;
+        if (strafeTick % 10 == 0 && mob.getRandom().nextInt(40) < strafeTick) {
+            flip = !flip;
+            strafeTick = 0;
+        }
+        if (strafeTick > 10)
+            mob.getMoveControl().strafe(0, flip ? 0.2f : -0.2f);
+        super.tick();
     }
 }

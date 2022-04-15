@@ -63,7 +63,7 @@ public class CombatManager {
         if (hasAttacker(m)) return true;
         float weight = getAttackWeight(m, move);
         if (alimit < currentAttack + weight) return false;
-        if(!addMob(m))return false;
+        if (!addMob(m)) return false;
         attackList.put(m, m.tickCount);
         currentAttack += weight;
         return true;
@@ -106,9 +106,14 @@ public class CombatManager {
     public void tick() {
         purge.clear();
         attackList.forEach((a, b) -> {
-            if (!a.isAlive()  || a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtByMobTimestamp() > b || a.getLastHurtMobTimestamp() > b) {
+            if (!a.isAlive() || a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtByMobTimestamp() > b || a.getLastHurtMobTimestamp() > b) {
                 purge.add(a);
-                purgeTimer=0;
+                purgeTimer = 0;
+            }
+        });
+        mobList.forEach(a -> {
+            if (!a.isAlive()) {
+                purge.add(a);
             }
         });
         purge.forEach(this::removeMob);
