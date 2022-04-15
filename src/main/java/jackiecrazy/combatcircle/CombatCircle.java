@@ -31,6 +31,7 @@ public class CombatCircle {
     public static final String MODID = "combatcircle";
 
     public static final int SHORT_DISTANCE = 1;
+    public static final int SPREAD_DISTANCE = 3;
     public static final int CIRCLE_SIZE = 3;
     public static final int MAXIMUM_CHASE_TIME = 100;
     public static final int MOB_LIMIT = 2;//5
