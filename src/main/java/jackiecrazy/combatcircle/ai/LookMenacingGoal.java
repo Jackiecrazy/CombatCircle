@@ -56,13 +56,16 @@ public class LookMenacingGoal extends LookAtGoal {
 
     @Override
     public void tick() {
-        strafeTick++;
-        if (strafeTick % 10 == 0 && mob.getRandom().nextInt(40) < strafeTick) {
-            flip = !flip;
-            strafeTick = 0;
-        }
-        if (strafeTick > 10)
-            mob.getMoveControl().strafe(0, flip ? 0.2f : -0.2f);
+//        strafeTick++;
+//        if(mob.getTarget()!=null)
+//        mob.lookAt(mob.getTarget(), 30, 30);
+//        if (strafeTick > 30 && mob.getRandom().nextInt(20) == 0) {
+//            flip = !flip;
+//            strafeTick = 0;
+//        }
+//        if (strafeTick > 20) {
+//            mob.getMoveControl().strafe(0, flip ? 0.2f : -0.2f);
+//        }
         super.tick();
     }
 }

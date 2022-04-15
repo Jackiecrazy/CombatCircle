@@ -32,8 +32,9 @@ public class StrafeGoal extends Goal {
     protected final int minDist;
     private final double walkSpeedModifier;
     private final double sprintSpeedModifier;
-    protected LivingEntity toAvoid;
     protected Path path;
+    MobEntity toAvoid;
+    private boolean retreated;
 
     public StrafeGoal(CreatureEntity entityIn) {
         super();
@@ -50,33 +51,33 @@ public class StrafeGoal extends Goal {
         if (GeneralUtils.getDistSqCompensated(mob.getTarget(), mob) > (minDist + 2) * (minDist + 2)) return false;
         BlockPos bp = mob.blockPosition();
         toAvoid = mob.level.getNearestEntity(MobEntity.class, SAME_TARGET, mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE));
-        if (this.toAvoid == null) {
+        Vector3d first = GeneralUtils.getPointInFrontOf(mob, mob.getTarget(), -minDist);
+        Vector3d second = Vector3d.ZERO;
+        if (toAvoid != null)
+            second = GeneralUtils.getPointInFrontOf(mob, toAvoid, -minDist).subtract(mob.getTarget().position()).normalize();
+        Vector3d vector3d = RandomPositionGenerator.getPosTowards(this.mob, minDist, minDist / 2, first.add(second));
+        if (vector3d == null) {
             return false;
         } else {
-            Vector3d first = GeneralUtils.getPointInFrontOf(mob, toAvoid, -minDist);
-            Vector3d second = GeneralUtils.getPointInFrontOf(mob, mob.getTarget(), -minDist).subtract(mob.getTarget().position()).normalize();
-            Vector3d vector3d = RandomPositionGenerator.getPosTowards(this.mob, minDist, minDist / 2, first.add(second));
-            if (vector3d == null) {
-                return false;
-            } else {
-                int density = GoalUtils.getCrowd(mob.level, mob.blockPosition(), CombatCircle.SHORT_DISTANCE).size();
-                int newdensity = GoalUtils.getCrowd(mob.level, vector3d, CombatCircle.SHORT_DISTANCE).size();
-                if (density < newdensity) return false;
-                this.path = this.pathNav.createPath(vector3d.x, vector3d.y, vector3d.z, 0);
-                return this.path != null;
-            }
+            int density = GoalUtils.getCrowd(mob.level, mob.blockPosition(), CombatCircle.SHORT_DISTANCE).size();
+            int newdensity = GoalUtils.getCrowd(mob.level, vector3d, CombatCircle.SHORT_DISTANCE).size();
+            if (density < newdensity) return false;
+            this.path = this.pathNav.createPath(vector3d.x, vector3d.y, vector3d.z, 0);
+            return this.path != null;
         }
     }
 
     @Override
     public boolean canContinueToUse() {
+        if (!retreated) return true;
         if (this.mob.getTarget() == null) {
             return false;
         }
         if (CombatManager.getManagerFor(this.mob.getTarget()).hasAttacker(mob)) {
             return false;
         }
-        return !pathNav.isDone();// && toAvoid == mob.level.getNearestEntity(MobEntity.class, SAME_TARGET, mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE));// && !GoalUtils.socialDistancing(mob);
+        BlockPos bp = mob.blockPosition();
+        return !pathNav.isDone() && toAvoid == mob.level.getNearestEntity(MobEntity.class, SAME_TARGET, mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE));// && !GoalUtils.socialDistancing(mob);
     }
 
     public boolean cannotApproach(LivingEntity target) {
@@ -84,18 +85,27 @@ public class StrafeGoal extends Goal {
     }
 
     public void start() {
-        this.pathNav.moveTo(this.path, this.walkSpeedModifier);
+        retreated = false;
     }
 
     public void stop() {
-        this.toAvoid = null;
+        retreated = false;
     }
 
     public void tick() {
-        if (GeneralUtils.getDistSqCompensated(toAvoid, mob) < minDist * minDist) {
-            this.mob.getNavigation().setSpeedModifier(this.sprintSpeedModifier);
+        if (mob.getTarget() == null) return;
+        mob.lookAt(mob.getTarget(), 30, 30);
+        mob.getLookControl().setLookAt(mob.getTarget(), 30, 30);
+        if (GeneralUtils.getDistSqCompensated(mob.getTarget(), mob) < 3.0) {
+            pathNav.stop();
+            mob.setDeltaMovement(mob.getDeltaMovement().add(mob.position().subtract(mob.getTarget().position()).normalize().scale(0.1)));
+            pathNav.setSpeedModifier(this.sprintSpeedModifier);
         } else {
-            this.mob.getNavigation().setSpeedModifier(this.walkSpeedModifier);
+            if (!this.retreated) {
+                this.retreated = true;
+                pathNav.moveTo(this.path, this.walkSpeedModifier);
+            }
+            pathNav.setSpeedModifier(this.sprintSpeedModifier);
         }
 
     }
