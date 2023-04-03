@@ -1,15 +1,16 @@
 package jackiecrazy.combatcircle;
 
-import jackiecrazy.combatcircle.ai.StrafeGoal;
 import jackiecrazy.combatcircle.ai.LookMenacingGoal;
+import jackiecrazy.combatcircle.ai.StrafeGoal;
 import jackiecrazy.combatcircle.utils.CombatManager;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.PathfinderMob;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
+import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.common.Mod;
@@ -17,8 +18,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,14 +54,9 @@ public class CombatCircle {
     }
 
     private void setup(final FMLCommonSetupEvent event) {
-        // some preinit code
-        LOGGER.info("HELLO FROM PREINIT");
-        LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-        // do something that can only be done on the client
-        LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().options);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -81,36 +75,31 @@ public class CombatCircle {
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(FMLServerStartingEvent event) {
-        // do something when the server starts
-        LOGGER.info("HELLO from server starting");
-    }
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
     // Event bus for receiving Registry Events)
     @Mod.EventBusSubscriber
     public static class TestEvents {
         @SubscribeEvent
-        public static void spread(final EntityJoinWorldEvent e) {
-            if (e.getEntity() instanceof CreatureEntity) {
-                ((MobEntity) e.getEntity()).goalSelector.addGoal(0, new StrafeGoal((CreatureEntity) e.getEntity()));
-                ((MobEntity) e.getEntity()).goalSelector.addGoal(1, new LookMenacingGoal((CreatureEntity) e.getEntity()));
+        public static void spread(final EntityJoinLevelEvent e) {
+            if (e.getEntity() instanceof PathfinderMob) {
+                ((Mob) e.getEntity()).goalSelector.addGoal(0, new StrafeGoal((PathfinderMob) e.getEntity()));
+                ((Mob) e.getEntity()).goalSelector.addGoal(1, new LookMenacingGoal((PathfinderMob) e.getEntity()));
             }
         }
 
         @SubscribeEvent
-        public static void start(FMLServerStartingEvent e) {
+        public static void start(ServerStartingEvent e) {
             CombatManager.managers.clear();
         }
 
         @SubscribeEvent
-        public static void stop(FMLServerStoppingEvent e) {
+        public static void stop(ServerStoppingEvent e) {
             CombatManager.managers.clear();
         }
 
         @SubscribeEvent
-        public static void tick(LivingEvent.LivingUpdateEvent e) {
+        public static void tick(LivingEvent.LivingTickEvent e) {
 //            LivingEntity elb = e.getEntityLiving();
 //            if (elb instanceof MobEntity && CombatData.getCap(elb).getStaggerTime() == 0 && ((MobEntity) elb).getTarget() != null) {
 //                double safeSpace = (elb.getBbWidth()) * 3;

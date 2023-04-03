@@ -1,6 +1,6 @@
 package jackiecrazy.combatcircle.move;
 
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 public class OldMove {
     private int vertAngle;
@@ -25,7 +25,7 @@ public class OldMove {
     private boolean indiscriminate = false;
     private boolean difficultyScalingPosture = false;
     private TaskType taskType = TaskType.MELEEATTACK;
-    private Vector3d startVec = Vector3d.ZERO, windupVec = Vector3d.ZERO, hitVec = Vector3d.ZERO, endVec = Vector3d.ZERO;//y is up and down, z is forward backward, x is side to side
+    private Vec3 startVec = Vec3.ZERO, windupVec = Vec3.ZERO, hitVec = Vec3.ZERO, endVec = Vec3.ZERO;//y is up and down, z is forward backward, x is side to side
 
     public OldMove(int initial, int hurt, int recover) {
         setFillTime(initial).setDamageTime(hurt).setEmptyTime(recover);
@@ -67,11 +67,11 @@ public class OldMove {
         return this;
     }
 
-    public Vector3d getStartVec() {
+    public Vec3 getStartVec() {
         return startVec;
     }
 
-    public OldMove setStartVec(Vector3d startVec) {
+    public OldMove setStartVec(Vec3 startVec) {
         this.startVec = startVec;
         return this;
     }
@@ -243,29 +243,29 @@ public class OldMove {
         return this;
     }
 
-    public Vector3d getWindupVec() {
+    public Vec3 getWindupVec() {
         return windupVec;
     }
 
-    OldMove setWindupVec(Vector3d windupVec) {
+    OldMove setWindupVec(Vec3 windupVec) {
         this.windupVec = windupVec;
         return this;
     }
 
-    public Vector3d getHitVec() {
+    public Vec3 getHitVec() {
         return hitVec;
     }
 
-    OldMove setHitVec(Vector3d hitVec) {
+    OldMove setHitVec(Vec3 hitVec) {
         this.hitVec = hitVec;
         return this;
     }
 
-    public Vector3d getEndVec() {
+    public Vec3 getEndVec() {
         return endVec;
     }
 
-    OldMove setEndVec(Vector3d endVec) {
+    OldMove setEndVec(Vec3 endVec) {
         this.endVec = endVec;
         return this;
     }

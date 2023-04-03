@@ -1,42 +1,46 @@
 package jackiecrazy.combatcircle.ai;
 
+import com.mojang.math.Vector3d;
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.utils.CombatManager;
 import jackiecrazy.combatcircle.utils.GoalUtils;
 import jackiecrazy.footwork.utils.GeneralUtils;
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityPredicate;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.pathfinding.Path;
-import net.minecraft.pathfinding.PathNavigator;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.util.RandomPos;
+import net.minecraft.world.level.pathfinder.Path;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 public class StrafeGoal extends Goal {
-    private static final EntityPredicate SAME_TARGET = new EntityPredicate() {
+    private static final TargetingConditions SAME_TARGET = new TargetingConditions() {
         @ParametersAreNonnullByDefault
         public boolean test(@Nullable LivingEntity from, LivingEntity to) {
-            if (!(from instanceof MobEntity && to instanceof MobEntity)) return false;
-            if (((MobEntity) from).getTarget() == null) return false;
-            return ((MobEntity) from).getTarget() == ((MobEntity) to).getTarget();
+            if (!(from instanceof Mob && to instanceof Mob)) return false;
+            if (((Mob) from).getTarget() == null) return false;
+            return ((Mob) from).getTarget() == ((Mob) to).getTarget();
         }
     };
-    protected final CreatureEntity mob;
-    protected final PathNavigator pathNav;
+    protected final PathfinderMob mob;
+    protected final PathNavigation pathNav;
     protected final int minDist;
     private final double walkSpeedModifier;
     private final double sprintSpeedModifier;
     protected Path path;
-    MobEntity toAvoid;
+    Mob toAvoid;
     private boolean retreated;
 
-    public StrafeGoal(CreatureEntity entityIn) {
+    public StrafeGoal(PathfinderMob entityIn) {
         super();
         mob = entityIn;
         walkSpeedModifier = 0.8f;
@@ -50,12 +54,12 @@ public class StrafeGoal extends Goal {
         if (cannotApproach(mob.getTarget())) return false;
         if (GeneralUtils.getDistSqCompensated(mob.getTarget(), mob) > (minDist + 2) * (minDist + 2)) return false;
         BlockPos bp = mob.blockPosition();
-        toAvoid = mob.level.getNearestEntity(MobEntity.class, SAME_TARGET, mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE));
-        Vector3d first = GeneralUtils.getPointInFrontOf(mob, mob.getTarget(), -minDist);
-        Vector3d second = Vector3d.ZERO;
+        toAvoid = mob.level.getNearestEntity(Mob.class, SAME_TARGET.selector(), mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE));
+        Vec3 first = GeneralUtils.getPointInFrontOf(mob, mob.getTarget(), -minDist);
+        Vec3 second = Vec3.ZERO;
         if (toAvoid != null)
             second = GeneralUtils.getPointInFrontOf(mob, toAvoid, -minDist).subtract(mob.getTarget().position()).normalize();
-        Vector3d vector3d = RandomPositionGenerator.getPosTowards(this.mob, minDist, minDist / 2, first.add(second));
+        Vec3 vector3d = RandomPos.generateRandomPosTowardDirection(this.mob, minDist, minDist / 2, first.add(second));
         if (vector3d == null) {
             return false;
         } else {
@@ -77,7 +81,7 @@ public class StrafeGoal extends Goal {
             return false;
         }
         BlockPos bp = mob.blockPosition();
-        return !pathNav.isDone() && toAvoid == mob.level.getNearestEntity(MobEntity.class, SAME_TARGET, mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE));// && !GoalUtils.socialDistancing(mob);
+        return !pathNav.isDone() && toAvoid == mob.level.getNearestEntity(Mob.class, SAME_TARGET, mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE));// && !GoalUtils.socialDistancing(mob);
     }
 
     public boolean cannotApproach(LivingEntity target) {

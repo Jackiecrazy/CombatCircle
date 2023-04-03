@@ -3,20 +3,19 @@ package jackiecrazy.combatcircle.ai;
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.utils.CombatManager;
 import jackiecrazy.combatcircle.utils.GoalUtils;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.EnumSet;
 
-public class LookMenacingGoal extends LookAtGoal {
+public class LookMenacingGoal extends LookAtPlayerGoal {
     static final EnumSet<Flag> mutex = EnumSet.allOf(Flag.class);
     int strafeTick = 0;
     boolean flip = false;
 
-    public LookMenacingGoal(MobEntity bind) {
-        super(bind, PlayerEntity.class, CombatCircle.CIRCLE_SIZE, 1);
+    public LookMenacingGoal(Mob bind) {
+        super(bind, Player.class, CombatCircle.CIRCLE_SIZE, 1);
     }
 
     @Override

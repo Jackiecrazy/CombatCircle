@@ -1,12 +1,12 @@
 package jackiecrazy.combatcircle.utils;
 
 import jackiecrazy.footwork.utils.GeneralUtils;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 
 public class MotionUtils {
-    public static Vector3d convertToFacing(LivingEntity mover, Vector3d moveVec) {
-        return moveVec.yRot(GeneralUtils.rad(-mover.yHeadRot)).xRot(GeneralUtils.rad(-mover.xRot));
+    public static Vec3 convertToFacing(LivingEntity mover, Vec3 moveVec) {
+        return moveVec.yRot(GeneralUtils.rad(-mover.yHeadRot)).xRot(GeneralUtils.rad(-mover.getXRot()));
     }
 
 }

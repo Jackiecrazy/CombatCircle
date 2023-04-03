@@ -1,21 +1,21 @@
 package jackiecrazy.combatcircle.utils;
 
 import jackiecrazy.combatcircle.CombatCircle;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 
 public class GoalUtils {
-    public static List<MobEntity> getCrowd(World level, BlockPos point, float radius) {
-        return level.getEntitiesOfClass(MobEntity.class, new AxisAlignedBB(point).inflate(radius), (a -> a.getTarget() != null));
+    public static List<Mob> getCrowd(Level level, BlockPos point, float radius) {
+        return level.getEntitiesOfClass(Mob.class, new AABB(point).inflate(radius), (a -> a.getTarget() != null));
     }
 
-    public static List<MobEntity> getCrowd(World level, Vector3d point, float radius) {
+    public static List<Mob> getCrowd(Level level, Vec3 point, float radius) {
         return getCrowd(level, new BlockPos(point), radius);
     }
 

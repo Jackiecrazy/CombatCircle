@@ -2,8 +2,8 @@ package jackiecrazy.combatcircle.utils;
 
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.move.OldMove;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,9 +11,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CombatManager {
     public static final ConcurrentHashMap<LivingEntity, CombatManager> managers = new ConcurrentHashMap<>();
-    private final ConcurrentLinkedQueue<MobEntity> mobList = new ConcurrentLinkedQueue<>();
-    private final ConcurrentHashMap<MobEntity, Integer> attackList = new ConcurrentHashMap<>();
-    private final ConcurrentLinkedQueue<MobEntity> coolingList = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Mob> mobList = new ConcurrentLinkedQueue<>();
+    private final ConcurrentHashMap<Mob, Integer> attackList = new ConcurrentHashMap<>();
+    private final ConcurrentLinkedQueue<Mob> coolingList = new ConcurrentLinkedQueue<>();
     /*
     HO, YOU'RE APPROACHING ME?
     get within, say, 4 blocks
@@ -33,7 +33,7 @@ public class CombatManager {
      */
     private final LivingEntity target;
     private final int mlimit, alimit;
-    private final ArrayList<MobEntity> purge = new ArrayList<>();
+    private final ArrayList<Mob> purge = new ArrayList<>();
     private float currentMob, currentAttack;
     private int purgeTimer;
 
@@ -47,7 +47,7 @@ public class CombatManager {
         return CombatManager.managers.computeIfAbsent(target, (a) -> new CombatManager(a, CombatCircle.MOB_LIMIT, CombatCircle.ATTACK_LIMIT));
     }
 
-    public boolean addMob(MobEntity m) {
+    public boolean addMob(Mob m) {
         if (isCooling(m)) return false;
         if (hasMob(m)) return true;
         float weight = getMobWeight(m);
@@ -57,7 +57,7 @@ public class CombatManager {
         return true;
     }
 
-    public boolean addAttacker(MobEntity m, OldMove move) {
+    public boolean addAttacker(Mob m, OldMove move) {
         if (isCooling(m)) return false;
         //if (!hasMob(m)) return false;
         if (hasAttacker(m)) return true;
@@ -69,37 +69,37 @@ public class CombatManager {
         return true;
     }
 
-    public void removeMob(MobEntity m) {
+    public void removeMob(Mob m) {
         if (!mobList.contains(m)) return;
         removeAttacker(m, null);
         mobList.remove(m);
         currentMob -= getMobWeight(m);
     }
 
-    public void removeAttacker(MobEntity m, OldMove move) {
+    public void removeAttacker(Mob m, OldMove move) {
         if (!attackList.containsKey(m)) return;
         attackList.remove(m);
         currentAttack -= getAttackWeight(m, move);
         coolingList.add(m);
     }
 
-    public boolean hasMob(MobEntity m) {
+    public boolean hasMob(Mob m) {
         return mobList.contains(m);
     }
 
-    public boolean hasAttacker(MobEntity m) {
+    public boolean hasAttacker(Mob m) {
         return attackList.containsKey(m);
     }
 
-    public boolean isCooling(MobEntity m) {
+    public boolean isCooling(Mob m) {
         return coolingList.contains(m);
     }
 
-    private float getMobWeight(MobEntity m) {
+    private float getMobWeight(Mob m) {
         return 1;//m.getBbWidth();
     }
 
-    private float getAttackWeight(MobEntity m, OldMove move) {
+    private float getAttackWeight(Mob m, OldMove move) {
         return 1;
     }
 
@@ -120,7 +120,7 @@ public class CombatManager {
         purgeTimer++;
         if (purgeTimer > 30) {
             if (!coolingList.isEmpty()) {
-                MobEntity m = coolingList.peek();
+                Mob m = coolingList.peek();
                 if (!m.isAlive() || m.distanceToSqr(target) > (CombatCircle.CIRCLE_SIZE * CombatCircle.CIRCLE_SIZE)) {
                     coolingList.poll();
                 }

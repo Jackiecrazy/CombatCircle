@@ -3,12 +3,12 @@ package jackiecrazy.combatcircle.ai;
 import jackiecrazy.combatcircle.move.OldMove;
 import jackiecrazy.combatcircle.utils.MotionUtils;
 import jackiecrazy.footwork.utils.GeneralUtils;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.Goal;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -16,7 +16,7 @@ import java.util.List;
 
 public class DelayedAttackGoal extends Goal {
     private final OldMove[] attackChain;
-    private final MobEntity wielder;
+    private final Mob wielder;
     private final List<Entity> hitList = new ArrayList<>();
     private final int cooldown;
     private int ordinal;
@@ -24,7 +24,7 @@ public class DelayedAttackGoal extends Goal {
     private int phase;
     private int cooldownTicker;
 
-    public DelayedAttackGoal(MobEntity host, int cooldown, OldMove... pattern) {
+    public DelayedAttackGoal(Mob host, int cooldown, OldMove... pattern) {
         wielder = host;
         this.cooldown = cooldown;
         attackChain = pattern;

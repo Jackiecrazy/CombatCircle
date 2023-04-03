@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "package": "jackiecrazy.combatcircle.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "combatcircle.refmap.json",
+  "mixins": [
+    "TargetingConditionMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

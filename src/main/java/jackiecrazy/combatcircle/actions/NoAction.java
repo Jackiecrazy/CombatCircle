@@ -1,6 +1,6 @@
 package jackiecrazy.combatcircle.actions;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 
 public class NoAction extends Action{
     @Override

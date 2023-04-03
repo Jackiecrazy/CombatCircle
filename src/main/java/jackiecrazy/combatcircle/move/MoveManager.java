@@ -3,14 +3,14 @@ package jackiecrazy.combatcircle.move;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Map;
 
-public class MoveManager extends JsonReloadListener {
+public class MoveManager extends SimpleJsonResourceReloadListener {
     /*
     moveset
       condition
@@ -123,7 +123,7 @@ public class MoveManager extends JsonReloadListener {
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> json, IResourceManager ign, IProfiler ored) {
+    protected void apply(Map<ResourceLocation, JsonElement> json, ResourceManager ign, ProfilerFiller ored) {
 
     }
 }
