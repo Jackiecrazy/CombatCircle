@@ -1,43 +1,36 @@
 package jackiecrazy.combatcircle.ai;
 
-import com.mojang.math.Vector3d;
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.utils.CombatManager;
 import jackiecrazy.combatcircle.utils.GoalUtils;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.util.RandomPos;
-import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 public class StrafeGoal extends Goal {
-    private static final TargetingConditions SAME_TARGET = new TargetingConditions() {
-        @ParametersAreNonnullByDefault
-        public boolean test(@Nullable LivingEntity from, LivingEntity to) {
-            if (!(from instanceof Mob && to instanceof Mob)) return false;
-            if (((Mob) from).getTarget() == null) return false;
-            return ((Mob) from).getTarget() == ((Mob) to).getTarget();
-        }
-    };
-    protected final PathfinderMob mob;
     protected final PathNavigation pathNav;
     protected final int minDist;
     private final double walkSpeedModifier;
     private final double sprintSpeedModifier;
+    protected PathfinderMob mob;
+    private final TargetingConditions SAME_TARGET = TargetingConditions.forNonCombat().selector(from -> {
+        if (!(from instanceof Mob && mob != null)) return false;
+        if (((Mob) from).getTarget() == null) return false;
+        return ((Mob) from).getTarget() == mob.getTarget();
+    });
     protected Path path;
-    Mob toAvoid;
+    Vec3 toAvoid;
     private boolean retreated;
 
     public StrafeGoal(PathfinderMob entityIn) {
@@ -50,16 +43,29 @@ public class StrafeGoal extends Goal {
     }
 
     public boolean canUse() {
-        if (mob.getTarget() == null) return false;
-        if (cannotApproach(mob.getTarget())) return false;
-        if (GeneralUtils.getDistSqCompensated(mob.getTarget(), mob) > (minDist + 2) * (minDist + 2)) return false;
-        BlockPos bp = mob.blockPosition();
-        toAvoid = mob.level.getNearestEntity(Mob.class, SAME_TARGET.selector(), mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE));
-        Vec3 first = GeneralUtils.getPointInFrontOf(mob, mob.getTarget(), -minDist);
-        Vec3 second = Vec3.ZERO;
-        if (toAvoid != null)
-            second = GeneralUtils.getPointInFrontOf(mob, toAvoid, -minDist).subtract(mob.getTarget().position()).normalize();
-        Vec3 vector3d = RandomPos.generateRandomPosTowardDirection(this.mob, minDist, minDist / 2, first.add(second));
+        final LivingEntity target = mob.getTarget();
+        if (target == null) return false;
+        if (cannotApproach(target)) return false;
+        //if (GeneralUtils.getDistSqCompensated(target, mob) > (minDist + 2) * (minDist + 2)) return false;
+        toAvoid = Vec3.ZERO;
+        double safesq = Math.min(mob.distanceToSqr(target), mob.getBbWidth() * mob.getBbWidth() * 6);
+        for (Entity fan : mob.level.getNearbyEntities(LivingEntity.class, SAME_TARGET, mob, mob.getBoundingBox().inflate(safesq))) {
+            if (fan instanceof Monster mob2 && target == mob2.getTarget() &&
+                    GeneralUtils.getDistSqCompensated(fan, mob) < (safesq) && fan != target) {
+                //mobs "avoid" clumping together
+                Vec3 diff = mob.position().subtract(fan.position());
+                double targDistSq = diff.lengthSqr();
+                //toAvoid = toAvoid.add(diff.normalize().scale(targDistSq));
+            }
+        }
+        //slight sideways knockback
+        Vec3 toTarget = target.position().subtract(mob.position()).normalize();
+        toAvoid = toAvoid.normalize();
+        toAvoid = toAvoid.subtract(toTarget.scale(toAvoid.dot(toTarget))).scale(mob.getAttributeValue(Attributes.MOVEMENT_SPEED));
+        Vec3 first = GeneralUtils.getPointInFrontOf(mob, target, -minDist);
+        mob.knockback(toAvoid.x, 0, toAvoid.z);
+        //
+        Vec3 vector3d = DefaultRandomPos.getPosTowards(this.mob, minDist, minDist / 2, first.add(toAvoid), Math.PI / 2);//what is the last variable even
         if (vector3d == null) {
             return false;
         } else {
@@ -77,15 +83,11 @@ public class StrafeGoal extends Goal {
         if (this.mob.getTarget() == null) {
             return false;
         }
-        if (CombatManager.getManagerFor(this.mob.getTarget()).hasAttacker(mob)) {
+        if (cannotApproach(mob.getTarget())) {
             return false;
         }
         BlockPos bp = mob.blockPosition();
-        return !pathNav.isDone() && toAvoid == mob.level.getNearestEntity(Mob.class, SAME_TARGET, mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE));// && !GoalUtils.socialDistancing(mob);
-    }
-
-    public boolean cannotApproach(LivingEntity target) {
-        return CombatManager.getManagerFor(target).addAttacker(mob, null);
+        return !pathNav.isDone();// && mob.level.getNearestEntity(Mob.class, SAME_TARGET, mob, bp.getX(), bp.getY(), bp.getZ(), mob.getBoundingBox().inflate(CombatCircle.SHORT_DISTANCE)).;// && !GoalUtils.socialDistancing(mob);
     }
 
     public void start() {
@@ -102,7 +104,7 @@ public class StrafeGoal extends Goal {
         mob.getLookControl().setLookAt(mob.getTarget(), 30, 30);
         if (GeneralUtils.getDistSqCompensated(mob.getTarget(), mob) < 3.0) {
             pathNav.stop();
-            mob.setDeltaMovement(mob.getDeltaMovement().add(mob.position().subtract(mob.getTarget().position()).normalize().scale(0.1)));
+            mob.setDeltaMovement(mob.getDeltaMovement().add(mob.position().subtract(mob.getTarget().position()).normalize().scale(mob.getAttributeValue(Attributes.MOVEMENT_SPEED) / 3)));
             pathNav.setSpeedModifier(this.sprintSpeedModifier);
         } else {
             if (!this.retreated) {
@@ -112,5 +114,9 @@ public class StrafeGoal extends Goal {
             pathNav.setSpeedModifier(this.sprintSpeedModifier);
         }
 
+    }
+
+    public boolean cannotApproach(LivingEntity target) {
+        return CombatManager.getManagerFor(target).addAttacker(mob, null);
     }
 }
