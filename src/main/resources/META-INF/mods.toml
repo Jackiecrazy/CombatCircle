@@ -4,9 +4,9 @@ license="Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported"
 [[mods]] #mandatory
 modId="combatcircle"
 version="${file.jarVersion}"
-displayName="Footwork"
+displayName="Combat Circle"
 description='''
-Common code for my other combat spicer-uppers.
+Lightweight Encirclement AI and JSON-defined moves coming soon(tm).
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.combatcircle]] #optional

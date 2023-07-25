@@ -164,7 +164,7 @@ Mobs should move into a position that is close to the player, far from allies, a
         purge.clear();
         //remove attackers that have attacked
         attackList.forEach((a, b) -> {
-            if (!a.isAlive() || a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtByMobTimestamp() > b || a.getLastHurtMobTimestamp() > b) {
+            if (!a.isAlive() || currentMob > 1 && (a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtByMobTimestamp() > b || a.getLastHurtMobTimestamp() > b)) {
                 purge.add(a);
                 purgeTimer = 0;
             }

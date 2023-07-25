@@ -76,8 +76,9 @@ public class CombatCircle {
 //                        mob.goalSelector.removeGoal(wg.getGoal());
 //                }
                 if(mob instanceof RangedAttackMob)
-                    mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE+1);
+                    mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE+2);
                 mob.goalSelector.addGoal(0, new WolfPackGoal((PathfinderMob) e.getEntity()));//theoretically as long as it continues to wolfpack it won't attack
+                //mob.getBrain().removeAllBehaviors();
                 //mob.goalSelector.addGoal(1, new LookMenacingGoal((PathfinderMob) e.getEntity()));
 
                 /*

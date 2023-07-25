@@ -62,12 +62,12 @@ public class WolfPackGoal extends Goal {
         //determine safe distance from player
         double safeDist = Math.max(GeneralUtils.getAttributeValueSafe(target, ForgeMod.ATTACK_RANGE.get()), GeneralUtils.getAttributeValueSafe(mob, FootworkAttributes.ENCIRCLEMENT_DISTANCE.get())) + slightSpread;
         //start with random base vector to emulate natural strafe
-        Vec3 toAvoid = new Vec3(Math.random(), Math.random(), Math.random());
+        Vec3 toAvoid = Vec3.ZERO;//new Vec3(Math.random(), Math.random(), Math.random());
         int num = 0;
         //try to maintain distance from others in a close-ish radius
         for (Entity other : mob.level.getNearbyEntities(LivingEntity.class, SAME_TARGET, mob, mob.getBoundingBox().inflate(safeDist * 2))) {
-            //determine if there are same target mobs too close
-            if (other instanceof Mob mob2 && other != target) {//target == mob2.getTarget() &&
+            //determine if there are same target mobs too close and in safe range
+            if (other instanceof Mob mob2 && mob2.distanceToSqr(target) > safeDist * safeDist && other != target && !mob2.isPassengerOfSameVehicle(mob)) {//target == mob2.getTarget() &&
                 //add to avoid vector
                 Vec3 diff = mob.position().subtract(other.position());
                 toAvoid = toAvoid.add(diff);//.add(diff.normalize().scale(other.getBbWidth()/Math.min(1, diff.lengthSqr())));
@@ -75,9 +75,9 @@ public class WolfPackGoal extends Goal {
             }
         }
         //normalize to reduce vector influence, more influence is exerted closer to the player
-        toAvoid = toAvoid.normalize().scale(num);
+        //toAvoid = toAvoid.normalize().scale(num);
         //move to
-        Vec3 moveTo = target.position().add(mob.position().subtract(target.position()).add(toAvoid).normalize().scale(safeDist));
+        Vec3 moveTo = target.position().add(mob.position().subtract(target.position()).add(toAvoid.normalize()).normalize().scale(safeDist));
         this.path = this.pathNav.createPath(moveTo.x, moveTo.y, moveTo.z, 0);
         return this.path != null;
     }
@@ -96,6 +96,10 @@ public class WolfPackGoal extends Goal {
 
     public void start() {
         mob.setAggressive(true);
+        final LivingEntity target = mob.getTarget();
+        if (target == null) return;
+        double safeDist = Math.max(GeneralUtils.getAttributeValueSafe(target, ForgeMod.ATTACK_RANGE.get()) + 1, CombatCircle.SPREAD_DISTANCE);
+        pathNav.moveTo(this.path, target.distanceToSqr(mob) > safeDist * safeDist ? walkSpeedModifier : sprintSpeedModifier);
     }
 
     public void stop() {
@@ -110,8 +114,6 @@ public class WolfPackGoal extends Goal {
         if (target == null) return;
         mob.lookAt(target, 30, 30);
         mob.getLookControl().setLookAt(target, 30, 30);
-        double safeDist = Math.max(GeneralUtils.getAttributeValueSafe(target, ForgeMod.ATTACK_RANGE.get()) + 1, CombatCircle.SPREAD_DISTANCE);
-        pathNav.moveTo(this.path, target.distanceToSqr(mob) > safeDist * safeDist ? walkSpeedModifier : sprintSpeedModifier);
     }
 
     @Override
