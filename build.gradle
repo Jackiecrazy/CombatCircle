@@ -59,6 +59,7 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+            ideaModule "jackiecrazy.${project.name}.main"
 
             mods {
                 combatcircle {
@@ -76,6 +77,7 @@ minecraft {
             // "REGISTRIES": For firing of registry events.
             // "REGISTRYDUMP": For getting the contents of all registries.
             property 'forge.logging.markers', 'REGISTRIES'
+            ideaModule "jackiecrazy.${project.name}.main"
 
             // Recommended logging level for the console
             // You can set various levels here.
@@ -98,6 +100,7 @@ minecraft {
             // "REGISTRIES": For firing of registry events.
             // "REGISTRYDUMP": For getting the contents of all registries.
             property 'forge.logging.markers', 'REGISTRIES'
+            ideaModule "jackiecrazy.${project.name}.main"
 
             // Recommended logging level for the console
             // You can set various levels here.

@@ -38,7 +38,7 @@ public class CombatCircle {
 
     public static final int SHORT_DISTANCE = 1;
     public static final int SPREAD_DISTANCE = 3;
-    public static final int CIRCLE_SIZE = 3;
+    public static final int CIRCLE_SIZE = 4;
     public static final int MAXIMUM_CHASE_TIME = 60;
     public static final int MOB_LIMIT = 10;//5
     public static final int ATTACK_LIMIT = 4;
@@ -77,6 +77,7 @@ public class CombatCircle {
 //                }
                 if(mob instanceof RangedAttackMob)
                     mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE+2);
+                    else mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE);
                 mob.goalSelector.addGoal(0, new WolfPackGoal((PathfinderMob) e.getEntity()));//theoretically as long as it continues to wolfpack it won't attack
                 //mob.getBrain().removeAllBehaviors();
                 //mob.goalSelector.addGoal(1, new LookMenacingGoal((PathfinderMob) e.getEntity()));

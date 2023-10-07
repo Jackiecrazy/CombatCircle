@@ -1,8 +1,9 @@
 package jackiecrazy.combatcircle.move;
 
 import jackiecrazy.combatcircle.actions.Action;
+import jackiecrazy.footwork.move.Move;
 
-public class Move {
+public class CombatMove extends Move {
 
     //public static final Move DEFAULT=new Move()
 
@@ -14,7 +15,7 @@ public class Move {
 //            ITEM_RARITY_CODEC.fieldOf("rarity").forGetter(ArmorGearConfig::getRarity)
 //    ).apply(instance, MoveSet::new));
 
-    public Move(Move inherit, Action initiation, Action p){
+    public CombatMove(CombatMove inherit, Action initiation, Action p){
 
     }
 }

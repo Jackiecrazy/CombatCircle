@@ -14,6 +14,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
@@ -45,7 +46,7 @@ public class WolfPackGoal extends Goal {
         mob = entityIn;
         walkSpeedModifier = 0.8f;
         sprintSpeedModifier = 1.2f;
-        slightSpread = 0;// Math.random();
+        slightSpread = Math.random();
         pathNav = entityIn.getNavigation();
     }
 
@@ -58,6 +59,8 @@ public class WolfPackGoal extends Goal {
         //if (target.distanceToSqr(mob) > CombatCircle.SPREAD_DISTANCE * CombatCircle.SPREAD_DISTANCE * 4) return false;
         //becomes an attacker, moves as they please
         if (CombatManager.getManagerFor(target).addAttacker(mob, null)) return false;
+        //there is no circle
+        if (CombatManager.getManagerFor(target).getAllAttackers().size() < 1) return false;
 
         //determine safe distance from player
         double safeDist = Math.max(GeneralUtils.getAttributeValueSafe(target, ForgeMod.ATTACK_RANGE.get()), GeneralUtils.getAttributeValueSafe(mob, FootworkAttributes.ENCIRCLEMENT_DISTANCE.get())) + slightSpread;
@@ -65,11 +68,11 @@ public class WolfPackGoal extends Goal {
         Vec3 toAvoid = Vec3.ZERO;//new Vec3(Math.random(), Math.random(), Math.random());
         int num = 0;
         //try to maintain distance from others in a close-ish radius
-        for (Entity other : mob.level.getNearbyEntities(LivingEntity.class, SAME_TARGET, mob, mob.getBoundingBox().inflate(safeDist * 2))) {
+        for (Mob mob2 : CombatManager.getManagerFor(target).getAllAttackers()) {
             //determine if there are same target mobs too close and in safe range
-            if (other instanceof Mob mob2 && mob2.distanceToSqr(target) > safeDist * safeDist && other != target && !mob2.isPassengerOfSameVehicle(mob)) {//target == mob2.getTarget() &&
+            if (mob2.distanceToSqr(target) > safeDist * safeDist && mob2.distanceToSqr(mob) < safeDist * safeDist && !mob2.isPassengerOfSameVehicle(mob)) {//target == mob2.getTarget() &&
                 //add to avoid vector
-                Vec3 diff = mob.position().subtract(other.position());
+                Vec3 diff = mob.position().subtract(mob2.position());
                 toAvoid = toAvoid.add(diff);//.add(diff.normalize().scale(other.getBbWidth()/Math.min(1, diff.lengthSqr())));
                 num++;
             }

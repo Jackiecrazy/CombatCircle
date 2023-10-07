@@ -1,8 +1,9 @@
 package jackiecrazy.combatcircle.move;
 
+import jackiecrazy.footwork.move.Move;
 import net.minecraft.world.phys.Vec3;
 
-public class OldMove {
+public class OldMove extends Move {
     private int vertAngle;
     private int horAngle;
     private int vertAngleOffset;

@@ -8,6 +8,11 @@ Features:
     - on large aoe attacks, mobs nearby attempt to move out of the way.
 - combat moves. json-defined mob moves with windup, damage, and cooldown frames, and *maybe* animation
     - should include both melee and ranged moves wherever possible
+    - eligible actions:
+        - wait
+        - project hitbox
+    - eligible modifiers:
+        - damage in
 - a "stun" or "counter" attack the player can use to put enemies out of combat for a few moments, so the player can attack other enemies in the circle
 - a "dodge" move for the player to quickly travel into, out of, or within the circle
 - "push" and "pull" moves that let the player move enemies into and out of the circle
