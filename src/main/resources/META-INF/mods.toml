@@ -25,7 +25,7 @@ Lightweight Encirclement AI and JSON-defined moves coming soon(tm).
     modId="minecraft"
     mandatory=true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.19.0,1.19.3)"
+    versionRange="[1.20.1,1.20.2)"
     ordering="NONE"
     side="BOTH"
 # Here's another dependency

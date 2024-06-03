@@ -5,10 +5,11 @@ import jackiecrazy.combatcircle.utils.CombatManager;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.capability.resources.CombatData;
 import jackiecrazy.footwork.utils.GeneralUtils;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.TagType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
@@ -39,9 +40,10 @@ public class CombatCircle {
     public static final int SHORT_DISTANCE = 1;
     public static final int SPREAD_DISTANCE = 3;
     public static final int CIRCLE_SIZE = 4;
-    public static final int MAXIMUM_CHASE_TIME = 60;
+    public static final int MAXIMUM_CHASE_TIME = 100;
     public static final int MOB_LIMIT = 10;//5
     public static final int ATTACK_LIMIT = 4;
+    public static final TagKey<EntityType<?>> COWARD= TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(MODID, "coward"));
 
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
@@ -76,7 +78,7 @@ public class CombatCircle {
 //                        mob.goalSelector.removeGoal(wg.getGoal());
 //                }
                 if(mob instanceof RangedAttackMob)
-                    mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE+2);
+                    mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE+3);
                     else mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE);
                 mob.goalSelector.addGoal(0, new WolfPackGoal((PathfinderMob) e.getEntity()));//theoretically as long as it continues to wolfpack it won't attack
                 //mob.getBrain().removeAllBehaviors();
@@ -107,6 +109,19 @@ public class CombatCircle {
                     eventually a mob with very high weight (such as a commander mob) may be able to be weighted heavily enough to strike very often
                 after the mob has or is attacked, it is removed from the attacker list, at which point a retreat goal should push it back into the horde
                 extended collision should only take place during the flank phase, a mob that is attacking or retreating should not be treated as having extended collision
+
+                boid notes: follow, avoid, conform
+                vector:
+                have several vectors that average each other out as enemies get closer to the player.
+                Potential vector ideas: move towards, move sideways, move away
+                Choose the best axis for movement based on several vector lengths projected around mob.
+                Reduce vector against terrain, other mobs (or not)
+                Move away from nearest enemy at an angle to prevent endless shoving
+
+                targeting:
+                bit masking to determine valid targets
+                revenge list (don't include itself)
+                retargeting revenge based on total damage dealt, damage dealt to it, and player weighting
                  */
             }
         }

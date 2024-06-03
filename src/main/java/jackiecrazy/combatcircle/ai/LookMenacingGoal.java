@@ -2,7 +2,6 @@ package jackiecrazy.combatcircle.ai;
 
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.utils.CombatManager;
-import jackiecrazy.combatcircle.utils.GoalUtils;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.player.Player;
@@ -28,7 +27,7 @@ public class LookMenacingGoal extends LookAtPlayerGoal {
         //too far away, just charge in
         if (mob.getTarget().distanceToSqr(mob) > CombatCircle.SPREAD_DISTANCE * CombatCircle.SPREAD_DISTANCE) return false;
         CombatManager cm = CombatManager.getManagerFor(mob.getTarget());
-        return !cm.hasAttacker(mob);
+        return !cm.addAttacker(mob, null);
     }
 
     @Override
@@ -39,6 +38,7 @@ public class LookMenacingGoal extends LookAtPlayerGoal {
     @Override
     public void start() {
         super.start();
+        System.out.println("yeet");
         strafeTick = 0;
     }
 

@@ -1,9 +1,10 @@
 package jackiecrazy.combatcircle.move;
 
 public enum TaskType {
-    MELEEATTACK,
-    MELEEDEFENSE,
-    RANGEDATTACK,
-    RANGEDDEFENSE,
-    RANDOM
+    IDLE,
+    PATROL,
+    PURSUIT,
+    ENCIRCLE,
+    ATTACK,
+    FLEE
 }

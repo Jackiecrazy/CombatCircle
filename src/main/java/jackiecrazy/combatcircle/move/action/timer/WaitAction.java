@@ -1,8 +1,8 @@
-package jackiecrazy.combatcircle.actions;
+package jackiecrazy.combatcircle.move.action.timer;
 
 import net.minecraft.world.entity.LivingEntity;
 
-public class NoAction extends Action{
+public class WaitAction extends TimerAction {
     @Override
     public void perform(LivingEntity performer, LivingEntity target) {
     }

@@ -57,12 +57,12 @@ public class ImprovedWolfPackGoal extends Goal {
         if (CombatManager.getManagerFor(target).addAttacker(mob, null)) return false;
 
         //determine safe distance from player
-        double safeDist = Math.max(GeneralUtils.getAttributeValueSafe(target, ForgeMod.ATTACK_RANGE.get()), GeneralUtils.getAttributeValueSafe(mob, FootworkAttributes.ENCIRCLEMENT_DISTANCE.get())) + slightSpread;
+        double safeDist = Math.max(GeneralUtils.getAttributeValueSafe(target, ForgeMod.ENTITY_REACH.get()), GeneralUtils.getAttributeValueSafe(mob, FootworkAttributes.ENCIRCLEMENT_DISTANCE.get())) + slightSpread;
         //start with random base vector to emulate natural strafe
         Vec3 toAvoid = new Vec3(Math.random(), Math.random(), Math.random());
         int num = 0;
         //try to maintain distance from others in a close-ish radius
-        for (Entity other : mob.level.getNearbyEntities(LivingEntity.class, SAME_TARGET, mob, mob.getBoundingBox().inflate(safeDist * 2))) {
+        for (Entity other : mob.level().getNearbyEntities(LivingEntity.class, SAME_TARGET, mob, mob.getBoundingBox().inflate(safeDist * 2))) {
             //determine if there are same target mobs too close and in safe range
             if (other instanceof Mob mob2 && other != target && !mob2.isPassengerOfSameVehicle(mob)) {//target == mob2.getTarget() &&
                 //add to avoid vector
@@ -95,7 +95,7 @@ public class ImprovedWolfPackGoal extends Goal {
         mob.setAggressive(true);
         final LivingEntity target = mob.getTarget();
         if (target == null) return;
-        double safeDist = Math.max(GeneralUtils.getAttributeValueSafe(target, ForgeMod.ATTACK_RANGE.get()) + 1, CombatCircle.SPREAD_DISTANCE);
+        double safeDist = Math.max(GeneralUtils.getAttributeValueSafe(target, ForgeMod.ENTITY_REACH.get()) + 1, CombatCircle.SPREAD_DISTANCE);
         pathNav.moveTo(this.path, target.distanceToSqr(mob) > safeDist * safeDist ? walkSpeedModifier : sprintSpeedModifier);
     }
 

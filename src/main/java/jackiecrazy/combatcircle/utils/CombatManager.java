@@ -1,20 +1,19 @@
 package jackiecrazy.combatcircle.utils;
 
 import jackiecrazy.combatcircle.CombatCircle;
-import jackiecrazy.combatcircle.move.OldMove;
-import jackiecrazy.footwork.api.FootworkAttributes;
-import jackiecrazy.footwork.utils.GeneralUtils;
-import net.minecraft.world.effect.MobEffect;
+import jackiecrazy.footwork.move.Move;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,9 +21,12 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class CombatManager {
     public static final ConcurrentHashMap<LivingEntity, CombatManager> managers = new ConcurrentHashMap<>();
+    private static final CombatManager dummy = new CombatManager(null, 0, 0);
     private final ConcurrentLinkedQueue<Mob> mobList = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Node> nodeCache = new ConcurrentLinkedQueue<>();
     private final ConcurrentHashMap<Mob, Integer> attackList = new ConcurrentHashMap<>();
     private final ConcurrentLinkedQueue<Mob> coolingList = new ConcurrentLinkedQueue<>();
+    private final LivingEntity target;
     /*
                         The battle circle AI basically works like this (from an enemy's perspective):
 First, walk towards the player until I get within a "danger" radius
@@ -58,21 +60,19 @@ Mobs should move into a position that is close to the player, far from allies, a
        if so, purge them from the attack list and order them to leave the circle, placing them on the cooling list
     > purge the first recorded mob from the cooling list if at least 10 ticks have elapsed
      */
-
-
-    private final LivingEntity target;
     private final int mlimit, alimit;
     private final ArrayList<Mob> purge = new ArrayList<>();
     private float currentMob, currentAttack;
     private int purgeTimer;
-
     public CombatManager(LivingEntity p, int mobLimit, int attackLimit) {
         target = p;
         mlimit = mobLimit;
         alimit = attackLimit;
     }
 
-    public static CombatManager getManagerFor(LivingEntity target) {
+    @NotNull
+    public static CombatManager getManagerFor(@Nullable LivingEntity target) {
+        if (target == null) return dummy;
         return CombatManager.managers.computeIfAbsent(target, (a) -> new CombatManager(a, CombatCircle.MOB_LIMIT, CombatCircle.ATTACK_LIMIT));
     }
 
@@ -81,7 +81,7 @@ Mobs should move into a position that is close to the player, far from allies, a
         Vec3 end = two.position();
         Vec3 look = end.subtract(start);
         LivingEntity entity = null;
-        List<LivingEntity> list = one.level.getEntitiesOfClass(LivingEntity.class, one.getBoundingBox().expandTowards(look.x, look.y, look.z).inflate(1.5), EntitySelector.LIVING_ENTITY_STILL_ALIVE);
+        List<LivingEntity> list = one.level().getEntitiesOfClass(LivingEntity.class, one.getBoundingBox().expandTowards(look.x, look.y, look.z).inflate(1.5), EntitySelector.LIVING_ENTITY_STILL_ALIVE);
         double d0 = -1.0D;//necessary to prevent small derps
 
         for (LivingEntity entity1 : list) {
@@ -96,6 +96,10 @@ Mobs should move into a position that is close to the player, far from allies, a
         return entity;
     }
 
+    public ConcurrentLinkedQueue<Node> getNodeCache() {
+        return nodeCache;
+    }
+
     public ConcurrentLinkedQueue<Mob> getAllAttackers() {
         return mobList;
     }
@@ -108,7 +112,7 @@ Mobs should move into a position that is close to the player, far from allies, a
         return true;
     }
 
-    public boolean addAttacker(Mob m, OldMove move) {
+    public boolean addAttacker(Mob m, Move move) {
         //what
         if (!addMob(m)) return false;
         //on cooldown list!
@@ -116,8 +120,8 @@ Mobs should move into a position that is close to the player, far from allies, a
         //dude you're already attacking
         if (hasAttacker(m)) return true;
         //no clear shot
-        if (rayTraceBetween(m, target) != null)
-            return false;
+//        if (rayTraceBetween(m, target) != null)
+//            return false;
         //can we squeeze the move in
         float weight = getAttackWeight(m, move);
         if (alimit < currentAttack + weight) return false;
@@ -133,7 +137,7 @@ Mobs should move into a position that is close to the player, far from allies, a
         currentMob -= getMobWeight(m);
     }
 
-    public void removeAttacker(Mob m, OldMove move) {
+    public void removeAttacker(Mob m, Move move) {
         if (!attackList.containsKey(m)) return;
         attackList.remove(m);
         currentAttack -= getAttackWeight(m, move);
@@ -156,7 +160,7 @@ Mobs should move into a position that is close to the player, far from allies, a
         return m.getBbWidth();
     }
 
-    private float getAttackWeight(Mob m, OldMove move) {
+    private float getAttackWeight(Mob m, Move move) {
         return 1;
     }
 
@@ -164,7 +168,7 @@ Mobs should move into a position that is close to the player, far from allies, a
         purge.clear();
         //remove attackers that have attacked
         attackList.forEach((a, b) -> {
-            if (!a.isAlive() || currentMob > 1 && (a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtByMobTimestamp() > b || a.getLastHurtMobTimestamp() > b)) {
+            if (!a.isAlive() || currentMob > 1 && (a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtMobTimestamp() > b)) {
                 purge.add(a);
                 purgeTimer = 0;
             }
@@ -179,8 +183,9 @@ Mobs should move into a position that is close to the player, far from allies, a
         });
         purge.forEach(this::removeMob);
         purgeTimer++;
+        purge.clear();
         //remove cooling mobs
-        if (purgeTimer > Math.min(currentMob * 5, 30)) {//scales on currentMob to prevent duels being weird
+        if (purgeTimer > Math.min(currentMob * 5, 20)) {//scales on currentMob to prevent duels being weird
             if (!coolingList.isEmpty()) {
 //                Mob m = coolingList.peek();
 //                if (!m.isAlive() || m.distanceToSqr(target) > (CombatCircle.CIRCLE_SIZE * CombatCircle.CIRCLE_SIZE)) {
@@ -190,5 +195,13 @@ Mobs should move into a position that is close to the player, far from allies, a
             }
             purgeTimer = 0;
         }
+        //keep a set of nodes
+//        nodeCache.clear();
+//        nodeCache.addAll(mobList.stream().map(a -> {
+//            Node ret = new Node(a.getBlockX(), a.getBlockY(), a.getBlockZ());
+//            ret.f = a.getBbWidth();
+//            ret.g = a.getBbHeight();
+//            return ret;
+//        }).collect(Collectors.toSet()));
     }
 }

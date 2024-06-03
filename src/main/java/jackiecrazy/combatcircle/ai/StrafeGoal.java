@@ -49,7 +49,7 @@ public class StrafeGoal extends Goal {
         //if (GeneralUtils.getDistSqCompensated(target, mob) > (minDist + 2) * (minDist + 2)) return false;
         toAvoid = Vec3.ZERO;
         double safesq = Math.min(mob.distanceToSqr(target), mob.getBbWidth() * mob.getBbWidth() * 6);
-        for (Entity fan : mob.level.getNearbyEntities(LivingEntity.class, SAME_TARGET, mob, mob.getBoundingBox().inflate(safesq))) {
+        for (Entity fan : mob.level().getNearbyEntities(LivingEntity.class, SAME_TARGET, mob, mob.getBoundingBox().inflate(safesq))) {
             if (fan instanceof Monster mob2 && target == mob2.getTarget() &&
                     GeneralUtils.getDistSqCompensated(fan, mob) < (safesq) && fan != target) {
                 //mobs "avoid" clumping together
@@ -69,8 +69,8 @@ public class StrafeGoal extends Goal {
         if (vector3d == null) {
             return false;
         } else {
-            int density = GoalUtils.getCrowd(mob.level, mob.blockPosition(), CombatCircle.SHORT_DISTANCE).size();
-            int newdensity = GoalUtils.getCrowd(mob.level, vector3d, CombatCircle.SHORT_DISTANCE).size();
+            int density = GoalUtils.getCrowd(mob.level(), mob.blockPosition(), CombatCircle.SHORT_DISTANCE).size();
+            int newdensity = GoalUtils.getCrowd(mob.level(), BlockPos.containing(vector3d), CombatCircle.SHORT_DISTANCE).size();
             if (density < newdensity) return false;
             this.path = this.pathNav.createPath(vector3d.x, vector3d.y, vector3d.z, 0);
             return this.path != null;

@@ -1,4 +1,4 @@
-package jackiecrazy.combatcircle.actions;
+package jackiecrazy.combatcircle.move.action;
 
 import net.minecraft.world.entity.LivingEntity;
 
