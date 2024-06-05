@@ -1,0 +1,12 @@
+{
+  "mob": "minecraft:vindicator",
+  "moveset": [
+    {
+      "weight": 1,
+      "priority": 1,
+      "condition": {
+      },
+      "move": "combatcircle:testing"
+    }
+  ]
+}

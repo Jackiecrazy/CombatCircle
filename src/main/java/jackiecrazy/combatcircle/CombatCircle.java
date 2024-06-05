@@ -1,41 +1,44 @@
 package jackiecrazy.combatcircle;
 
 import jackiecrazy.combatcircle.ai.*;
+import jackiecrazy.combatcircle.move.Moves;
+import jackiecrazy.combatcircle.move.MovesetFactory;
+import jackiecrazy.combatcircle.move.Movesets;
+import jackiecrazy.combatcircle.move.action.ActionRegistry;
+import jackiecrazy.combatcircle.move.argument.ArgumentRegistry;
+import jackiecrazy.combatcircle.move.condition.ConditionRegistry;
+import jackiecrazy.combatcircle.move.filter.FilterRegistry;
 import jackiecrazy.combatcircle.utils.CombatManager;
 import jackiecrazy.footwork.api.FootworkAttributes;
-import jackiecrazy.footwork.capability.resources.CombatData;
-import jackiecrazy.footwork.utils.GeneralUtils;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.TagType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.WrappedGoal;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.RangedAttackMob;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashSet;
+import java.util.Random;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(CombatCircle.MODID)
 public class CombatCircle {
     public static final String MODID = "combatcircle";
+    public static final Random rand=new Random();
 
     public static final int SHORT_DISTANCE = 1;
     public static final int SPREAD_DISTANCE = 3;
@@ -46,7 +49,7 @@ public class CombatCircle {
     public static final TagKey<EntityType<?>> COWARD= TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(MODID, "coward"));
 
     // Directly reference a log4j logger.
-    private static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public CombatCircle() {
         // Register the setup method for modloading
@@ -56,12 +59,28 @@ public class CombatCircle {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+
+        IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        ArgumentRegistry.SUPPLIER = ArgumentRegistry.ARGUMENTS.makeRegistry(RegistryBuilder::new);
+        ArgumentRegistry.ARGUMENTS.register(bus);
+        ConditionRegistry.SUPPLIER = ConditionRegistry.CONDITIONS.makeRegistry(RegistryBuilder::new);
+        ConditionRegistry.CONDITIONS.register(bus);
+        ActionRegistry.SUPPLIER = ActionRegistry.ACTIONS.makeRegistry(RegistryBuilder::new);
+        ActionRegistry.ACTIONS.register(bus);
+        FilterRegistry.SUPPLIER = FilterRegistry.FILTERS.makeRegistry(RegistryBuilder::new);
+        FilterRegistry.FILTERS.register(bus);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
+    }
+
+    @SubscribeEvent
+    public void onJsonListener(AddReloadListenerEvent event) {
+        Moves.register(event);
+        Movesets.register(event);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
@@ -82,7 +101,13 @@ public class CombatCircle {
                     else mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE);
                 mob.goalSelector.addGoal(0, new WolfPackGoal((PathfinderMob) e.getEntity()));//theoretically as long as it continues to wolfpack it won't attack
                 //mob.getBrain().removeAllBehaviors();
-                //mob.goalSelector.addGoal(1, new LookMenacingGoal((PathfinderMob) e.getEntity()));
+                mob.goalSelector.addGoal(1, new LookMenacingGoal((PathfinderMob) e.getEntity()));
+                MovesetFactory[] sets=Movesets.moves.get(mob.getType());
+                if(sets!=null){
+                    for(MovesetFactory msf:sets){
+                        msf.attachToMob(mob);
+                    }
+                }
 
                 /*
                 several types of AI can be made:

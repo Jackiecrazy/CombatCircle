@@ -4,15 +4,16 @@ import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import net.minecraft.world.entity.Entity;
 
-public class StartAtCondition extends Condition {
-    public StartAtCondition(int at) {
-        time = at;
-    }
+import java.util.List;
 
-    private int time;
+public class OrCondition extends Condition {
+    List<Condition> values;
 
     @Override
     public boolean evaluate(TimerAction parent, Entity performer, Entity target) {
-        return parent != null && parent.getTimer() == time;
+        for(Condition c: values){
+            if(c.evaluate(parent, performer, target))return true;
+        }
+        return false;
     }
 }

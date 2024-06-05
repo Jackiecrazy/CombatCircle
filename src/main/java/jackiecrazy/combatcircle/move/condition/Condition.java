@@ -2,21 +2,23 @@ package jackiecrazy.combatcircle.move.condition;
 
 import com.google.gson.JsonObject;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
-import jackiecrazy.combatcircle.utils.MoveUtils;
-import net.minecraft.world.entity.LivingEntity;
+import jackiecrazy.combatcircle.utils.JsonAdapters;
+import net.minecraft.world.entity.Entity;
+
+import javax.annotation.Nullable;
 
 public abstract class Condition {
     private String ID;
 
-    public abstract boolean evaluate(TimerAction parent, LivingEntity performer, LivingEntity target);
+    public abstract boolean evaluate(@Nullable TimerAction parent, Entity performer, Entity target);
 
     public String serializeToJson(JsonObject to) {
-        return MoveUtils.gson.toJson(this);
+        return JsonAdapters.gson.toJson(this);
     }
 
     public void readFromJson(JsonObject from){
         //chat is this real//
-        MoveUtils.gson.fromJson(from, this.getClass());
+        JsonAdapters.gson.fromJson(from, this.getClass());
     }
 
     public String toString() {

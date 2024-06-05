@@ -1,18 +1,18 @@
 package jackiecrazy.combatcircle.move.argument;
 
 import com.google.gson.JsonObject;
-import jackiecrazy.combatcircle.utils.MoveUtils;
+import jackiecrazy.combatcircle.utils.JsonAdapters;
 
 public abstract class Argument {
     private String ID;
 
     public String serializeToJson(JsonObject to) {
-        return MoveUtils.gson.toJson(this);
+        return JsonAdapters.gson.toJson(this);
     }
 
     public void readFromJson(JsonObject from){
         //chat is this real//
-        MoveUtils.gson.fromJson(from, this.getClass());
+        JsonAdapters.gson.fromJson(from, this.getClass());
     }
 
     public String toString() {

@@ -28,16 +28,6 @@ A mob may be defined with a list of movesets. Condition-less movesets will be ch
  */
 
 /*
- * a mob's goal links to the moveset.
- * the moveset is a singleton.
- * the moveset is a singleton.
- * the moveset is a singleton.
- * the mob's goal holds a reference to the relevant moveset, the current move index, the currently executed move (cached), and a timer for the current move.
- * the first move is read and executes until the timer ends or the move is interrupted in any way, then the move index/move is updated, the timer is reset, and the process repeats until the move index exceeds the current list size in any way.
- * the mob relinquishes control to the combat manager after the end of one moveset.
- */
-
-/*
 implementation notes:
 encirclement: safe distance, avoidance vector towards specific entity types, slot placement priority, "cover" (whatever that is, I'm still not sure)
 chasing: boid behavior, smooth transition to encirclement

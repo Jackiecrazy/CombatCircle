@@ -1,6 +1,5 @@
 package jackiecrazy.combatcircle.utils;
 
-import com.google.gson.Gson;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -10,5 +9,4 @@ public class MoveUtils {
         return moveVec.yRot(GeneralUtils.rad(-mover.yHeadRot)).xRot(GeneralUtils.rad(-mover.getXRot()));
     }
 
-    public static final Gson gson = new Gson();
 }

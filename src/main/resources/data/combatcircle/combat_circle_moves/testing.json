@@ -1,0 +1,15 @@
+[
+  {
+    "waiting": [
+      {
+        "condition": {
+          "ID": "combatcircle:start_at",
+          "time": 3
+        },
+        "ID": "combatcircle:debug"
+      }
+    ],
+    "max_time": 20,
+    "ID": "combatcircle:wait"
+  }
+]

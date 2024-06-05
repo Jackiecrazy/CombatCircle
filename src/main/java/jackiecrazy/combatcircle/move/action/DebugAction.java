@@ -1,12 +1,16 @@
 package jackiecrazy.combatcircle.move.action;
 
-import net.minecraft.world.entity.LivingEntity;
+import jackiecrazy.combatcircle.move.action.timer.TimerAction;
+import net.minecraft.world.entity.Entity;
+
+import javax.annotation.Nullable;
 
 public class DebugAction extends Action{
     @Override
-    public void perform(LivingEntity performer, LivingEntity target) {
+    public int perform(@Nullable TimerAction parent, Entity performer, Entity target) {
         System.out.println("here are the performer and target:");
         System.out.println(performer);
         System.out.println(target);
+        return 0;
     }
 }
