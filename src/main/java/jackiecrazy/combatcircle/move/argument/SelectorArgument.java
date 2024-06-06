@@ -21,15 +21,15 @@ public class SelectorArgument extends Argument {
     private CircleEnums.SWEEPTYPE shape;
     private NumberArgument range;
     private NumberArgument width;
-    private Filter selector;
+    private Filter filter;
     private VectorArgument position;
     private VectorArgument vector;
 
     public SelectorArgument() {
         shape = CircleEnums.SWEEPTYPE.CIRCLE;
-        selector = NoFilter.INSTANCE;
-        position = new EyePositionVectorArgument(CasterEntityArgument.INSTANCE);
-        vector = new LookVectorArgument(CasterEntityArgument.INSTANCE);
+        filter = NoFilter.INSTANCE;
+        position = new EyePositionVectorArgument();
+        vector = new LookVectorArgument();
     }
 
     public List<Entity> resolve(Entity caster, Entity target) {
@@ -42,7 +42,7 @@ public class SelectorArgument extends Argument {
             return resolved;
         }
         double radius = width.resolve(caster, target);
-        for (Entity ent : selector.filter(caster, target, caster.level().getEntities(null, new AABB(pos, pos).inflate(ra * 1.5)))) {
+        for (Entity ent : filter.filter(caster, target, caster.level().getEntities(null, new AABB(pos, pos).inflate(ra * 1.5)))) {
             //type specific sweep checks
             switch (shape) {
                 case CONE -> {

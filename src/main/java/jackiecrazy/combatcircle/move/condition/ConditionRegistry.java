@@ -15,11 +15,11 @@ public class ConditionRegistry {
     public static DeferredRegister<ConditionType> CONDITIONS = DeferredRegister.create(REGISTRY_NAME, CombatCircle.MODID);
 
     //logical//
-    public static final RegistryObject<ConditionType> TRUE = CONDITIONS.register("true", () -> (a) -> JsonAdapters.gson.fromJson(a, TrueCondition.class));
-    public static final RegistryObject<ConditionType> FALSE = CONDITIONS.register("false", () -> (a) -> JsonAdapters.gson.fromJson(a, FalseCondition.class));
+    public static final RegistryObject<ConditionType> TRUE = CONDITIONS.register("true", () -> (SingletonConditionType<TrueCondition>)a -> TrueCondition.INSTANCE);
+    public static final RegistryObject<ConditionType> FALSE = CONDITIONS.register("false", () -> (SingletonConditionType<FalseCondition>)a -> FalseCondition.INSTANCE);
     public static final RegistryObject<ConditionType> AND = CONDITIONS.register("and", () -> (a) -> JsonAdapters.gson.fromJson(a, AndCondition.class));
     public static final RegistryObject<ConditionType> OR = CONDITIONS.register("or", () -> (a) -> JsonAdapters.gson.fromJson(a, OrCondition.class));
-    public static final RegistryObject<ConditionType> NOT = CONDITIONS.register("or", () -> (a) -> JsonAdapters.gson.fromJson(a, NotCondition.class));
+    public static final RegistryObject<ConditionType> NOT = CONDITIONS.register("not", () -> (a) -> JsonAdapters.gson.fromJson(a, NotCondition.class));
 
     //entity//
     public static final RegistryObject<ConditionType> START_AT = CONDITIONS.register("start_at", () -> (a) -> JsonAdapters.gson.fromJson(a, StartAtCondition.class));

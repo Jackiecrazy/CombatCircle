@@ -3,6 +3,7 @@ package jackiecrazy.combatcircle.move.action;
 import com.google.gson.JsonObject;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.condition.Condition;
+import jackiecrazy.combatcircle.move.condition.TrueCondition;
 import jackiecrazy.combatcircle.utils.JsonAdapters;
 import jackiecrazy.footwork.move.Move;
 import net.minecraft.world.entity.Entity;
@@ -11,10 +12,9 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public abstract class Action extends Move {
-    //TODO protect this
-    public Condition condition;
+    protected Condition condition = TrueCondition.INSTANCE;
     protected transient boolean triggered = false;
-    protected String ID;
+    protected String ID = "(default)";
 
     /**
      * Runs the list of actions, aborting and returning a jump code if the child returns a jump code.

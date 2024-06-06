@@ -33,7 +33,6 @@ public abstract class TimerAction extends Action {
     }
 
     public int tick(Entity performer, Entity target) {
-
         timer++;
         return isFinished(performer, target) ? -1 : 0;
     }

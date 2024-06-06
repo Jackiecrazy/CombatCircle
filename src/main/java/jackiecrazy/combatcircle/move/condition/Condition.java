@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity;
 import javax.annotation.Nullable;
 
 public abstract class Condition {
-    private String ID;
+    private String ID = "(default)";
 
     public abstract boolean evaluate(@Nullable TimerAction parent, Entity performer, Entity target);
 

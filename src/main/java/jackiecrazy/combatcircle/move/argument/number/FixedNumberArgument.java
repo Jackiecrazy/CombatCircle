@@ -9,6 +9,9 @@ public class FixedNumberArgument extends NumberArgument{
         this.number = number;
     }
 
+    public FixedNumberArgument() {
+    }
+
     @Override
     public double resolve(Entity caster, Entity target) {
         return number;

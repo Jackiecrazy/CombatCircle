@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import jackiecrazy.combatcircle.utils.JsonAdapters;
 
 public abstract class Argument {
-    private String ID;
+    private String ID="(default)";
 
     public String serializeToJson(JsonObject to) {
         return JsonAdapters.gson.toJson(this);

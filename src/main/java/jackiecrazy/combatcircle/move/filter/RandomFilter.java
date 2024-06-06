@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RandomFilter extends Filter {
+    public static final RandomFilter INSTANCE=new RandomFilter();
     @Override
     public List<Entity> filter(Entity performer, Entity target, List<Entity> targets) {
         List<Entity> ret = new ArrayList<>();

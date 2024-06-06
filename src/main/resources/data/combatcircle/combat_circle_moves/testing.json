@@ -4,12 +4,131 @@
       {
         "condition": {
           "ID": "combatcircle:start_at",
-          "time": 3
+          "time": 10
         },
-        "ID": "combatcircle:debug"
+        "ID": "combatcircle:set_aggressive",
+        "toggle": true
+      },
+      {
+        "condition": {
+          "ID": "combatcircle:start_at",
+          "time": 5
+        },
+        "ID": "combatcircle:look_at",
+        "entity_target": "combatcircle:target"
       }
     ],
-    "max_time": 20,
+    "max_time": 15,
     "ID": "combatcircle:wait"
+  },
+  {
+    "ID": "combatcircle:add_velocity",
+    "max_time": 20,
+    "direction": {
+      "ID": "combatcircle:sum",
+      "min_length": 0.6,
+      "max_length": 1.3,
+      "addends": [
+        {
+          "ID": "combatcircle:eye_position",
+          "reference_point": {
+            "ID": "combatcircle:target"
+          }
+        },
+        {
+          "ID": "combatcircle:foot_position",
+          "scale": -1,
+          "min_length": 0,
+          "max_length": 0,
+          "reference_point": {
+            "ID": "combatcircle:caster"
+          }
+        }
+      ]
+    },
+    "on_launch": [
+    ],
+    "tick": [
+      {
+        "ID": "combatcircle:project_hitbox",
+        "selector": {
+          "shape": "CIRCLE",
+          "range": 3,
+          "width": 3,
+          "filter": {
+            "ID": "combatcircle:condition",
+            "condition": {
+              "ID": "combatcircle:is_target",
+              "reference_point": {
+                "ID": "combatcircle:caster"
+              }
+            }
+          }
+        },
+        "hit_cooldown": 0,
+        "max_time": 10,
+        "actions": [
+          {
+            "ID": "combatcircle:deal_damage",
+            "damage_source": {
+              "armor_pierce_percentage": 0.5,
+              "damage_multiplier": 1.2,
+              "proxy": "combatcircle:caster",
+              "tags": [
+                "minecraft:is_fire"
+              ]
+            },
+            "amount": {
+              "ID": "combatcircle:number",
+              "number": 5.5
+            }
+          },
+          {
+            "ID": "combatcircle:add_effect",
+            "effect": "minecraft:poison",
+            "potency": 1,
+            "duration": {
+              "ID": "combatcircle:current_health",
+              "reference_point": "combatcircle:caster"
+            }
+          }
+        ]
+      }
+    ],
+    "on_land": [
+      {
+        "ID": "combatcircle:add_effect",
+        "effect": "minecraft:regeneration",
+        "potency": 1,
+        "recipient": {
+          "ID": "combatcircle:caster"
+        },
+        "duration": {
+          "ID": "combatcircle:current_health",
+          "reference_point": {
+            "ID": "combatcircle:target"
+          }
+        }
+      },
+      {
+        "ID": "combatcircle:explode",
+        "radius": 6,
+        "damage": 1,
+        "typing": "MAGICAL",
+        "griefing": "TNT",
+        "damage_source": {
+          "proxy": {
+            "ID": "combatcircle:caster"
+          },
+          "tags": [
+            "minecraft:is_explosion"
+          ]
+        }
+      },
+      {
+        "ID": "combatcircle:set_aggressive",
+        "toggle": false
+      }
+    ]
   }
 ]

@@ -61,12 +61,14 @@ public class MovesetGoal extends Goal {
 
     @Override
     public void start() {
+        this.mob.setAggressive(true);
         super.start();
         currentMove = actions.get(0);
     }
 
     @Override
     public void stop() {
+        this.mob.setAggressive(false);
         super.stop();
         target = null;
         actions.forEach(TimerAction::reset);

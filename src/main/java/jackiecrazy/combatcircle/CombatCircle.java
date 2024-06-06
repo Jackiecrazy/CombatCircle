@@ -14,6 +14,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -32,6 +34,7 @@ import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashSet;
 import java.util.Random;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -92,10 +95,10 @@ public class CombatCircle {
         @SubscribeEvent
         public static void spread(final EntityJoinLevelEvent e) {
             if (e.getEntity() instanceof PathfinderMob mob) {
-//                for(WrappedGoal wg:new HashSet<>(mob.goalSelector.getAvailableGoals())){
-//                    if(wg.getGoal() instanceof MeleeAttackGoal)
-//                        mob.goalSelector.removeGoal(wg.getGoal());
-//                }
+                for(WrappedGoal wg:new HashSet<>(mob.goalSelector.getAvailableGoals())){
+                    if(wg.getGoal() instanceof MeleeAttackGoal)
+                        mob.goalSelector.removeGoal(wg.getGoal());
+                }
                 if(mob instanceof RangedAttackMob)
                     mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE+3);
                     else mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE);

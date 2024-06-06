@@ -32,7 +32,7 @@ public class Movesets extends SimpleJsonResourceReloadListener {
         moves.clear();
         object.forEach((key, value) -> {
             JsonObject file = value.getAsJsonObject();
-            CombatCircle.LOGGER.debug("loading {}", key);
+            CombatCircle.LOGGER.debug("loading mob moveset definition found under {}", key);
             try {
                 EntityType<?> et = ForgeRegistries.ENTITY_TYPES.getValue(JsonAdapters.gson.fromJson(file.get("mob"), ResourceLocation.class));
                 MovesetFactory[] mf = JsonAdapters.gson.fromJson(file.get("moveset"), MovesetFactory[].class);

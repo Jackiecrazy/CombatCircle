@@ -17,7 +17,7 @@ public class FilterRegistry {
     public static Supplier<IForgeRegistry<FilterType>> SUPPLIER;
     public static DeferredRegister<FilterType> FILTERS = DeferredRegister.create(REGISTRY_NAME, CombatCircle.MODID);
 
-    public static final RegistryObject<FilterType> NONE = FILTERS.register("none", () -> (a) -> NoFilter.INSTANCE);
-    public static final RegistryObject<FilterType> RANDOM = FILTERS.register("random", () -> (a) -> JsonAdapters.gson.fromJson(a, RandomFilter.class));
+    public static final RegistryObject<FilterType> NONE = FILTERS.register("none", () -> (SingletonFilterType) a -> NoFilter.INSTANCE);
+    public static final RegistryObject<FilterType> RANDOM = FILTERS.register("random", () -> (SingletonFilterType) a -> RandomFilter.INSTANCE);
     public static final RegistryObject<FilterType> CONDITION = FILTERS.register("condition", () -> (a) -> JsonAdapters.gson.fromJson(a, ConditionFilter.class));
 }

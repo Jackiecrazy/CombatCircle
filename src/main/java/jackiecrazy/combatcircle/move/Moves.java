@@ -32,7 +32,7 @@ public class Moves extends SimpleJsonResourceReloadListener {
         moves.clear();
         object.forEach((key, value) -> {
             JsonArray file = value.getAsJsonArray();
-            CombatCircle.LOGGER.debug("loading {}", key);
+            CombatCircle.LOGGER.debug("loading move definition found under {}", key);
             try {
                 a=JsonAdapters.gson.fromJson(file, Action[].class)[0];
                 moves.put(key, file);

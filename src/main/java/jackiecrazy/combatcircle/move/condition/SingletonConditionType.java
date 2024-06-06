@@ -5,6 +5,5 @@ import com.google.gson.JsonObject;
 /**
  only implemented in lambdas in ActionRegistry.
  */
-public interface ConditionType<T extends Condition> {
-    public T bake(JsonObject from);
+public interface SingletonConditionType<T extends Condition> extends ConditionType<T> {
 }
