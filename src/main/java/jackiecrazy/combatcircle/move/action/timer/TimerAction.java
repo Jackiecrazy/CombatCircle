@@ -14,9 +14,9 @@ public abstract class TimerAction extends Action {
     }
 
     /**
-     * on the base action TODO privatize
+     * on the base action
      */
-    public NumberArgument max_time;
+    private NumberArgument max_time;
     transient int timer = 0;
 
     @Override

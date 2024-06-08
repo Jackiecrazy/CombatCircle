@@ -29,4 +29,6 @@ public class ActionRegistry {
     public static final RegistryObject<ActionType> EXPLODE = ACTIONS.register("explode", () -> (a) -> JsonAdapters.gson.fromJson(a, ExplodeAction.class));
     public static final RegistryObject<ActionType> LOOK_AT = ACTIONS.register("look_at", () -> (a) -> JsonAdapters.gson.fromJson(a, LookAtAction.class));
     public static final RegistryObject<ActionType> SET_AGGRESSIVE = ACTIONS.register("set_aggressive", () -> (a) -> JsonAdapters.gson.fromJson(a, SetAggressiveAction.class));
+    public static final RegistryObject<ActionType> ATTACH_ACTION = ACTIONS.register("attach_action", () -> (a) -> JsonAdapters.gson.fromJson(a, AttachActionAction.class));
+    public static final RegistryObject<ActionType> SPAWN_ENTITY = ACTIONS.register("spawn_entity", () -> (a) -> JsonAdapters.gson.fromJson(a, SpawnEntityAction.class));
 }

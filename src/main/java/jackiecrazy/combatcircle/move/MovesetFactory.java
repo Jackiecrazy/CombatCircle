@@ -1,8 +1,6 @@
 package jackiecrazy.combatcircle.move;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.condition.Condition;
 import jackiecrazy.combatcircle.utils.JsonAdapters;
@@ -35,8 +33,12 @@ public class MovesetFactory {
         return true;
     }
 
-    public void attachToMob(PathfinderMob mob) {
+    public MovesetWrapper generateMoveset() {
         ArrayList<TimerAction> timers = new ArrayList<>(List.of(JsonAdapters.gson.fromJson(Moves.moves.get(move), TimerAction[].class)));
-        mob.goalSelector.addGoal(priority, new MovesetGoal(mob, weight, timers, JsonAdapters.gson.fromJson(condition, Condition.class)));
+        return new MovesetWrapper(timers);
+    }
+
+    public void attachToMob(PathfinderMob mob) {
+        mob.goalSelector.addGoal(priority, new MovesetGoal(mob, weight, generateMoveset(), JsonAdapters.gson.fromJson(condition, Condition.class)));
     }
 }

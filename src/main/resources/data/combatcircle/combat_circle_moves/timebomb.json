@@ -1,0 +1,31 @@
+[
+  {
+    "waiting": [
+      {
+        "ID": "combatcircle:explode",
+        "radius": 6,
+        "damage": 1,
+        "typing": "MAGICAL",
+        "griefing": "TNT",
+        "position": {
+          "ID": "combatcircle:eye_position",
+          "reference_point": "combatcircle:target"
+        },
+        "damage_source": {
+          "proxy": {
+            "ID": "combatcircle:caster"
+          },
+          "tags": [
+            "minecraft:is_explosion"
+          ]
+        },
+        "condition": {
+          "ID": "combatcircle:start_at",
+          "time": 99
+        }
+      }
+    ],
+    "max_time": 100,
+    "ID": "combatcircle:wait"
+  }
+]

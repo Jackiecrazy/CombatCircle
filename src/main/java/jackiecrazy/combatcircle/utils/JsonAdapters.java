@@ -1,6 +1,8 @@
 package jackiecrazy.combatcircle.utils;
 
 import com.google.gson.*;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.action.ActionRegistry;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
@@ -17,6 +19,8 @@ import jackiecrazy.combatcircle.move.filter.Filter;
 import jackiecrazy.combatcircle.move.filter.FilterRegistry;
 import jackiecrazy.combatcircle.move.filter.NoFilter;
 import jackiecrazy.combatcircle.move.filter.SingletonFilterType;
+import net.minecraft.commands.arguments.CompoundTagArgument;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 import java.lang.reflect.Type;
@@ -32,6 +36,7 @@ public class JsonAdapters {
             .registerTypeAdapter(Condition.class, new ConditionAdapter())
             .registerTypeAdapter(Filter.class, new FilterAdapter())
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocation.Serializer())
+            .registerTypeAdapter(CompoundTag.class, new NBTAdapter())
             .setPrettyPrinting()
             .create();
 
@@ -158,6 +163,19 @@ public class JsonAdapters {
                 throw new JsonParseException("invalid ID defined for number object: " + json);
             }
             throw new JsonParseException("number argument is unreadable: " + json);
+        }
+    }
+
+    public static class NBTAdapter implements JsonDeserializer<CompoundTag>{
+
+        @Override
+        public CompoundTag deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            if(!json.isJsonPrimitive())throw new JsonParseException("not an NBT tag: " + json);
+            try {
+                return CompoundTagArgument.compoundTag().parse(new StringReader(json.getAsString()));
+            } catch (CommandSyntaxException e) {
+                throw new JsonParseException("invalid NBT definition: "+json);
+            }
         }
     }
 }

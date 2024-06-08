@@ -1,0 +1,29 @@
+[
+  {
+    "waiting": [
+      {
+        "ID": "combatcircle:spawn_entity",
+        "entity": "minecraft:slime",
+        "quantity": "5",
+        "spread": 1,
+        "tag": "{Size:0}",
+        "condition": {
+          "ID": "combatcircle:start_at",
+          "time": 98
+        },
+        "position": {
+          "ID": "combatcircle:eye_position",
+          "reference_point": "combatcircle:target"
+        },
+        "on_spawn": [
+          {
+            "ID": "combatcircle:attach_action",
+            "effect": "combatcircle:timebomb"
+          }
+        ]
+      }
+    ],
+    "max_time": 100,
+    "ID": "combatcircle:wait"
+  }
+]

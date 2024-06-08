@@ -6,6 +6,8 @@ import jackiecrazy.combatcircle.move.MovesetFactory;
 import jackiecrazy.combatcircle.move.Movesets;
 import jackiecrazy.combatcircle.move.action.ActionRegistry;
 import jackiecrazy.combatcircle.move.argument.ArgumentRegistry;
+import jackiecrazy.combatcircle.move.capability.Mark;
+import jackiecrazy.combatcircle.move.capability.Marks;
 import jackiecrazy.combatcircle.move.condition.ConditionRegistry;
 import jackiecrazy.combatcircle.move.filter.FilterRegistry;
 import jackiecrazy.combatcircle.utils.CombatManager;
@@ -17,8 +19,10 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -166,31 +170,14 @@ public class CombatCircle {
 
         @SubscribeEvent
         public static void tick(LivingEvent.LivingTickEvent e) {
-//            LivingEntity elb = e.getEntity();
-//            if (elb instanceof Mob mob1 && !CombatData.getCap(elb).isVulnerable() && mob1.getTarget() != null) {
-//                double safeSpace = Math.min(elb.distanceTo(mob1.getTarget()), elb.getBbWidth() * 2);
-//                Vec3 push = Vec3.ZERO;
-//                for (Entity fan : elb.level.getEntities(elb, elb.getBoundingBox().inflate(safeSpace))) {
-//                    if (fan instanceof Monster mob2 && mob1.getTarget() == mob2.getTarget() &&
-//                            GeneralUtils.getDistSqCompensated(fan, elb) < (safeSpace) * safeSpace && fan != mob1.getTarget()) {
-//                        //mobs "avoid" clumping together
-//                        Vec3 diff = elb.position().subtract(fan.position());
-//                        double targDistSq = diff.lengthSqr();
-//                        push = push.add(diff.normalize().scale(targDistSq));
-//                        //targDistSq = Math.max(targDistSq, 1);
-//                        //fan.addVelocity(diff.x == 0 ? 0 : -0.03 / diff.x, 0, diff.z == 0 ? 0 : -0.03 / diff.z);
-//                        /*
-//                        Mobs should move into a position that is close to the player, far from allies, and close to them.
-//                         */
-//                    }
-//                }
-//                Vec3 toTarget = mob1.getTarget().position().subtract(mob1.position()).normalize();
-//                push = push.normalize();
-//                push = push.subtract(toTarget.scale(push.dot(toTarget)));
-//                push = push.normalize().scale(elb.getAttributeValue(Attributes.MOVEMENT_SPEED) / 2);
-//                //elb.setDeltaMovement(elb.getDeltaMovement().scale(0.5));
-//                elb.push(push.x, 0, push.z);
-//            }
+            Marks.getCap(e.getEntity()).update();
+        }
+
+        @SubscribeEvent
+        public static void caps(AttachCapabilitiesEvent<Entity> e) {
+            if (e.getObject() instanceof LivingEntity lb) {
+                e.addCapability(new ResourceLocation("combatcircle:delayed_actions"), new Marks(new Mark(lb)));
+            }
         }
 
         @SubscribeEvent
