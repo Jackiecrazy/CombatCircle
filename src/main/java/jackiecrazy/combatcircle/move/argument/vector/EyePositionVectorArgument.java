@@ -10,6 +10,6 @@ public class EyePositionVectorArgument extends VectorArgument {
 
     @Override
     public Vec3 _resolve(Entity caster, Entity target) {
-        return reference_point.resolve(caster, target).getEyePosition();
+        return reference_point.resolveAsEntity(caster, target).getEyePosition();
     }
 }

@@ -5,8 +5,7 @@ import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.SelectorEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.TargetEntityArgument;
-import jackiecrazy.combatcircle.move.argument.number.CurrentHealthArgument;
-import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
+import jackiecrazy.combatcircle.move.argument.number.*;
 import jackiecrazy.combatcircle.move.argument.vector.*;
 import jackiecrazy.combatcircle.utils.JsonAdapters;
 import net.minecraft.resources.ResourceLocation;
@@ -30,15 +29,20 @@ public class ArgumentRegistry {
     //numbers//
     public static final RegistryObject<ArgumentType> NUMBER = ARGUMENTS.register("number", () -> (a) -> JsonAdapters.gson.fromJson(a, FixedNumberArgument.class));
     public static final RegistryObject<ArgumentType> CURRENT_HEALTH = ARGUMENTS.register("current_health", () -> (a) -> JsonAdapters.gson.fromJson(a, CurrentHealthArgument.class));
+    public static final RegistryObject<ArgumentType> OPERATION = ARGUMENTS.register("operate", () -> (a) -> JsonAdapters.gson.fromJson(a, OperateArgument.class));
+    public static final RegistryObject<ArgumentType> ATTRIBUTE_VALUE = ARGUMENTS.register("attribute_value", () -> (a) -> JsonAdapters.gson.fromJson(a, AttributeValueArgument.class));
+    public static final RegistryObject<ArgumentType> DOT_PRODUCT = ARGUMENTS.register("dot_product", () -> (a) -> JsonAdapters.gson.fromJson(a, DotProductArgument.class));
+    public static final RegistryObject<ArgumentType> DISTANCE = ARGUMENTS.register("distance", () -> (a) -> JsonAdapters.gson.fromJson(a, DistanceArgument.class));
 
     //vectors//
     public static final RegistryObject<ArgumentType> RAW = ARGUMENTS.register("vector", () -> (a) -> JsonAdapters.gson.fromJson(a, RawVectorArgument.class));
-    public static final RegistryObject<ArgumentType> SUM = ARGUMENTS.register("sum", () -> (a) -> JsonAdapters.gson.fromJson(a, SumVectorArgument.class));
+    public static final RegistryObject<ArgumentType> SUM = ARGUMENTS.register("vector_sum", () -> (a) -> JsonAdapters.gson.fromJson(a, SumVectorArgument.class));
     public static final RegistryObject<ArgumentType> ZERO = ARGUMENTS.register("zero", () -> (SingletonArgumentType) a -> RawVectorArgument.ZERO);
     public static final RegistryObject<ArgumentType> EYE_HEIGHT = ARGUMENTS.register("eye_height", () -> (a) -> JsonAdapters.gson.fromJson(a, EyeHeightVectorArgument.class));
     public static final RegistryObject<ArgumentType> EYE_POSITION = ARGUMENTS.register("eye_position", () -> (a) -> JsonAdapters.gson.fromJson(a, EyePositionVectorArgument.class));
     public static final RegistryObject<ArgumentType> LOOK = ARGUMENTS.register("look", () -> (a) -> JsonAdapters.gson.fromJson(a, LookVectorArgument.class));
     public static final RegistryObject<ArgumentType> MULTIPLY = ARGUMENTS.register("multiply", () -> (a) -> JsonAdapters.gson.fromJson(a, MultiplyVectorArgument.class));
+    public static final RegistryObject<ArgumentType> CROSS_PRODUCT = ARGUMENTS.register("cross_product", () -> (a) -> JsonAdapters.gson.fromJson(a, CrossProductArgument.class));
     public static final RegistryObject<ArgumentType> POSITION = ARGUMENTS.register("foot_position", () -> (a) -> JsonAdapters.gson.fromJson(a, PositionVectorArgument.class));
 
     //misc//

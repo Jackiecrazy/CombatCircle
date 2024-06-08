@@ -1,4 +1,4 @@
-package jackiecrazy.combatcircle.move.action;
+package jackiecrazy.combatcircle.move.condition;
 
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
@@ -12,19 +12,22 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
-public class AddEffectAction extends Action {
+public class HasEffectCondition extends Condition {
     private ResourceLocation effect;
     private transient MobEffect me;
-    private NumberArgument potency, duration;
-    private EntityArgument recipient= TargetEntityArgument.INSTANCE;
+    private NumberArgument minimum_potency=NumberArgument.ZERO, minimum_duration=NumberArgument.ZERO;
+    private EntityArgument tested = TargetEntityArgument.INSTANCE;
 
     @Override
-    public int perform(@Nullable TimerAction parent, Entity performer, Entity target) {
+    public boolean evaluate(@Nullable TimerAction parent, Entity performer, Entity target) {
         if (me == null)
             me = ForgeRegistries.MOB_EFFECTS.getValue(effect);
-        if (me != null && recipient.resolveAsEntity(performer, target) instanceof LivingEntity e) {
-            e.addEffect(new MobEffectInstance(me, (int) (duration.resolve(performer, target)), (int) potency.resolve(performer, target)));
+        if (me != null && tested.resolveAsEntity(performer, target) instanceof LivingEntity e) {
+            MobEffectInstance inst = e.getEffect(me);
+            if (inst != null) {
+                return inst.getDuration() > (minimum_duration.resolve(performer, target)) && inst.getAmplifier() > minimum_potency.resolve(performer, target);
+            }
         }
-        return 0;
+        return false;
     }
 }

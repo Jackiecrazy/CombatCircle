@@ -2,6 +2,7 @@ package jackiecrazy.combatcircle.move.action;
 
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.move.action.timer.AddVelocityAction;
+import jackiecrazy.combatcircle.move.action.timer.MoveToAction;
 import jackiecrazy.combatcircle.move.action.timer.ProjectHitboxAction;
 import jackiecrazy.combatcircle.move.action.timer.WaitAction;
 import jackiecrazy.combatcircle.utils.JsonAdapters;
@@ -20,6 +21,7 @@ public class ActionRegistry {
     //Timer Actions//
     public static final RegistryObject<ActionType> WAIT = ACTIONS.register("wait", () -> (a) -> JsonAdapters.gson.fromJson(a, WaitAction.class));
     public static final RegistryObject<ActionType> ADD_VELOCITY = ACTIONS.register("add_velocity", () -> (a) -> JsonAdapters.gson.fromJson(a, AddVelocityAction.class));
+    public static final RegistryObject<ActionType> MOVE_TO = ACTIONS.register("move_to", () -> (a) -> JsonAdapters.gson.fromJson(a, MoveToAction.class));
     public static final RegistryObject<ActionType> PROJECT_HITBOX = ACTIONS.register("project_hitbox", () -> (a) -> JsonAdapters.gson.fromJson(a, ProjectHitboxAction.class));
 
     //Simple Actions//
@@ -31,4 +33,5 @@ public class ActionRegistry {
     public static final RegistryObject<ActionType> SET_AGGRESSIVE = ACTIONS.register("set_aggressive", () -> (a) -> JsonAdapters.gson.fromJson(a, SetAggressiveAction.class));
     public static final RegistryObject<ActionType> ATTACH_ACTION = ACTIONS.register("attach_action", () -> (a) -> JsonAdapters.gson.fromJson(a, AttachActionAction.class));
     public static final RegistryObject<ActionType> SPAWN_ENTITY = ACTIONS.register("spawn_entity", () -> (a) -> JsonAdapters.gson.fromJson(a, SpawnEntityAction.class));
+    public static final RegistryObject<ActionType> JUMP_TO = ACTIONS.register("jump_to", () -> (a) -> JsonAdapters.gson.fromJson(a, JumpToAction.class));
 }

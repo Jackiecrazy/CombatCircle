@@ -9,6 +9,6 @@ public class CurrentHealthArgument extends NumberArgument {
 
     @Override
     public double resolve(Entity caster, Entity target) {
-        return reference_point.resolve(caster, target) instanceof LivingEntity le ? le.getHealth() : 0;
+        return reference_point.resolveAsEntity(caster, target) instanceof LivingEntity le ? le.getHealth() : 0;
     }
 }

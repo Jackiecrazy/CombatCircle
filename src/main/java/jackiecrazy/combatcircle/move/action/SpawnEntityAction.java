@@ -34,7 +34,7 @@ public class SpawnEntityAction extends Action {
 
     @Override
     public int perform(@Nullable TimerAction parent, Entity performer, Entity target) {
-        Entity summoner = this.summoner.resolve(performer, target);
+        Entity summoner = this.summoner.resolveAsEntity(performer, target);
         int toSpawn = (int) quantity.resolve(performer, target);
         double deviation = spread.resolve(performer, target);
         Vec3 vec = position.resolve(performer, target);

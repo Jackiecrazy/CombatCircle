@@ -1,6 +1,5 @@
 package jackiecrazy.combatcircle.move.argument;
 
-import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
@@ -45,9 +44,9 @@ public class DamageArgument extends Argument {
         if (dtags == null) {
             dtags = tags.stream().map(a -> TagKey.create(Registries.DAMAGE_TYPE, a)).collect(Collectors.toSet());
         }
-        CombatDamageSource ret = new CombatDamageSource(source.resolve(caster, target))
+        CombatDamageSource ret = new CombatDamageSource(source.resolveAsEntity(caster, target))
                 .setDamageDealer(equip.resolve(caster, target))
-                .setProxy(proxy.resolve(caster, target))
+                .setProxy(proxy.resolveAsEntity(caster, target))
                 .setDamageTyping(typing)
                 .setProcAttackEffects(proc_attack.evaluate(parent, caster, target))
                 .setProcSkillEffects(proc_skill.evaluate(parent, caster, target))

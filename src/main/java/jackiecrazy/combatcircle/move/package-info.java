@@ -40,12 +40,6 @@ A mob may be defined with a list of movesets. Condition-less movesets will be ch
  */
 
 /*
-implementation notes:
-encirclement: safe distance, avoidance vector towards specific entity types, slot placement priority, "cover" (whatever that is, I'm still not sure)
-chasing: boid behavior, smooth transition to encirclement
-actions: ID, condition, arguments, (template), tags, sub-actions, proxy inheritance
-move: "movement" action
-moveset: moves, conditions, weight, global cooldown
-mob: movesets, any special tags, encirclement
+todo moveset weight, store/read variable, nbt tag?, name?, wait action resolution order
 
  */

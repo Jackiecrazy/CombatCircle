@@ -21,7 +21,7 @@ public class EquipmentArgument extends Argument {
     }
 
     public ItemStack resolve(Entity caster, Entity target) {
-        Entity e = entity.resolve(caster, target);
+        Entity e = entity.resolveAsEntity(caster, target);
         if (e instanceof LivingEntity ent) return ent.getItemBySlot(slot);
         return ItemStack.EMPTY;
     }

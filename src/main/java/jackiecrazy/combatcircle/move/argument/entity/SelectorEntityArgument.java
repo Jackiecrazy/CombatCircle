@@ -6,7 +6,7 @@ import net.minecraft.world.entity.Entity;
 public class SelectorEntityArgument extends EntityArgument{
     private SelectorArgument select;
     @Override
-    public Entity resolve(Entity caster, Entity target) {
+    public Entity resolveAsEntity(Entity caster, Entity target) {
         return select.resolve(caster, target).get(0);
     }
 }

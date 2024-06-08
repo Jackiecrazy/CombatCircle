@@ -20,9 +20,12 @@ public class ConditionRegistry {
     public static final RegistryObject<ConditionType> AND = CONDITIONS.register("and", () -> (a) -> JsonAdapters.gson.fromJson(a, AndCondition.class));
     public static final RegistryObject<ConditionType> OR = CONDITIONS.register("or", () -> (a) -> JsonAdapters.gson.fromJson(a, OrCondition.class));
     public static final RegistryObject<ConditionType> NOT = CONDITIONS.register("not", () -> (a) -> JsonAdapters.gson.fromJson(a, NotCondition.class));
+    public static final RegistryObject<ConditionType> COMPARISON = CONDITIONS.register("compare", () -> (a) -> JsonAdapters.gson.fromJson(a, ComparisonCondition.class));
 
     //entity//
     public static final RegistryObject<ConditionType> START_AT = CONDITIONS.register("start_at", () -> (a) -> JsonAdapters.gson.fromJson(a, StartAtCondition.class));
     public static final RegistryObject<ConditionType> IS_TARGET = CONDITIONS.register("is_target", () -> (a) -> JsonAdapters.gson.fromJson(a, IsTargetCondition.class));
     public static final RegistryObject<ConditionType> CAN_SEE = CONDITIONS.register("can_see", () -> (a) -> JsonAdapters.gson.fromJson(a, CanSeeCondition.class));
+    public static final RegistryObject<ConditionType> IS_ALIVE = CONDITIONS.register("is_alive", () -> (a) -> JsonAdapters.gson.fromJson(a, IsAliveCondition.class));
+    public static final RegistryObject<ConditionType> HAS_EFFECT = CONDITIONS.register("has_effect", () -> (a) -> JsonAdapters.gson.fromJson(a, HasEffectCondition.class));
 }

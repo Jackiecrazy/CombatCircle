@@ -11,6 +11,6 @@ public class PositionVectorArgument extends VectorArgument {
 
     @Override
     public Vec3 _resolve(Entity caster, Entity target) {
-        return reference_point.resolve(caster, target).position();
+        return reference_point.resolveAsEntity(caster, target).position();
     }
 }

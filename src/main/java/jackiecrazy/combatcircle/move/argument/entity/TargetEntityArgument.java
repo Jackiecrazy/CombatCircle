@@ -5,7 +5,7 @@ import net.minecraft.world.entity.Entity;
 public class TargetEntityArgument extends EntityArgument{
     public static final TargetEntityArgument INSTANCE=new TargetEntityArgument();
     @Override
-    public Entity resolve(Entity caster, Entity target) {
+    public Entity resolveAsEntity(Entity caster, Entity target) {
         return target;
     }
 }

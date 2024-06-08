@@ -10,7 +10,6 @@ import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
 import jackiecrazy.combatcircle.move.condition.Condition;
 import jackiecrazy.combatcircle.move.condition.FalseCondition;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -35,7 +34,7 @@ public class ExplodeAction extends Action {
     @Override
     public int perform(@Nullable TimerAction parent, Entity performer, Entity target) {
         Vec3 pos = position.resolve(performer, target);
-        performer.level().explode(exploder.resolve(performer, target), damage_source.bake(parent, performer, target), null, pos.x, pos.y, pos.z, (float) radius.resolve(performer, target), fire.evaluate(parent, performer, target), griefing);
+        performer.level().explode(exploder.resolveAsEntity(performer, target), damage_source.bake(parent, performer, target), null, pos.x, pos.y, pos.z, (float) radius.resolve(performer, target), fire.evaluate(parent, performer, target), griefing);
         return 0;
     }
 }
