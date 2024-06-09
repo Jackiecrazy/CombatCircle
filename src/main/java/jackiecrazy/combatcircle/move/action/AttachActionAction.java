@@ -21,7 +21,7 @@ public class AttachActionAction extends Action {
     private ResourceLocation effect;
 
     @Override
-    public int perform(@Nullable TimerAction parent, Entity perform, Entity target) {
+    public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity perform, Entity target) {
         ArrayList<TimerAction> timers = new ArrayList<>(List.of(JsonAdapters.gson.fromJson(Moves.moves.get(effect), TimerAction[].class)));
         Marks.getCap(recipient.resolveAsEntity(perform, target)).mark(performer.resolveAsEntity(perform, target), new MovesetWrapper(timers));
         return 0;

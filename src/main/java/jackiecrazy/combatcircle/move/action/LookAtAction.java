@@ -1,5 +1,6 @@
 package jackiecrazy.combatcircle.move.action;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
@@ -21,7 +22,7 @@ public class LookAtAction extends Action {
     private EntityAnchorArgument.Anchor anchor = EntityAnchorArgument.Anchor.EYES;
 
     @Override
-    public int perform(@Nullable TimerAction parent, Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
         Entity toLook = looker.resolveAsEntity(performer, target);
         if (vector_target != null)
             toLook.lookAt(anchor, vector_target.resolve(performer, target));

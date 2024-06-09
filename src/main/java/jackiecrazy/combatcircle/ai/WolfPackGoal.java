@@ -3,23 +3,17 @@ package jackiecrazy.combatcircle.ai;
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.utils.CombatManager;
 import jackiecrazy.footwork.api.FootworkAttributes;
-import jackiecrazy.footwork.client.particle.FootworkParticles;
 import jackiecrazy.footwork.utils.GeneralUtils;
-import jackiecrazy.footwork.utils.ParticleUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
-import net.minecraft.world.entity.monster.Pillager;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.ForgeMod;
-import org.checkerframework.checker.units.qual.C;
 
 import java.awt.*;
 import java.util.EnumSet;
@@ -90,7 +84,7 @@ public class WolfPackGoal extends Goal {
         //too far away, just charge in
         if (target.distanceToSqr(mob) > safeDist * safeDist * 4) return false;
         //becomes an attacker, moves as they please
-        if (CombatManager.getManagerFor(target).addAttacker(mob, null)) return false;
+        if (CombatManager.getManagerFor(target).hasAttacker(mob)) return false;
         //there is no circle
         if (CombatManager.getManagerFor(target).getAllAttackers().size() < 2) return false;
 

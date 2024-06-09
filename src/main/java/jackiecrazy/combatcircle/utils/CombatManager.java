@@ -1,7 +1,8 @@
 package jackiecrazy.combatcircle.utils;
 
 import jackiecrazy.combatcircle.CombatCircle;
-import jackiecrazy.footwork.move.Move;
+import jackiecrazy.combatcircle.move.MovesetGoal;
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
@@ -24,7 +25,7 @@ public class CombatManager {
     private static final CombatManager dummy = new CombatManager(null, 0, 0);
     private final ConcurrentLinkedQueue<Mob> mobList = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<Node> nodeCache = new ConcurrentLinkedQueue<>();
-    private final ConcurrentHashMap<Mob, Integer> attackList = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Mob, MovesetGoal> attackList = new ConcurrentHashMap<>();
     private final ConcurrentLinkedQueue<Mob> coolingList = new ConcurrentLinkedQueue<>();
     private final LivingEntity target;
     /*
@@ -64,6 +65,7 @@ Mobs should move into a position that is close to the player, far from allies, a
     private final ArrayList<Mob> purge = new ArrayList<>();
     private float currentMob, currentAttack;
     private int purgeTimer;
+
     public CombatManager(LivingEntity p, int mobLimit, int attackLimit) {
         target = p;
         mlimit = mobLimit;
@@ -112,7 +114,7 @@ Mobs should move into a position that is close to the player, far from allies, a
         return true;
     }
 
-    public boolean addAttacker(Mob m, Move move) {
+    public boolean addAttacker(Mob m, MovesetGoal move) {
         //what
         if (!addMob(m)) return false;
         //on cooldown list!
@@ -125,7 +127,7 @@ Mobs should move into a position that is close to the player, far from allies, a
         //can we squeeze the move in
         float weight = getAttackWeight(m, move);
         if (alimit < currentAttack + weight) return false;
-        attackList.put(m, m.tickCount);
+        attackList.put(m, move);
         currentAttack += weight;
         return true;
     }
@@ -137,7 +139,7 @@ Mobs should move into a position that is close to the player, far from allies, a
         currentMob -= getMobWeight(m);
     }
 
-    public void removeAttacker(Mob m, Move move) {
+    public void removeAttacker(Mob m, MovesetGoal move) {
         if (!attackList.containsKey(m)) return;
         attackList.remove(m);
         currentAttack -= getAttackWeight(m, move);
@@ -160,21 +162,22 @@ Mobs should move into a position that is close to the player, far from allies, a
         return m.getBbWidth();
     }
 
-    private float getAttackWeight(Mob m, Move move) {
+    private float getAttackWeight(Mob m, MovesetGoal move) {
+        if (move != null) return move.getWeight();
         return 1;
     }
 
     public void tick() {
         purge.clear();
         //remove attackers that have attacked
-        attackList.forEach((a, b) -> {
-            if (!a.isAlive() || currentMob > 1 && (a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtMobTimestamp() > b)) {
-                purge.add(a);
-                purgeTimer = 0;
-            }
-        });
-        purge.forEach(a -> this.removeAttacker(a, null));
-        purge.clear();
+//        attackList.forEach((a, b) -> {
+//            if (!a.isAlive() || currentMob > 1 && (a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtMobTimestamp() > b)) {
+//                purge.add(a);
+//                purgeTimer = 0;
+//            }
+//        });
+//        purge.forEach(a -> this.removeAttacker(a, null));
+//        purge.clear();
         //remove dead mobs to prevent memory leak
         mobList.forEach(a -> {
             if (!a.isAlive()) {

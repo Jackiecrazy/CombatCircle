@@ -1,5 +1,6 @@
 package jackiecrazy.combatcircle.move.action.timer;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
 import net.minecraft.world.entity.Entity;
@@ -15,34 +16,34 @@ public class AddVelocityAction extends TimerAction {
     private transient boolean flying;
 
     @Override
-    public boolean isFinished(Entity performer, Entity target) {
-        return super.isFinished(performer, target);
+    public boolean isFinished(MovesetWrapper wrapper, Entity performer, Entity target) {
+        return super.isFinished(wrapper, performer, target);
     }
 
     @Override
-    public void start(Entity performer, Entity target) {
-        runActions(this, on_launch, performer, target);//fixme doesn't proc continuous tasks
+    public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
+        runActions(wrapper, this, on_launch, performer, target);//fixme doesn't proc continuous tasks
         Vec3 dir = direction.resolve(performer, target);
         performer.addDeltaMovement(dir);
         if(dir.y>0){
             performer.setOnGround(false);
             flying=true;
         }
-        super.start(performer, target);
+        super.start(wrapper, performer, target);
     }
 
     @Override
-    public int tick(Entity performer, Entity target) {
-        int childRet = runActions(this, tick, performer, target);
+    public int tick(MovesetWrapper wrapper, Entity performer, Entity target) {
+        int childRet = runActions(wrapper, this, tick, performer, target);
         if (childRet != 0) return childRet;
         if(!performer.onGround()){
             flying=true;
         }else if(flying){
             flying=false;
-            childRet = runActions(this, on_land, performer, target);
+            childRet = runActions(wrapper, this, on_land, performer, target);
             if (childRet != 0) return childRet;
         }
-        return super.tick(performer, target);
+        return super.tick(wrapper, performer, target);
     }
 
     @Override

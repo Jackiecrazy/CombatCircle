@@ -1,5 +1,6 @@
 package jackiecrazy.combatcircle.move.action.timer;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.argument.SelectorArgument;
 import net.minecraft.world.entity.Entity;
@@ -18,15 +19,15 @@ public class ProjectHitboxAction extends TimerAction {
     private List<Action> actions = new ArrayList<>();
 
     @Override
-    public int tick(Entity performer, Entity target) {
+    public int tick(MovesetWrapper wrapper, Entity performer, Entity target) {
         for (Entity e : selector.resolve(performer, target)) {
             if (hit_cooldown == 0 && lastHit.containsKey(e)) continue;
             if (lastHit.containsKey(e) && lastHit.get(e) < e.level().getGameTime() + hit_cooldown) continue;
-            int childRet = runActions(this, actions, performer, e);
+            int childRet = runActions(wrapper, this, actions, performer, e);
             if (childRet != 0) return childRet;
             lastHit.put(e, e.level().getGameTime());
         }
-        return super.tick(performer, target);
+        return super.tick(wrapper, performer, target);
     }
 
     @Override

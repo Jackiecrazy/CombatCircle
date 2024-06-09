@@ -2,11 +2,15 @@ package jackiecrazy.combatcircle.move;
 
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MovesetWrapper {
     private List<TimerAction> actions;
+    private Map<String, Vec3> vecStorage=new HashMap<>();
     private TimerAction currentMove;
     private int index = 0;
 
@@ -29,7 +33,7 @@ public class MovesetWrapper {
     }
 
     public void tick(Entity performer, Entity target){
-        int ret = currentMove.perform(null, performer, target);
+        int ret = currentMove.perform(this, null, performer, target);
         if (ret < 0) {
             //natural progression//
             index++;

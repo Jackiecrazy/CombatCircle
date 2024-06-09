@@ -1,5 +1,6 @@
 package jackiecrazy.combatcircle.move.action.timer;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
 import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
@@ -18,24 +19,24 @@ public class MoveToAction extends TimerAction {
     private VectorArgument position;
 
     @Override
-    public boolean isFinished(Entity performer, Entity target) {
-        return super.isFinished(performer, target);
+    public boolean isFinished(MovesetWrapper wrapper, Entity performer, Entity target) {
+        return super.isFinished(wrapper, performer, target);
     }
 
     @Override
-    public void start(Entity performer, Entity target) {
-        runActions(this, on_start, performer, target);//fixme doesn't proc continuous tasks
+    public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
+        runActions(wrapper, this, on_start, performer, target);//fixme doesn't proc continuous tasks
         Vec3 dir = position.resolve(performer, target);
         if (performer instanceof Mob m)
             m.getMoveControl().setWantedPosition(dir.x, dir.y, dir.z, speed_modifier.resolve(performer, target));
-        super.start(performer, target);
+        super.start(wrapper, performer, target);
     }
 
     @Override
-    public int tick(Entity performer, Entity target) {
-        int childRet = runActions(this, tick, performer, target);
+    public int tick(MovesetWrapper wrapper, Entity performer, Entity target) {
+        int childRet = runActions(wrapper, this, tick, performer, target);
         if (childRet != 0) return childRet;
-        return super.tick(performer, target);
+        return super.tick(wrapper, performer, target);
     }
 
     @Override

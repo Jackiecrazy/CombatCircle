@@ -1,5 +1,6 @@
 package jackiecrazy.combatcircle.move.action;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.TargetEntityArgument;
@@ -19,7 +20,7 @@ public class AddEffectAction extends Action {
     private EntityArgument recipient= TargetEntityArgument.INSTANCE;
 
     @Override
-    public int perform(@Nullable TimerAction parent, Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
         if (me == null)
             me = ForgeRegistries.MOB_EFFECTS.getValue(effect);
         if (me != null && recipient.resolveAsEntity(performer, target) instanceof LivingEntity e) {

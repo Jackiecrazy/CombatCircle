@@ -1,6 +1,7 @@
 package jackiecrazy.combatcircle.move.action;
 
 import jackiecrazy.combatcircle.CombatCircle;
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
@@ -33,7 +34,7 @@ public class SpawnEntityAction extends Action {
     private List<Action> on_spawn = new ArrayList<>();
 
     @Override
-    public int perform(@Nullable TimerAction parent, Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
         Entity summoner = this.summoner.resolveAsEntity(performer, target);
         int toSpawn = (int) quantity.resolve(performer, target);
         double deviation = spread.resolve(performer, target);
@@ -58,7 +59,7 @@ public class SpawnEntityAction extends Action {
 
                     serverlevel.tryAddFreshEntityWithPassengers(summon);
                     for (Action a : on_spawn) {
-                        a.perform(parent, summoner, summon);
+                        a.perform(wrapper, parent, summoner, summon);
                     }
 
                 }

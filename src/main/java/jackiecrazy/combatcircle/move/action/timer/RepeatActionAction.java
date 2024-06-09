@@ -1,5 +1,6 @@
 package jackiecrazy.combatcircle.move.action.timer;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
 import net.minecraft.world.entity.Entity;
 
@@ -11,12 +12,12 @@ public class RepeatActionAction extends TimerAction {
     private List<Action> run = new ArrayList<>();
 
     @Override
-    public int tick(Entity performer, Entity target) {
+    public int tick(MovesetWrapper wrapper, Entity performer, Entity target) {
         if (this.timer % every == 0) {
-            int childRet = runActions(this, run, performer, target);
+            int childRet = runActions(wrapper, this, run, performer, target);
             if (childRet != 0) return childRet;
         }
-        return super.tick(performer, target);
+        return super.tick(wrapper, performer, target);
     }
 
     @Override
