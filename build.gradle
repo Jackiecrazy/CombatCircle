@@ -14,14 +14,13 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
+apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'maven-publish'
 apply plugin: 'org.spongepowered.mixin'
 apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 version = "${mod_version}"
-group = 'jackiecrazy' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'jackiecrazy.combatcircle' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'combatcircle'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)

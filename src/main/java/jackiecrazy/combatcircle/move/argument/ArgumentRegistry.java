@@ -3,6 +3,7 @@ package jackiecrazy.combatcircle.move.argument;
 import com.google.gson.JsonObject;
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
+import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.SelectorEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.TargetEntityArgument;
 import jackiecrazy.combatcircle.move.argument.number.*;
@@ -14,6 +15,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.Random;
 import java.util.function.Supplier;
 
 public class ArgumentRegistry {
@@ -25,6 +27,7 @@ public class ArgumentRegistry {
     public static final RegistryObject<ArgumentType> CASTER = ARGUMENTS.register("caster", () -> (SingletonArgumentType) a -> CasterEntityArgument.INSTANCE);
     public static final RegistryObject<ArgumentType> TARGET = ARGUMENTS.register("target", () -> (SingletonArgumentType) a -> TargetEntityArgument.INSTANCE);
     public static final RegistryObject<ArgumentType> ENTITY = ARGUMENTS.register("random_entity", () -> (a) -> JsonAdapters.gson.fromJson(a, SelectorEntityArgument.class));
+    public static final RegistryObject<ArgumentType> GET_ENTITY = ARGUMENTS.register("get_entity", () -> (a) -> JsonAdapters.gson.fromJson(a, EntityArgument.Get.class));
 
     //numbers//
     public static final RegistryObject<ArgumentType> NUMBER = ARGUMENTS.register("number", () -> (a) -> JsonAdapters.gson.fromJson(a, FixedNumberArgument.class));
@@ -33,6 +36,8 @@ public class ArgumentRegistry {
     public static final RegistryObject<ArgumentType> ATTRIBUTE_VALUE = ARGUMENTS.register("attribute_value", () -> (a) -> JsonAdapters.gson.fromJson(a, AttributeValueArgument.class));
     public static final RegistryObject<ArgumentType> DOT_PRODUCT = ARGUMENTS.register("dot_product", () -> (a) -> JsonAdapters.gson.fromJson(a, DotProductArgument.class));
     public static final RegistryObject<ArgumentType> DISTANCE = ARGUMENTS.register("distance", () -> (a) -> JsonAdapters.gson.fromJson(a, DistanceArgument.class));
+    public static final RegistryObject<ArgumentType> GET_NUMBER = ARGUMENTS.register("get_number", () -> (a) -> JsonAdapters.gson.fromJson(a, NumberArgument.Get.class));
+    public static final RegistryObject<ArgumentType> RANDOM = ARGUMENTS.register("random", () -> (a) -> JsonAdapters.gson.fromJson(a, RandomNumberArgument.class));
 
     //vectors//
     public static final RegistryObject<ArgumentType> RAW = ARGUMENTS.register("vector", () -> (a) -> JsonAdapters.gson.fromJson(a, RawVectorArgument.class));
@@ -44,6 +49,8 @@ public class ArgumentRegistry {
     public static final RegistryObject<ArgumentType> MULTIPLY = ARGUMENTS.register("multiply", () -> (a) -> JsonAdapters.gson.fromJson(a, MultiplyVectorArgument.class));
     public static final RegistryObject<ArgumentType> CROSS_PRODUCT = ARGUMENTS.register("cross_product", () -> (a) -> JsonAdapters.gson.fromJson(a, CrossProductArgument.class));
     public static final RegistryObject<ArgumentType> POSITION = ARGUMENTS.register("foot_position", () -> (a) -> JsonAdapters.gson.fromJson(a, PositionVectorArgument.class));
+    public static final RegistryObject<ArgumentType> GET_VECTOR = ARGUMENTS.register("get_vector", () -> (a) -> JsonAdapters.gson.fromJson(a, VectorArgument.Get.class));
+    public static final RegistryObject<ArgumentType> RAY_TRACE = ARGUMENTS.register("ray_trace", () -> (a) -> JsonAdapters.gson.fromJson(a, RayTraceVectorArgument.class));
 
     //misc//
     public static final RegistryObject<ArgumentType> DAMAGE = ARGUMENTS.register("damage", () -> (a) -> JsonAdapters.gson.fromJson(a, DamageArgument.class));

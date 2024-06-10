@@ -11,17 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MovesetFactory {
-    int weight;
-    int priority;
+    int starting_weight=1;
+    int weight_change=0;
+    int size=1;
     JsonObject condition;
     ResourceLocation move;
-
-    public MovesetFactory(int weight, int priority, JsonObject condition, ResourceLocation move) {
-        this.weight = weight;
-        this.priority = priority;
-        this.condition = condition;
-        this.move = move;
-    }
 
     public boolean validate() {
         try {
@@ -35,10 +29,10 @@ public class MovesetFactory {
 
     public MovesetWrapper generateMoveset() {
         ArrayList<TimerAction> timers = new ArrayList<>(List.of(JsonAdapters.gson.fromJson(Moves.moves.get(move), TimerAction[].class)));
-        return new MovesetWrapper(timers);
+        return new MovesetWrapper(size, starting_weight, weight_change, timers, generateCondition());
     }
 
-    public void attachToMob(PathfinderMob mob) {
-        mob.goalSelector.addGoal(priority, new MovesetGoal(mob, weight, generateMoveset(), JsonAdapters.gson.fromJson(condition, Condition.class)));
+    public Condition generateCondition() {
+        return JsonAdapters.gson.fromJson(condition, Condition.class);
     }
 }

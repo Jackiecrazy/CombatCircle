@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.condition.Condition;
+import jackiecrazy.combatcircle.move.condition.FalseCondition;
 import jackiecrazy.combatcircle.move.condition.TrueCondition;
 import jackiecrazy.combatcircle.utils.JsonAdapters;
 import jackiecrazy.footwork.move.Move;
@@ -15,12 +16,13 @@ import java.util.List;
 public abstract class Action extends Move {
     protected Condition condition = TrueCondition.INSTANCE;
     protected transient boolean triggered = false;
+    protected Condition retrigger = FalseCondition.INSTANCE;
     protected String ID = "(default)";
 
     /**
      * Runs the list of actions, aborting and returning a jump code if the child returns a jump code.
      */
-    protected int runActions(MovesetWrapper wrapper, @Nullable TimerAction parent, List<Action> actions, Entity performer, Entity target){
+    protected int runActions(MovesetWrapper wrapper, @Nullable TimerAction parent, List<Action> actions, Entity performer, Entity target) {
         int returnCode = 0;
         for (Action child : actions) {
             if (child.canRun(wrapper, parent, performer, target)) {
@@ -44,15 +46,9 @@ public abstract class Action extends Move {
         return triggered;
     }
 
-    public Action readFromJson(JsonObject from) {
-        //chat is this real//
-        return JsonAdapters.gson.fromJson(from, this.getClass());
-    }
-
     public boolean canRun(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
-        if (triggered) return false;
+        if (triggered && !retrigger.evaluate(null, performer, target)) return false;
         return condition.evaluate(parent, performer, target);
-
     }
 
     public void start(MovesetWrapper wrapper, Entity performer, Entity target) {

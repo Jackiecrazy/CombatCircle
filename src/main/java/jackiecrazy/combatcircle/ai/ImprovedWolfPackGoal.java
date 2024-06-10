@@ -92,7 +92,6 @@ public class ImprovedWolfPackGoal extends Goal {
     }
 
     public void start() {
-        mob.setAggressive(true);
         final LivingEntity target = mob.getTarget();
         if (target == null) return;
         double safeDist = Math.max(GeneralUtils.getAttributeValueSafe(target, ForgeMod.ENTITY_REACH.get()) + 1, CombatCircle.SPREAD_DISTANCE);

@@ -1,13 +1,11 @@
 package jackiecrazy.combatcircle;
 
 import jackiecrazy.combatcircle.ai.*;
-import jackiecrazy.combatcircle.move.Moves;
-import jackiecrazy.combatcircle.move.MovesetFactory;
-import jackiecrazy.combatcircle.move.Movesets;
+import jackiecrazy.combatcircle.move.*;
 import jackiecrazy.combatcircle.move.action.ActionRegistry;
 import jackiecrazy.combatcircle.move.argument.ArgumentRegistry;
-import jackiecrazy.combatcircle.move.capability.Mark;
-import jackiecrazy.combatcircle.move.capability.Marks;
+import jackiecrazy.combatcircle.capability.Moveset;
+import jackiecrazy.combatcircle.capability.MovesetData;
 import jackiecrazy.combatcircle.move.condition.ConditionRegistry;
 import jackiecrazy.combatcircle.move.filter.FilterRegistry;
 import jackiecrazy.combatcircle.utils.CombatManager;
@@ -16,10 +14,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.monster.RangedAttackMob;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -45,15 +41,15 @@ import java.util.Random;
 @Mod(CombatCircle.MODID)
 public class CombatCircle {
     public static final String MODID = "combatcircle";
-    public static final Random rand=new Random();
+    public static final Random rand = new Random();
 
     public static final int SHORT_DISTANCE = 1;
-    public static final int SPREAD_DISTANCE = 3;
+    public static final int SPREAD_DISTANCE = 7;
     public static final int CIRCLE_SIZE = 4;
     public static final int MAXIMUM_CHASE_TIME = 100;
     public static final int MOB_LIMIT = 10;//5
-    public static final int ATTACK_LIMIT = 4;
-    public static final TagKey<EntityType<?>> COWARD= TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(MODID, "coward"));
+    public static final int ATTACK_LIMIT = 10;
+    public static final TagKey<EntityType<?>> COWARD = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(MODID, "coward"));
 
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
@@ -97,23 +93,38 @@ public class CombatCircle {
     @Mod.EventBusSubscriber
     public static class TestEvents {
         @SubscribeEvent
+        public static void caps(AttachCapabilitiesEvent<Entity> e) {
+            if (e.getObject() instanceof LivingEntity lb) {
+                e.addCapability(new ResourceLocation("combatcircle:delayed_actions"), new MovesetData(new Moveset(lb)));
+            }
+        }
+
+        @SubscribeEvent
         public static void spread(final EntityJoinLevelEvent e) {
             if (e.getEntity() instanceof PathfinderMob mob) {
-                for(WrappedGoal wg:new HashSet<>(mob.goalSelector.getAvailableGoals())){
-                    if(wg.getGoal() instanceof MeleeAttackGoal)
-                        mob.goalSelector.removeGoal(wg.getGoal());
+                if (Movesets.moves.containsKey(mob.getType())) {
+                    mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(Movesets.moves.get(mob.getType()).encirclement_distance);
                 }
-                if(mob instanceof RangedAttackMob)
-                    mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE+3);
-                    else mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE);
+                if (mob instanceof RangedAttackMob)
+                    mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE + 3);
+                else
+                    mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE);
                 mob.goalSelector.addGoal(0, new WolfPackGoal((PathfinderMob) e.getEntity()));//theoretically as long as it continues to wolfpack it won't attack
                 //mob.getBrain().removeAllBehaviors();
                 mob.goalSelector.addGoal(1, new LookMenacingGoal((PathfinderMob) e.getEntity()));
-                MovesetFactory[] sets=Movesets.moves.get(mob.getType());
-                if(sets!=null){
-                    for(MovesetFactory msf:sets){
-                        msf.attachToMob(mob);
+                EntityInfo sets = Movesets.moves.get(mob.getType());
+                if (sets != null) {
+                    for (WrappedGoal wg : new HashSet<>(mob.goalSelector.getAvailableGoals())) {
+                        for (Class<Goal> goal : sets.to_wipe)
+                            if (goal.isAssignableFrom(wg.getGoal().getClass()))
+                                mob.goalSelector.removeGoal(wg.getGoal());
                     }
+                    for (WrappedGoal wg : new HashSet<>(mob.targetSelector.getAvailableGoals())) {
+                        for (Class<Goal> goal : sets.to_wipe)
+                            if (goal.isAssignableFrom(wg.getGoal().getClass()))
+                                mob.targetSelector.removeGoal(wg.getGoal());
+                    }
+                    mob.targetSelector.addGoal(0, new MovesetGoal(mob, new MovesetManager(mob, sets.moveset)));
                 }
 
                 /*
@@ -170,14 +181,7 @@ public class CombatCircle {
 
         @SubscribeEvent
         public static void tick(LivingEvent.LivingTickEvent e) {
-            Marks.getCap(e.getEntity()).update();
-        }
-
-        @SubscribeEvent
-        public static void caps(AttachCapabilitiesEvent<Entity> e) {
-            if (e.getObject() instanceof LivingEntity lb) {
-                e.addCapability(new ResourceLocation("combatcircle:delayed_actions"), new Marks(new Mark(lb)));
-            }
+            MovesetData.getCap(e.getEntity()).update();
         }
 
         @SubscribeEvent

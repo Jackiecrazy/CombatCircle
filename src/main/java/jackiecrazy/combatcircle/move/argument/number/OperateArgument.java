@@ -9,6 +9,7 @@ public class OperateArgument extends NumberArgument {
         SUB("-"),
         MUL("*"),
         DIV("/"),
+        MOD("%"),
         POW("^");
 
         private final String value;
@@ -35,6 +36,7 @@ public class OperateArgument extends NumberArgument {
             case SUB -> f - s;
             case MUL -> f * s;
             case DIV -> f / s;
+            case MOD -> f % s;
             case POW -> Math.pow(f, s);
         };
     }

@@ -1,16 +1,28 @@
-package jackiecrazy.combatcircle.move.capability;
+package jackiecrazy.combatcircle.capability;
 
+import jackiecrazy.combatcircle.move.MovesetManager;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
 import net.minecraft.world.entity.Entity;
 
 import java.util.*;
 
-public class Mark implements IMark {
+public class Moveset implements IMoveset {
     private final Entity tiedTo;
+    private MovesetManager manager;
     private final HashMap<Entity, List<MovesetWrapper>> marks = new HashMap<>();
 
-    public Mark(Entity linked) {
+    public Moveset(Entity linked) {
         tiedTo = linked;
+    }
+
+    @Override
+    public void setMovesetManager(MovesetManager mm) {
+        manager=mm;
+    }
+
+    @Override
+    public MovesetManager getMovesetManager() {
+        return manager;
     }
 
     @Override

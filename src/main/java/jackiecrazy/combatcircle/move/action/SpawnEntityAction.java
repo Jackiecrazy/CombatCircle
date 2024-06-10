@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
@@ -38,7 +39,7 @@ public class SpawnEntityAction extends Action {
         Entity summoner = this.summoner.resolveAsEntity(performer, target);
         int toSpawn = (int) quantity.resolve(performer, target);
         double deviation = spread.resolve(performer, target);
-        Vec3 vec = position.resolve(performer, target);
+        Vec3 vec = position.resolveAsVector(performer, target);
         Level level = performer.level();
         if (level instanceof ServerLevel serverlevel) {
             for (int x = 0; x < toSpawn; x++) {
@@ -46,10 +47,16 @@ public class SpawnEntityAction extends Action {
                 final Vec3 pos = vec.add(rand);
                 CompoundTag compoundtag = tag == null ? new CompoundTag() : tag.copy();
                 compoundtag.putString("id", entity.toString());
-                Vec3 look = facing.resolve(performer, target);
+                Vec3 look = facing.resolveAsVector(performer, target);
                 Entity summon = EntityType.loadEntityRecursive(compoundtag, serverlevel, (toSummon) -> {
                     double flatDist = Math.sqrt(look.x * look.x + look.z * look.z);
                     toSummon.moveTo(pos.x, pos.y, pos.z, (float) Mth.wrapDegrees(GeneralUtils.deg((float) Mth.atan2(look.z, look.x)) - 90.0F), Mth.wrapDegrees(-GeneralUtils.deg((float) Mth.atan2(look.y, flatDist))));
+                    if(toSummon instanceof Projectile p){
+                        p.setOwner(summoner);
+                    }
+                    if(toSummon instanceof TamableAnimal p){
+                        p.setOwnerUUID(summoner.getUUID());
+                    }
                     return toSummon;
                 });
                 if (summon != null) {

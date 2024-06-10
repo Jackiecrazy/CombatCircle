@@ -8,7 +8,7 @@ public class RawVectorArgument extends VectorArgument {
     public static final VectorArgument ZERO = new VectorArgument() {
 
         @Override
-        Vec3 _resolve(Entity caster, Entity target) {
+        public Vec3 _resolve(Entity caster, Entity target) {
             return Vec3.ZERO;
         }
     };

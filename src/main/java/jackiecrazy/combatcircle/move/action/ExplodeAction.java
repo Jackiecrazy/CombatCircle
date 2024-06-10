@@ -34,7 +34,7 @@ public class ExplodeAction extends Action {
 
     @Override
     public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
-        Vec3 pos = position.resolve(performer, target);
+        Vec3 pos = position.resolveAsVector(performer, target);
         performer.level().explode(exploder.resolveAsEntity(performer, target), damage_source.bake(parent, performer, target), null, pos.x, pos.y, pos.z, (float) radius.resolve(performer, target), fire.evaluate(parent, performer, target), griefing);
         return 0;
     }

@@ -8,6 +8,6 @@ public class DistanceArgument extends NumberArgument {
 
     @Override
     public double resolve(Entity caster, Entity target) {
-        return first.resolve(caster, target).distanceTo(second.resolve(caster, target));
+        return first.resolveAsVector(caster, target).distanceTo(second.resolveAsVector(caster, target));
     }
 }

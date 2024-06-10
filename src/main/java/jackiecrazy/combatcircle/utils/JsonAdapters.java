@@ -17,16 +17,18 @@ import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
 import jackiecrazy.combatcircle.move.condition.*;
 import jackiecrazy.combatcircle.move.filter.Filter;
 import jackiecrazy.combatcircle.move.filter.FilterRegistry;
-import jackiecrazy.combatcircle.move.filter.NoFilter;
 import jackiecrazy.combatcircle.move.filter.SingletonFilterType;
 import net.minecraft.commands.arguments.CompoundTagArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
 import java.lang.reflect.Type;
+import java.util.function.Supplier;
 
 public class JsonAdapters {
     public static final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Class.class, new ClassAdapter())
+            .registerTypeAdapter(Supplier.class, new SupplierAdapter())
             .registerTypeAdapter(Action.class, new ActionAdapter())
             .registerTypeAdapter(TimerAction.class, new ActionAdapter())
             .registerTypeAdapter(Argument.class, new ArgumentAdapter())
@@ -39,6 +41,24 @@ public class JsonAdapters {
             .registerTypeAdapter(CompoundTag.class, new NBTAdapter())
             .setPrettyPrinting()
             .create();
+
+    public static class ClassAdapter implements JsonDeserializer<Class> {
+        @Override
+        public Class deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            try {
+                return Class.forName(json.getAsString());
+            } catch (ClassNotFoundException e) {
+                throw new JsonParseException("cannot find class " + json);
+            }
+        }
+    }
+
+    public static class SupplierAdapter implements JsonDeserializer<Supplier<String>> {
+        @Override
+        public Supplier<String> deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            return json::getAsString;
+        }
+    }
 
     public static class ActionAdapter implements JsonDeserializer<Action> {
         @Override
@@ -63,8 +83,7 @@ public class JsonAdapters {
                 ResourceLocation rl = new ResourceLocation(json.getAsString());
                 if (ArgumentRegistry.SUPPLIER.get().getValue(rl) instanceof SingletonArgumentType sat) {
                     return sat.bake(null);
-                }
-                else throw new JsonParseException("argument is not a singleton: " + json);
+                } else throw new JsonParseException("argument is not a singleton: " + json);
             }
             JsonObject sub = json.getAsJsonObject();
             if (sub.has("ID")) {
@@ -88,8 +107,7 @@ public class JsonAdapters {
                 ResourceLocation rl = new ResourceLocation(json.getAsString());
                 if (ConditionRegistry.SUPPLIER.get().getValue(rl) instanceof SingletonConditionType sat) {
                     return sat.bake(null);
-                }
-                else throw new JsonParseException("condition is not a singleton: " + json);
+                } else throw new JsonParseException("condition is not a singleton: " + json);
             }
             JsonObject sub = json.getAsJsonObject();
             if (sub.has("ID")) {
@@ -110,8 +128,7 @@ public class JsonAdapters {
                 ResourceLocation rl = new ResourceLocation(json.getAsString());
                 if (FilterRegistry.SUPPLIER.get().getValue(rl) instanceof SingletonFilterType sat) {
                     return sat.bake(null);
-                }
-                else throw new JsonParseException("filter is not a singleton: " + json);
+                } else throw new JsonParseException("filter is not a singleton: " + json);
             }
             JsonObject sub = json.getAsJsonObject();
             if (sub.has("ID")) {
@@ -166,15 +183,15 @@ public class JsonAdapters {
         }
     }
 
-    public static class NBTAdapter implements JsonDeserializer<CompoundTag>{
+    public static class NBTAdapter implements JsonDeserializer<CompoundTag> {
 
         @Override
         public CompoundTag deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-            if(!json.isJsonPrimitive())throw new JsonParseException("not an NBT tag: " + json);
+            if (!json.isJsonPrimitive()) throw new JsonParseException("not an NBT tag: " + json);
             try {
                 return CompoundTagArgument.compoundTag().parse(new StringReader(json.getAsString()));
             } catch (CommandSyntaxException e) {
-                throw new JsonParseException("invalid NBT definition: "+json);
+                throw new JsonParseException("invalid NBT definition: " + json);
             }
         }
     }

@@ -1,6 +1,7 @@
 package jackiecrazy.combatcircle.ai;
 
 import jackiecrazy.combatcircle.CombatCircle;
+import jackiecrazy.combatcircle.move.Movesets;
 import jackiecrazy.combatcircle.utils.CombatManager;
 import jackiecrazy.footwork.api.FootworkAttributes;
 import jackiecrazy.footwork.utils.GeneralUtils;
@@ -83,10 +84,13 @@ public class WolfPackGoal extends Goal {
         double safeDist = Math.max(GeneralUtils.getAttributeValueSafe(target, ForgeMod.ENTITY_REACH.get()), GeneralUtils.getAttributeValueSafe(mob, FootworkAttributes.ENCIRCLEMENT_DISTANCE.get())) + slightSpread;
         //too far away, just charge in
         if (target.distanceToSqr(mob) > safeDist * safeDist * 4) return false;
-        //becomes an attacker, moves as they please
-        if (CombatManager.getManagerFor(target).hasAttacker(mob)) return false;
         //there is no circle
         if (CombatManager.getManagerFor(target).getAllAttackers().size() < 2) return false;
+        //becomes an attacker, moves as they please, differential handling for smart and dumb mobs
+        if (Movesets.moves.containsKey(target.getType())) {
+            if (!CombatManager.getManagerFor(target).hasAttacker(mob)) return false;
+            //fixme cannot pick a goal while wolfpacking, causing infinite wolfpacking
+        } else if (!CombatManager.getManagerFor(target).addAttacker(mob, null)) return false;
 
         //start with random base vector to emulate natural strafe
         Vec3 toAvoid = Vec3.ZERO;//new Vec3(Math.random(), Math.random(), Math.random());
@@ -105,9 +109,6 @@ public class WolfPackGoal extends Goal {
                 float sideWeighting = mob2.getBbWidth();
                 //add a significant side vector if mob is attacking to move out of the way of shots
                 if (CombatManager.getManagerFor(target).hasAttacker(mob2)) sideWeighting *= 3;
-                    //cowards hide behind non-cowards
-                else if (mob.getType().is(CombatCircle.COWARD) && !mob2.getType().is(CombatCircle.COWARD))
-                    sideWeighting *= -1;
                 Vec3 diff = secondToFirst.add(targetToMob.normalize().scale(0.5)).scale(sideWeighting);
                 toAvoid = toAvoid.add(diff);//.add(diff.normalize().scale(other.getBbWidth()/Math.min(1, diff.lengthSqr())));
                 //flock
@@ -132,7 +133,7 @@ public class WolfPackGoal extends Goal {
     @Override
     public boolean canContinueToUse() {
         //becomes an attacker, does as they please
-        boolean canAttack = targetCopy != null && CombatManager.getManagerFor(targetCopy).addAttacker(mob, null);
+        boolean canAttack = targetCopy != null && CombatManager.getManagerFor(targetCopy).hasAttacker(mob);
 //        if (canAttack)
 //            ParticleUtils.playSweepParticle(FootworkParticles.CIRCLE.get(), mob, mob.position(), 0, 1, c, 2);
 //        if (pathNav.isDone())
@@ -146,7 +147,6 @@ public class WolfPackGoal extends Goal {
     }
 
     public void start() {
-        mob.setAggressive(true);
         if (targetCopy == null) return;
         double safeDist = Math.max(GeneralUtils.getAttributeValueSafe(targetCopy, ForgeMod.ENTITY_REACH.get()) + 1, CombatCircle.SPREAD_DISTANCE);
         //we cannot control horizontal movement purely via strafe because drowned don't strafe

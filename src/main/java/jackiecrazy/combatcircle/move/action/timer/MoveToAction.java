@@ -26,7 +26,7 @@ public class MoveToAction extends TimerAction {
     @Override
     public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
         runActions(wrapper, this, on_start, performer, target);//fixme doesn't proc continuous tasks
-        Vec3 dir = position.resolve(performer, target);
+        Vec3 dir = position.resolveAsVector(performer, target);
         if (performer instanceof Mob m)
             m.getMoveControl().setWantedPosition(dir.x, dir.y, dir.z, speed_modifier.resolve(performer, target));
         super.start(wrapper, performer, target);

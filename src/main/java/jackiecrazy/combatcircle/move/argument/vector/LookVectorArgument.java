@@ -9,7 +9,7 @@ public class LookVectorArgument extends VectorArgument{
     EntityArgument reference_point=CasterEntityArgument.INSTANCE;
 
     @Override
-    Vec3 _resolve(Entity caster, Entity target) {
+    public Vec3 _resolve(Entity caster, Entity target) {
         return reference_point.resolveAsEntity(caster, target).getLookAngle();
     }
 }

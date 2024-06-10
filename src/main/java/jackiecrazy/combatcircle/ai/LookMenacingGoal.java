@@ -25,26 +25,29 @@ public class LookMenacingGoal extends LookAtPlayerGoal {
         lookAt = mob.getTarget();
         if (mob.getTarget() == null) return false;
         //too far away, just charge in
-        if (mob.getTarget().distanceToSqr(mob) > CombatCircle.SPREAD_DISTANCE * CombatCircle.SPREAD_DISTANCE) return false;
+        if (mob.getTarget().distanceToSqr(mob) > CombatCircle.SPREAD_DISTANCE * CombatCircle.SPREAD_DISTANCE)
+            return false;
         CombatManager cm = CombatManager.getManagerFor(mob.getTarget());
-        return !cm.addAttacker(mob, null);
+        return !cm.hasAttacker(mob);
     }
 
     @Override
     public boolean canContinueToUse() {
+        if (strafeTick > 60 && mob.tickCount % 24 == 0) return false;
         return canUse();
     }
 
     @Override
     public void start() {
         super.start();
-        System.out.println("yeet");
+        flip=mob.tickCount%7==0;
         strafeTick = 0;
     }
 
     @Override
     public void stop() {
         strafeTick = 0;
+        flip = !flip;
         super.stop();
     }
 
@@ -53,10 +56,6 @@ public class LookMenacingGoal extends LookAtPlayerGoal {
         strafeTick++;
         if (mob.getTarget() != null)
             mob.lookAt(mob.getTarget(), 30, 30);
-        if (strafeTick > 30 && mob.getRandom().nextInt(20) == 0) {
-            flip = !flip;
-            strafeTick = 0;
-        }
         if (strafeTick > 20) {
             mob.getMoveControl().strafe(0, flip ? 0.2f : -0.2f);
         }
@@ -65,7 +64,7 @@ public class LookMenacingGoal extends LookAtPlayerGoal {
 
     @Override
     public boolean isInterruptable() {
-        return false;
+        return true;
     }
 
     @Override

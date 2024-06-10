@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -17,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Movesets extends SimpleJsonResourceReloadListener {
-    public static final HashMap<EntityType<?>, MovesetFactory[]> moves = new HashMap<>();
+    public static final HashMap<EntityType<?>, EntityInfo> moves = new HashMap<>();
 
     public Movesets() {
         super(JsonAdapters.gson, "combat_circle_movesets");
@@ -39,7 +40,8 @@ public class Movesets extends SimpleJsonResourceReloadListener {
                 for (MovesetFactory msf : mf)
                     if (!msf.validate())
                         CombatCircle.LOGGER.error("{} is an invalid moveset factory!", key);
-                moves.merge(et, mf, ArrayUtils::addAll);
+                EntityInfo ei=JsonAdapters.gson.fromJson(file, EntityInfo.class);
+                moves.put(et, ei);
             } catch (Exception e) {
                 CombatCircle.LOGGER.error("{} is an invalid moveset definition!", key);
                 e.printStackTrace();

@@ -1,9 +1,8 @@
-package jackiecrazy.combatcircle.move.capability;
+package jackiecrazy.combatcircle.capability;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
@@ -13,23 +12,23 @@ import net.minecraftforge.common.util.LazyOptional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class Marks implements ICapabilitySerializable<CompoundTag> {
-    private static IMark OHNO = new DummyMarkCap();
+public class MovesetData implements ICapabilitySerializable<CompoundTag> {
+    private static IMoveset OHNO = new DummyMovesetCap();
 
-    public static Capability<IMark> CAP = CapabilityManager.get(new CapabilityToken<>() {
+    public static Capability<IMoveset> CAP = CapabilityManager.get(new CapabilityToken<>() {
     });
 
-    public static IMark getCap(Entity le) {
+    public static IMoveset getCap(Entity le) {
         return le.getCapability(CAP).orElse(OHNO);//.orElseThrow(() -> new IllegalArgumentException("attempted to find a nonexistent capability"));
     }
 
-    protected final IMark instance;
+    protected final IMoveset instance;
 
-    public Marks() {
-        this(new DummyMarkCap());
+    public MovesetData() {
+        this(new DummyMovesetCap());
     }
 
-    public Marks(IMark cap) {
+    public MovesetData(IMoveset cap) {
         instance = cap;
     }
 

@@ -6,7 +6,7 @@
         "radius": 6,
         "damage": 1,
         "typing": "MAGICAL",
-        "griefing": "TNT",
+        "griefing": "NONE",
         "position": {
           "ID": "combatcircle:eye_position",
           "reference_point": "combatcircle:target"

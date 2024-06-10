@@ -1,21 +1,42 @@
 package jackiecrazy.combatcircle.move;
 
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
+import jackiecrazy.combatcircle.move.condition.Condition;
+import jackiecrazy.combatcircle.move.condition.TrueCondition;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.Vec3;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class MovesetWrapper {
     private List<TimerAction> actions;
-    private Map<String, Vec3> vecStorage=new HashMap<>();
     private TimerAction currentMove;
+    private Condition canRun;
     private int index = 0;
+    private int power;
+    private int changePer, currentWeight;
+
+    public MovesetWrapper(int power, int initialWeight, int weightChange, List<TimerAction> actions, Condition toRun) {
+        this.actions = actions;
+        canRun = toRun;
+        currentWeight = initialWeight;
+        changePer = weightChange;
+        this.power = power;
+    }
 
     public MovesetWrapper(List<TimerAction> actions) {
-        this.actions = actions;
+        this(0, 0, 0, actions, TrueCondition.INSTANCE);
+    }
+
+    public int getChangePer() {
+        return changePer;
+    }
+
+    public int getCurrentWeight() {
+        return currentWeight;
+    }
+
+    public void changeCurrentWeight(int by) {
+        currentWeight += Math.abs(by);
     }
 
     public boolean executing() {
@@ -32,7 +53,11 @@ public class MovesetWrapper {
         currentMove = null;
     }
 
-    public void tick(Entity performer, Entity target){
+    public boolean canRun(Entity performer, Entity target) {
+        return canRun.evaluate(null, performer, target);
+    }
+
+    public void tick(Entity performer, Entity target) {
         int ret = currentMove.perform(this, null, performer, target);
         if (ret < 0) {
             //natural progression//
@@ -41,10 +66,13 @@ public class MovesetWrapper {
         }
         if (ret > 0) {
             //jump, reset everything//
-            //TODO implement loop
             actions.forEach(TimerAction::reset);
             index = ret - 1;
             currentMove = actions.get(index % actions.size());
         }
+    }
+
+    public int getPower() {
+        return power;
     }
 }

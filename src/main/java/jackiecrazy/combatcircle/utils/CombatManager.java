@@ -3,6 +3,7 @@ package jackiecrazy.combatcircle.utils;
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.move.MovesetGoal;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.move.Movesets;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,7 +26,7 @@ public class CombatManager {
     private static final CombatManager dummy = new CombatManager(null, 0, 0);
     private final ConcurrentLinkedQueue<Mob> mobList = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<Node> nodeCache = new ConcurrentLinkedQueue<>();
-    private final ConcurrentHashMap<Mob, MovesetGoal> attackList = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<Mob, Integer> attackList = new ConcurrentHashMap<>();
     private final ConcurrentLinkedQueue<Mob> coolingList = new ConcurrentLinkedQueue<>();
     private final LivingEntity target;
     /*
@@ -60,6 +61,8 @@ Mobs should move into a position that is close to the player, far from allies, a
     > check if any mob is (taking more than 5 second to attack), beyond their move range, has been interrupted, or has finished
        if so, purge them from the attack list and order them to leave the circle, placing them on the cooling list
     > purge the first recorded mob from the cooling list if at least 10 ticks have elapsed
+
+    mlimit for mobs that form the inner circle, alimit for attacks
      */
     private final int mlimit, alimit;
     private final ArrayList<Mob> purge = new ArrayList<>();
@@ -127,9 +130,13 @@ Mobs should move into a position that is close to the player, far from allies, a
         //can we squeeze the move in
         float weight = getAttackWeight(m, move);
         if (alimit < currentAttack + weight) return false;
-        attackList.put(m, move);
+        attackList.put(m, m.tickCount);
         currentAttack += weight;
         return true;
+    }
+
+    public float getRemainingAttackPower() {
+        return alimit - currentAttack;
     }
 
     public void removeMob(Mob m) {
@@ -169,15 +176,15 @@ Mobs should move into a position that is close to the player, far from allies, a
 
     public void tick() {
         purge.clear();
-        //remove attackers that have attacked
-//        attackList.forEach((a, b) -> {
-//            if (!a.isAlive() || currentMob > 1 && (a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtMobTimestamp() > b)) {
-//                purge.add(a);
-//                purgeTimer = 0;
-//            }
-//        });
-//        purge.forEach(a -> this.removeAttacker(a, null));
-//        purge.clear();
+        //remove dumb attackers that have attacked
+        attackList.forEach((a, b) -> {
+            if (!a.isAlive() || currentMob > 1 && !Movesets.moves.containsKey(a.getType()) && (a.tickCount > b + CombatCircle.MAXIMUM_CHASE_TIME || a.getLastHurtMobTimestamp() > b)) {
+                purge.add(a);
+                purgeTimer = 0;
+            }
+        });
+        purge.forEach(a -> this.removeAttacker(a, null));
+        purge.clear();
         //remove dead mobs to prevent memory leak
         mobList.forEach(a -> {
             if (!a.isAlive()) {

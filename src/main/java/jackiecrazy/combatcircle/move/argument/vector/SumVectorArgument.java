@@ -7,10 +7,10 @@ public class SumVectorArgument extends VectorArgument{
     VectorArgument[] addends;
 
     @Override
-    Vec3 _resolve(Entity caster, Entity target) {
+    public Vec3 _resolve(Entity caster, Entity target) {
         Vec3 start=Vec3.ZERO;
         for(VectorArgument vec: addends){
-            start=start.add(vec.resolve(caster, target));
+            start=start.add(vec.resolveAsVector(caster, target));
         }
         return start;
     }

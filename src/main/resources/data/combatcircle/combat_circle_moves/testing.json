@@ -25,7 +25,7 @@
     "ID": "combatcircle:add_velocity",
     "max_time": 60,
     "direction": {
-      "ID": "combatcircle:sum",
+      "ID": "combatcircle:vector_sum",
       "min_length": 0.6,
       "max_length": 1.3,
       "addends": [

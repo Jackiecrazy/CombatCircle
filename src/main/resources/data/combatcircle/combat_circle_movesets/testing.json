@@ -1,12 +1,21 @@
 {
   "mob": "minecraft:vindicator",
+  "mob_size": 1,
+  "encirclement_distance": "3",
+  "condition": {
+
+  },
   "moveset": [
     {
-      "weight": 1,
-      "priority": 1,
+      "starting_weight": 1,
+      "weight_change": 0,
+      "size": 4,
       "condition": {
       },
       "move": "combatcircle:testing"
     }
+  ],
+  "to_wipe": [
+    "net.minecraft.world.entity.ai.goal.MeleeAttackGoal"
   ]
 }

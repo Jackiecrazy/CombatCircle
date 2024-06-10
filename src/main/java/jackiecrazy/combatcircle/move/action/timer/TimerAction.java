@@ -10,19 +10,25 @@ import javax.annotation.Nullable;
 
 public abstract class TimerAction extends Action {
 
-    public int getTimer() {
-        return timer;
-    }
-
+    transient int timer = 0;
     /**
      * on the base action
      */
     private NumberArgument max_time;
-    transient int timer = 0;
+
+    public int getTimer() {
+        return timer;
+    }
 
     @Override
     public boolean canRun(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
-        if (triggered && !isFinished(wrapper, performer, target)) return true;
+        if (triggered) {
+            if (!isFinished(wrapper, performer, target))
+                return true;
+            else if (retrigger.evaluate(null, performer, target)) {
+                triggered = false;
+            }
+        }
         return super.canRun(wrapper, parent, performer, target);
     }
 

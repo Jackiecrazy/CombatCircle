@@ -8,7 +8,7 @@ public class MultiplyVectorArgument extends VectorArgument {
     VectorArgument multiply;
 
     @Override
-    Vec3 _resolve(Entity caster, Entity target) {
-        return base.resolve(caster, target).multiply(multiply.resolve(caster, target));
+    public Vec3 _resolve(Entity caster, Entity target) {
+        return base.resolveAsVector(caster, target).multiply(multiply.resolveAsVector(caster, target));
     }
 }

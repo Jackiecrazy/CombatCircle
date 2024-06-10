@@ -40,7 +40,6 @@ public class Moves extends SimpleJsonResourceReloadListener {
                 CombatCircle.LOGGER.error("{} is an invalid moveset, it will not be registered!", key);
                 e.printStackTrace();
             }
-            System.out.println(a.serializeToJson());
         });
     }
 }

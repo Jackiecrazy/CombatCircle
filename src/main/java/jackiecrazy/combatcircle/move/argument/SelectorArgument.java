@@ -1,7 +1,6 @@
 package jackiecrazy.combatcircle.move.argument;
 
 import jackiecrazy.combatcircle.move.CircleEnums;
-import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
 import jackiecrazy.combatcircle.move.argument.vector.EyePositionVectorArgument;
 import jackiecrazy.combatcircle.move.argument.vector.LookVectorArgument;
@@ -34,8 +33,8 @@ public class SelectorArgument extends Argument {
 
     public List<Entity> resolve(Entity caster, Entity target) {
         List<Entity> resolved = new ArrayList<>();
-        Vec3 pos = position.resolve(caster, target);
-        Vec3 look = vector.resolve(caster, target);
+        Vec3 pos = position.resolveAsVector(caster, target);
+        Vec3 look = vector.resolveAsVector(caster, target);
         double ra = range.resolve(caster, target);
         if (shape == CircleEnums.SWEEPTYPE.NONE) {
             if (GeneralUtils.getDistSqCompensated(target, pos) < ra * ra) resolved.add(target);
