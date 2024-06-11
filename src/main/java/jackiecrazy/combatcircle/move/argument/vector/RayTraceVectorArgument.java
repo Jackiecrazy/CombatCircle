@@ -19,10 +19,10 @@ public class RayTraceVectorArgument extends VectorArgument {
     ClipContext.Fluid fluid_clip = ClipContext.Fluid.NONE;
 
     @Override
-    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
-        Vec3 start = position.resolveAsVector(wrapper, parent, caster, target);
-        Vec3 look = direction.resolveAsVector(wrapper, parent, caster, target);
-        double range = distance.resolve(wrapper, parent, caster, target);
-        return GeneralUtils.raytraceAnything(caster.level(), start, look, range, scans_entities.evaluate(wrapper, null, caster, target), block_clip, fluid_clip).getLocation();
+    public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+        Vec3 start = position.resolveAsVector(wrapper, caster, target);
+        Vec3 look = direction.resolveAsVector(wrapper, caster, target);
+        double range = distance.resolve(wrapper, caster, target);
+        return GeneralUtils.raytraceAnything(caster.level(), start, look, range, scans_entities.evaluate(wrapper, caster, target), block_clip, fluid_clip).getLocation();
     }
 }

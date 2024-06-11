@@ -9,7 +9,7 @@ public class CrossProductArgument extends VectorArgument {
     private VectorArgument first, second;
 
     @Override
-    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
-        return first.resolveAsVector(wrapper, parent, caster, target).cross(second.resolveAsVector(wrapper, parent, caster, target));
+    public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+        return first.resolveAsVector(wrapper, caster, target).cross(second.resolveAsVector(wrapper, caster, target));
     }
 }

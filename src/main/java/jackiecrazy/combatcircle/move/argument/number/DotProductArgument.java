@@ -9,7 +9,7 @@ public class DotProductArgument extends NumberArgument {
     private VectorArgument first, second;
 
     @Override
-    public double resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
-        return first.resolveAsVector(wrapper, parent, caster, target).dot(second.resolveAsVector(wrapper, parent, caster, target));
+    public double resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+        return first.resolveAsVector(wrapper, caster, target).dot(second.resolveAsVector(wrapper, caster, target));
     }
 }

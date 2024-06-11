@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity;
 public class SelectorEntityArgument extends EntityArgument{
     private SelectorArgument select;
     @Override
-    public Entity resolveAsEntity(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
-        return select.resolve(wrapper, parent, caster, target).get(0);
+    public Entity resolveAsEntity(MovesetWrapper wrapper, Entity caster, Entity target) {
+        return select.resolve(wrapper, caster, target).get(0);
     }
 }

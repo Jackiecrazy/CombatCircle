@@ -1,5 +1,5 @@
 {
-  "mob": "mymodid:mymob",
+  "mob": "minecraft:iron_golem",
   "mob_size": 1,
   "encirclement_distance": 5,
   "pursue_walk_speed": 1.0,

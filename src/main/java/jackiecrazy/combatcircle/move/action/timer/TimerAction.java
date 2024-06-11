@@ -21,22 +21,22 @@ public abstract class TimerAction extends Action {
     }
 
     @Override
-    public boolean canRun(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+    public boolean canRun(MovesetWrapper wrapper, Entity performer, Entity target) {
         if (triggered) {
             if (!isFinished(wrapper, performer, target))
                 return true;
-            else if (repeatable.evaluate(wrapper, null, performer, target)) {
+            else if (repeatable.evaluate(wrapper, performer, target)) {
                 triggered = false;
             }
         }
-        return super.canRun(wrapper, parent, performer, target);
+        return super.canRun(wrapper, performer, target);
     }
 
     /**
      * @return false if the action ends
      */
     public boolean isFinished(MovesetWrapper wrapper, Entity performer, Entity target) {
-        return timer > max_time.resolve(wrapper, this, performer, target);
+        return timer > max_time.resolve(wrapper, performer, target);
     }
 
     public int tick(MovesetWrapper wrapper, Entity performer, Entity target) {
@@ -44,8 +44,8 @@ public abstract class TimerAction extends Action {
         return isFinished(wrapper, performer, target) ? -1 : 0;
     }
 
-    public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
-        if (!triggered) start(wrapper, parent, performer, target);
+    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
+        if (!triggered) start(wrapper, performer, target);
         return tick(wrapper, performer, target);
     }
 

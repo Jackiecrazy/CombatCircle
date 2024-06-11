@@ -10,7 +10,7 @@ public class JumpToAction extends Action {
     private NumberArgument instruction;
 
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
-        return (int) instruction.resolve(wrapper, parent, performer, target);
+    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
+        return (int) instruction.resolve(wrapper, performer, target);
     }
 }

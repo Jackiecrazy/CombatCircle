@@ -111,6 +111,14 @@
       "max_length": 1.3
     },
     "on_launch": [
+      {
+        "ID": "combatcircle:swing_arm",
+        "hand": "MAIN_HAND"
+      },
+      {
+        "ID": "combatcircle:swing_arm",
+        "hand": "OFF_HAND"
+      }
     ],
     "tick": [
       {

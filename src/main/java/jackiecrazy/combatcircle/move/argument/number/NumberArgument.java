@@ -11,7 +11,7 @@ public abstract class NumberArgument extends Argument {
     public static final FixedNumberArgument ZERO = new FixedNumberArgument(0);
     public static final FixedNumberArgument ONE = new FixedNumberArgument(1);
 
-    public abstract double resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target);
+    public abstract double resolve(MovesetWrapper wrapper, Entity caster, Entity target);
 
 
     public static class Store extends Action {
@@ -19,8 +19,8 @@ public abstract class NumberArgument extends Argument {
         private String into;
 
         @Override
-        public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
-            final double vec = toStore.resolve(wrapper, parent, performer, target);
+        public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
+            final double vec = toStore.resolve(wrapper, performer, target);
             performer.getPersistentData().putDouble(into, vec);
             return 0;
         }
@@ -30,7 +30,7 @@ public abstract class NumberArgument extends Argument {
         private String from;
 
         @Override
-        public double resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        public double resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
             return caster.getPersistentData().getDouble(from);
         }
     }

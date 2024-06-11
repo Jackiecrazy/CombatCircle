@@ -10,7 +10,7 @@ public class EyeHeightVectorArgument extends VectorArgument {
     private EntityArgument reference_point;
 
     @Override
-    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
-        return new Vec3(0, reference_point.resolveAsEntity(wrapper, parent, caster, target).getEyeY(), 0);
+    public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+        return new Vec3(0, reference_point.resolveAsEntity(wrapper, caster, target).getEyeY(), 0);
     }
 }

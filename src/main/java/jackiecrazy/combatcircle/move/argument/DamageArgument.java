@@ -41,24 +41,24 @@ public class DamageArgument extends Argument {
     private List<ResourceLocation> tags = new ArrayList<>();
     transient Set<TagKey<DamageType>> dtags;
 
-    public CombatDamageSource bake(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity caster, Entity target) {
+    public CombatDamageSource bake(MovesetWrapper wrapper, @Nullable Entity caster, Entity target) {
         if (dtags == null) {
             dtags = tags.stream().map(a -> TagKey.create(Registries.DAMAGE_TYPE, a)).collect(Collectors.toSet());
         }
-        CombatDamageSource ret = new CombatDamageSource(source.resolveAsEntity(wrapper, parent, caster, target))
-                .setDamageDealer(equip.resolve(wrapper, parent, caster, target))
-                .setProxy(proxy.resolveAsEntity(wrapper, parent, caster, target))
+        CombatDamageSource ret = new CombatDamageSource(source.resolveAsEntity(wrapper, caster, target))
+                .setDamageDealer(equip.resolve(wrapper, caster, target))
+                .setProxy(proxy.resolveAsEntity(wrapper, caster, target))
                 .setDamageTyping(typing)
-                .setProcAttackEffects(proc_attack.evaluate(wrapper, parent, caster, target))
-                .setProcSkillEffects(proc_skill.evaluate(wrapper, parent, caster, target))
-                .setProcNormalEffects(proc_normal.evaluate(wrapper, parent, caster, target))
-                .setCrit(crit.evaluate(wrapper, parent, caster, target))
-                .setCritDamage((float) crit_damage.resolve(wrapper, parent, caster, target))
-                .setArmorReductionPercentage((float) armor_pierce_percentage.resolve(wrapper, parent, caster, target))
-                .setKnockbackPercentage((float) knockback_percentage.resolve(wrapper, parent, caster, target))
-                .setMultiplier((float) damage_multiplier.resolve(wrapper, parent, caster, target))
+                .setProcAttackEffects(proc_attack.evaluate(wrapper, caster, target))
+                .setProcSkillEffects(proc_skill.evaluate(wrapper, caster, target))
+                .setProcNormalEffects(proc_normal.evaluate(wrapper, caster, target))
+                .setCrit(crit.evaluate(wrapper, caster, target))
+                .setCritDamage((float) crit_damage.resolve(wrapper, caster, target))
+                .setArmorReductionPercentage((float) armor_pierce_percentage.resolve(wrapper, caster, target))
+                .setKnockbackPercentage((float) knockback_percentage.resolve(wrapper, caster, target))
+                .setMultiplier((float) damage_multiplier.resolve(wrapper, caster, target))
                 .setAttackingHand(equip.getSlot().getType() == EquipmentSlot.Type.HAND ? equip.getSlot() == EquipmentSlot.MAINHAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND : null)
-                .setPostureDamage((float) posture_damage.resolve(wrapper, parent, caster, target));
+                .setPostureDamage((float) posture_damage.resolve(wrapper, caster, target));
         dtags.forEach(ret::flag);
         return ret;
     }

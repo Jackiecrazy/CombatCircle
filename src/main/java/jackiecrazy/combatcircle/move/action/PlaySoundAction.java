@@ -22,13 +22,13 @@ public class PlaySoundAction extends Action {
     private NumberArgument pitch = NumberArgument.ONE;
 
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
         if (play == null)
             play = ForgeRegistries.SOUND_EVENTS.getValue(sound);
         if (play == null) return 0;
         //type/data, force, pos xyz, quantity, vel xyz, max speed
-        Vec3 pos = position.resolveAsVector(wrapper, parent, performer, target);
-        performer.level().playSound(null, pos.x, pos.y, pos.z, play, source, (float) volume.resolve(wrapper, parent, performer, target), (float) pitch.resolve(wrapper, parent, performer, target));
+        Vec3 pos = position.resolveAsVector(wrapper, performer, target);
+        performer.level().playSound(null, pos.x, pos.y, pos.z, play, source, (float) volume.resolve(wrapper, performer, target), (float) pitch.resolve(wrapper, performer, target));
         return 0;
     }
     //position, type, direction if any

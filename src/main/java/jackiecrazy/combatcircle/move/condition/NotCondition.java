@@ -8,7 +8,7 @@ public class NotCondition extends Condition {
     Condition of;
 
     @Override
-    public boolean evaluate(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
-        return !of.evaluate(wrapper, parent, performer, target);
+    public boolean evaluate(MovesetWrapper wrapper, Entity performer, Entity target) {
+        return !of.evaluate(wrapper, performer, target);
     }
 }

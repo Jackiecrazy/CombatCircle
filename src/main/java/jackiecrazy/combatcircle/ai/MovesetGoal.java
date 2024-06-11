@@ -7,7 +7,6 @@ import jackiecrazy.combatcircle.utils.CombatManager;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.Goal;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 

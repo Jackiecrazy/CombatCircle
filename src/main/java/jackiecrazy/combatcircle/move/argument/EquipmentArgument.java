@@ -22,8 +22,8 @@ public class EquipmentArgument extends Argument {
         this.entity = entity;
     }
 
-    public ItemStack resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
-        Entity e = entity.resolveAsEntity(wrapper, parent, caster, target);
+    public ItemStack resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+        Entity e = entity.resolveAsEntity(wrapper, caster, target);
         if (e instanceof LivingEntity ent) return ent.getItemBySlot(slot);
         return ItemStack.EMPTY;
     }

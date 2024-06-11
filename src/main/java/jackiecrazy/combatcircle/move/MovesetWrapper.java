@@ -9,17 +9,11 @@ import java.util.List;
 
 public class MovesetWrapper {
     private List<TimerAction> actions;
-
-    public TimerAction getCurrentMove() {
-        return currentMove;
-    }
-
     private TimerAction currentMove;
     private Condition canRun;
     private int index = 0;
     private int power;
     private int changePer, currentWeight;
-
     public MovesetWrapper(int power, int initialWeight, int weightChange, List<TimerAction> actions, Condition toRun) {
         this.actions = actions;
         canRun = toRun;
@@ -30,6 +24,10 @@ public class MovesetWrapper {
 
     public MovesetWrapper(List<TimerAction> actions) {
         this(0, 0, 0, actions, TrueCondition.INSTANCE);
+    }
+
+    public TimerAction getCurrentMove() {
+        return currentMove;
     }
 
     public int getChangePer() {
@@ -59,11 +57,11 @@ public class MovesetWrapper {
     }
 
     public boolean canRun(Entity performer, Entity target) {
-        return canRun.evaluate(this, null, performer, target);
+        return canRun.evaluate(this, performer, target);
     }
 
     public void tick(Entity performer, Entity target) {
-        int ret = currentMove.perform(this, null, performer, target);
+        int ret = currentMove.perform(this, performer, target);
         if (ret < 0) {
             //natural progression//
             index++;

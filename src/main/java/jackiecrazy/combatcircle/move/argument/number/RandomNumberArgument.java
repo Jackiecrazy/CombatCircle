@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity;
 public class RandomNumberArgument extends NumberArgument{
     NumberArgument bound;
     @Override
-    public double resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
-        return CombatCircle.rand.nextDouble(bound.resolve(wrapper, parent, caster, target));
+    public double resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+        return CombatCircle.rand.nextDouble(bound.resolve(wrapper, caster, target));
     }
 }

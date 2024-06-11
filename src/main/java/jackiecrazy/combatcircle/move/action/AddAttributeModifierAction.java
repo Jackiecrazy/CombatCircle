@@ -25,11 +25,11 @@ public class AddAttributeModifierAction extends Action {
     private EntityArgument recipient = CasterEntityArgument.INSTANCE;
 
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
         if (attr == null) attr = ForgeRegistries.ATTRIBUTES.getValue(attribute);
-        if (attr != null && recipient.resolveAsEntity(wrapper, parent, performer, target) instanceof LivingEntity ent && ent.getAttribute(attr) != null) {
+        if (attr != null && recipient.resolveAsEntity(wrapper, performer, target) instanceof LivingEntity ent && ent.getAttribute(attr) != null) {
             ent.getAttribute(attr).removeModifier(uuid);
-            AttributeModifier am = new AttributeModifier(uuid, name, amount.resolve(wrapper, parent, performer, target), operation);
+            AttributeModifier am = new AttributeModifier(uuid, name, amount.resolve(wrapper, performer, target), operation);
             ent.getAttribute(attr).addTransientModifier(am);
         }
         return 0;

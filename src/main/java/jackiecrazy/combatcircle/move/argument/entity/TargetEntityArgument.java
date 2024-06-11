@@ -7,7 +7,7 @@ import net.minecraft.world.entity.Entity;
 public class TargetEntityArgument extends EntityArgument{
     public static final TargetEntityArgument INSTANCE=new TargetEntityArgument();
     @Override
-    public Entity resolveAsEntity(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+    public Entity resolveAsEntity(MovesetWrapper wrapper, Entity caster, Entity target) {
         return target;
     }
 }

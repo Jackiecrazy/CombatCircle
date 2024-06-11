@@ -38,6 +38,7 @@ public class ArgumentRegistry {
     public static final RegistryObject<ArgumentType> DISTANCE = ARGUMENTS.register("distance", () -> (a) -> JsonAdapters.gson.fromJson(a, DistanceArgument.class));
     public static final RegistryObject<ArgumentType> GET_NUMBER = ARGUMENTS.register("get_number", () -> (a) -> JsonAdapters.gson.fromJson(a, NumberArgument.Get.class));
     public static final RegistryObject<ArgumentType> RANDOM = ARGUMENTS.register("random", () -> (a) -> JsonAdapters.gson.fromJson(a, RandomNumberArgument.class));
+    public static final RegistryObject<ArgumentType> PARENT_TIMER = ARGUMENTS.register("parent_timer", () -> (SingletonArgumentType) a -> ParentTimerArgument.INSTANCE);
 
     //vectors//
     public static final RegistryObject<ArgumentType> RAW = ARGUMENTS.register("vector", () -> (a) -> JsonAdapters.gson.fromJson(a, RawVectorArgument.class));

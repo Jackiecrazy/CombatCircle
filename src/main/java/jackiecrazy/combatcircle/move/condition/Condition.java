@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 public abstract class Condition {
     private String ID = "(default)";
 
-    public abstract boolean evaluate(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target);
+    public abstract boolean evaluate(MovesetWrapper wrapper, @Nullable Entity performer, Entity target);
 
     public String serializeToJson(JsonObject to) {
         return JsonAdapters.gson.toJson(this);

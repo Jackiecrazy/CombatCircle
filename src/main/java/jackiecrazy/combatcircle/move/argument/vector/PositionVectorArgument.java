@@ -12,7 +12,7 @@ public class PositionVectorArgument extends VectorArgument {
     public static final PositionVectorArgument CASTER = new PositionVectorArgument();
 
     @Override
-    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
-        return reference_point.resolveAsEntity(wrapper, parent, caster, target).position();
+    public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+        return reference_point.resolveAsEntity(wrapper, caster, target).position();
     }
 }

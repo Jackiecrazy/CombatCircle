@@ -10,7 +10,7 @@ public class RawVectorArgument extends VectorArgument {
     public static final VectorArgument ZERO = new VectorArgument() {
 
         @Override
-        public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
             return Vec3.ZERO;
         }
     };
@@ -18,9 +18,9 @@ public class RawVectorArgument extends VectorArgument {
     transient Vec3 vec;
 
     @Override
-    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+    public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
         if (vec == null)
-            vec = new Vec3(x.resolve(wrapper, parent, caster, target), y.resolve(wrapper, parent, caster, target), z.resolve(wrapper, parent, caster, target));
+            vec = new Vec3(x.resolve(wrapper, caster, target), y.resolve(wrapper, caster, target), z.resolve(wrapper, caster, target));
         return vec;
     }
 }

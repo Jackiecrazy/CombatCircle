@@ -45,4 +45,5 @@ public class ActionRegistry {
     public static final RegistryObject<ActionType> PLAY_PARTICLE = ACTIONS.register("play_particle", () -> (a) -> JsonAdapters.gson.fromJson(a, PlayParticleAction.class));
     public static final RegistryObject<ActionType> PLAY_SOUND = ACTIONS.register("play_sound", () -> (a) -> JsonAdapters.gson.fromJson(a, PlaySoundAction.class));
     public static final RegistryObject<ActionType> TELEPORT = ACTIONS.register("teleport", () -> (a) -> JsonAdapters.gson.fromJson(a, TeleportAction.class));
+    public static final RegistryObject<ActionType> SWING_ARM = ACTIONS.register("swing_arm", () -> (a) -> JsonAdapters.gson.fromJson(a, SwingArmAction.class));
 }

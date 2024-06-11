@@ -21,26 +21,26 @@ public class AddVelocityAction extends TimerAction {
     }
 
     @Override
-    public void start(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
-        runActions(wrapper, this, on_launch, performer, target);
-        Vec3 dir = direction.resolveAsVector(wrapper, parent, performer, target);
+    public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
+        runActions(wrapper, on_launch, performer, target);
+        Vec3 dir = direction.resolveAsVector(wrapper, performer, target);
         performer.addDeltaMovement(dir);
         if(dir.y>0){
             performer.setOnGround(false);
             flying=true;
         }
-        super.start(wrapper, parent, performer, target);
+        super.start(wrapper, performer, target);
     }
 
     @Override
     public int tick(MovesetWrapper wrapper, Entity performer, Entity target) {
-        int childRet = runActions(wrapper, this, tick, performer, target);
+        int childRet = runActions(wrapper, tick, performer, target);
         if (childRet != 0) return childRet;
         if(!performer.onGround()){
             flying=true;
         }else if(flying){
             flying=false;
-            childRet = runActions(wrapper, this, on_land, performer, target);
+            childRet = runActions(wrapper, on_land, performer, target);
             if (childRet != 0) return childRet;
         }
         return super.tick(wrapper, performer, target);

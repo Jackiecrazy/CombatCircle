@@ -15,9 +15,11 @@ public class SwingArmAction extends Action {
     private EntityArgument swinger = CasterEntityArgument.INSTANCE;
 
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
-        if (swinger.resolveAsEntity(wrapper, parent, performer, target) instanceof LivingEntity e)
+    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
+        if (swinger.resolveAsEntity(wrapper, performer, target) instanceof LivingEntity e) {
             e.swing(hand, true);
+            e.level().broadcastEntityEvent(e, (byte)4);
+        }
         return 0;
     }
 }

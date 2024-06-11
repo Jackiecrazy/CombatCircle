@@ -10,6 +10,6 @@ public class ConditionFilter extends Filter {
     private Condition condition;
     @Override
     public List<Entity> filter(MovesetWrapper wrapper, Entity performer, Entity target, List<Entity> targets) {
-        return targets.stream().filter(a->condition.evaluate(wrapper, null, performer, a)).toList();
+        return targets.stream().filter(a->condition.evaluate(wrapper, performer, a)).toList();
     }
 }

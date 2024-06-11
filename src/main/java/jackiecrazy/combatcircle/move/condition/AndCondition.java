@@ -10,9 +10,9 @@ public class AndCondition extends Condition {
     List<Condition> values;
 
     @Override
-    public boolean evaluate(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+    public boolean evaluate(MovesetWrapper wrapper, Entity performer, Entity target) {
         for(Condition c: values){
-            if(!c.evaluate(wrapper, parent, performer, target))return false;
+            if(!c.evaluate(wrapper, performer, target))return false;
         }
         return true;
     }

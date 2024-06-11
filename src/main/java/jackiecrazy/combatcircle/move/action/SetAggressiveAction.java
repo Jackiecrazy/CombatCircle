@@ -12,9 +12,9 @@ public class SetAggressiveAction extends Action {
     Condition toggle;
 
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
         if (performer instanceof Mob e) {
-            e.setAggressive(toggle.evaluate(wrapper, parent, performer, target));
+            e.setAggressive(toggle.evaluate(wrapper, performer, target));
         }
         return 0;
     }

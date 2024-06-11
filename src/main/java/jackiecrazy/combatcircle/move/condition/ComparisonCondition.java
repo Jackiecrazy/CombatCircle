@@ -30,9 +30,9 @@ public class ComparisonCondition extends Condition {
 
 
     @Override
-    public boolean evaluate(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
-        double f = first.resolve(wrapper, parent, performer, target);
-        double s = second.resolve(wrapper, parent, performer, target);
+    public boolean evaluate(MovesetWrapper wrapper, Entity performer, Entity target) {
+        double f = first.resolve(wrapper, performer, target);
+        double s = second.resolve(wrapper, performer, target);
         return switch (comparison) {
             case EQ -> f == s;
             case NEQ -> f != s;

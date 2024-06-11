@@ -21,13 +21,13 @@ public abstract class Action extends Move {
     /**
      * Runs the list of actions, aborting and returning a jump code if the child returns a jump code.
      */
-    protected int runActions(MovesetWrapper wrapper, @Nullable TimerAction parent, List<Action> actions, Entity performer, Entity target) {
+    protected int runActions(MovesetWrapper wrapper, @Nullable List<Action> actions, Entity performer, Entity target) {
         int returnCode = 0;
         for (Action child : actions) {
-            if (child.canRun(wrapper, parent, performer, target)) {
+            if (child.canRun(wrapper, performer, target)) {
                 if (!child.triggered)
-                    child.start(wrapper, parent, performer, target);//kinda an ugly fix tbh
-                returnCode = child.perform(wrapper, parent, performer, target);
+                    child.start(wrapper, performer, target);//kinda an ugly fix tbh
+                returnCode = child.perform(wrapper, performer, target);
                 if (returnCode > 0) return returnCode;
             }
         }
@@ -37,7 +37,7 @@ public abstract class Action extends Move {
     /**
      * @return 0 for normal execution. -1 is reserved for expiry of timer actions, and any positive integer is taken to be a jump code.
      */
-    public abstract int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target);
+    public abstract int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target);
 
     public String serializeToJson() {
         return JsonAdapters.gson.toJson(this);
@@ -47,12 +47,12 @@ public abstract class Action extends Move {
         return triggered;
     }
 
-    public boolean canRun(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
-        if (triggered && !repeatable.evaluate(wrapper, null, performer, target)) return false;
-        return condition.evaluate(wrapper, parent, performer, target);
+    public boolean canRun(MovesetWrapper wrapper, Entity performer, Entity target) {
+        if (triggered && !repeatable.evaluate(wrapper, performer, target)) return false;
+        return condition.evaluate(wrapper, performer, target);
     }
 
-    public void start(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+    public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
         //fixme instant actions do not run start()
         triggered = true;
     }

@@ -31,14 +31,14 @@ public class PlayParticleAction extends Action {
     private NumberArgument quantity = NumberArgument.ZERO;
 
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
         if (play == null)
             play = ForgeRegistries.PARTICLE_TYPES.getValue(particle);
         if (play == null) return 0;
         //type/data, force, pos xyz, quantity, vel xyz, max speed
         ParticleOptions p;
-        Vec3 pos = position.resolveAsVector(wrapper, parent, performer, target);
-        Vec3 dir = direction.resolveAsVector(wrapper, parent, performer, target);
+        Vec3 pos = position.resolveAsVector(wrapper, performer, target);
+        Vec3 dir = direction.resolveAsVector(wrapper, performer, target);
         try {
             p = play.getDeserializer().fromCommand(play, new StringReader(" " + particle_parameters));
         } catch (CommandSyntaxException cse) {
@@ -46,8 +46,8 @@ public class PlayParticleAction extends Action {
         }
         if (target.level() instanceof ServerLevel sl) {
             for (ServerPlayer sp : sl.players()) {
-                if (seen_by_player.evaluate(wrapper, parent, performer, sp)) {
-                    sl.sendParticles(sp, p, force.evaluate(wrapper, parent, performer, target), pos.x, pos.y, pos.z, (int) quantity.resolve(wrapper, parent, performer, target), dir.x, dir.y, dir.z, dir.length());
+                if (seen_by_player.evaluate(wrapper, performer, sp)) {
+                    sl.sendParticles(sp, p, force.evaluate(wrapper, performer, target), pos.x, pos.y, pos.z, (int) quantity.resolve(wrapper, performer, target), dir.x, dir.y, dir.z, dir.length());
                 }
             }
         }
