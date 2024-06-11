@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 public class PlayParticleAction extends Action {
     private ResourceLocation particle;
     private transient ParticleType play;
-    private String options = "";
+    private String particle_parameters = "";
     private Condition seen_by_player = TrueCondition.INSTANCE;
     private Condition force = FalseCondition.INSTANCE;
     private VectorArgument position = CasterEntityArgument.INSTANCE, direction = RawVectorArgument.ZERO;
@@ -40,7 +40,7 @@ public class PlayParticleAction extends Action {
         Vec3 pos = position.resolveAsVector(performer, target);
         Vec3 dir = direction.resolveAsVector(performer, target);
         try {
-            p = play.getDeserializer().fromCommand(play, new StringReader(options));
+            p = play.getDeserializer().fromCommand(play, new StringReader(" " + particle_parameters));
         } catch (CommandSyntaxException cse) {
             throw new RuntimeException(cse);
         }

@@ -13,6 +13,6 @@ public class StartAtCondition extends Condition {
 
     @Override
     public boolean evaluate(TimerAction parent, Entity performer, Entity target) {
-        return parent != null && parent.getTimer() == time;
+        return parent != null && parent.getTimer() >= time;
     }
 }

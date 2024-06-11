@@ -32,23 +32,23 @@ public abstract class VectorArgument extends Argument {
 
     public static class Store extends Action{
         private VectorArgument toStore;
-        private String id;
+        private String into;
         @Override
         public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
             final Vec3 vec=toStore.resolveAsVector(performer, target);
-            performer.getPersistentData().putDouble(id+"_x", vec.x);
-            performer.getPersistentData().putDouble(id+"_y", vec.y);
-            performer.getPersistentData().putDouble(id+"_z", vec.z);
+            performer.getPersistentData().putDouble(into +"_x", vec.x);
+            performer.getPersistentData().putDouble(into +"_y", vec.y);
+            performer.getPersistentData().putDouble(into +"_z", vec.z);
             return 0;
         }
     }
 
     public static class Get extends VectorArgument{
-        private String id;
+        private String from;
 
         @Override
         public Vec3 _resolve(Entity caster, Entity target) {
-            return new Vec3(caster.getPersistentData().getDouble(id+"_x"), caster.getPersistentData().getDouble(id+"_y"), caster.getPersistentData().getDouble(id+"_z"));
+            return new Vec3(caster.getPersistentData().getDouble(from +"_x"), caster.getPersistentData().getDouble(from +"_y"), caster.getPersistentData().getDouble(from +"_z"));
         }
     }
 }

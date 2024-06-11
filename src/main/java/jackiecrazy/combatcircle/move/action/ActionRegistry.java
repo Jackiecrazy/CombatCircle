@@ -31,6 +31,7 @@ public class ActionRegistry {
     public static final RegistryObject<ActionType> STORE_NUMBER = ACTIONS.register("store_number", () -> (a) -> JsonAdapters.gson.fromJson(a, NumberArgument.Store.class));
     public static final RegistryObject<ActionType> STORE_VECTOR = ACTIONS.register("store_vector", () -> (a) -> JsonAdapters.gson.fromJson(a, VectorArgument.Store.class));
     public static final RegistryObject<ActionType> STORE_ENTITY = ACTIONS.register("store_entity", () -> (a) -> JsonAdapters.gson.fromJson(a, EntityArgument.Store.class));
+
     public static final RegistryObject<ActionType> DEBUG = ACTIONS.register("debug", () -> (a) -> JsonAdapters.gson.fromJson(a, DebugAction.class));
     public static final RegistryObject<ActionType> DEAL_DAMAGE = ACTIONS.register("deal_damage", () -> (a) -> JsonAdapters.gson.fromJson(a, DealDamageAction.class));
     public static final RegistryObject<ActionType> ADD_EFFECT = ACTIONS.register("add_effect", () -> (a) -> JsonAdapters.gson.fromJson(a, AddEffectAction.class));

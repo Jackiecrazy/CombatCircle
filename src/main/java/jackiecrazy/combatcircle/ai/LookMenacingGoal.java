@@ -12,8 +12,9 @@ import java.util.EnumSet;
  * this goal causes mobs to stand still and stare at the player
  */
 public class LookMenacingGoal extends LookAtPlayerGoal {
-    static final EnumSet<Flag> mutex = EnumSet.allOf(Flag.class);
+    static final EnumSet<Flag> mutex = EnumSet.of(Flag.LOOK, Flag.MOVE);
     int strafeTick = 0;
+    float strafeX, strafeZ;
     boolean flip = false;
 
     public LookMenacingGoal(Mob bind) {
@@ -22,6 +23,8 @@ public class LookMenacingGoal extends LookAtPlayerGoal {
 
     @Override
     public boolean canUse() {
+        strafeTick--;
+        if (strafeTick > 0) return false;
         lookAt = mob.getTarget();
         if (mob.getTarget() == null) return false;
         //too far away, just charge in
@@ -33,38 +36,36 @@ public class LookMenacingGoal extends LookAtPlayerGoal {
 
     @Override
     public boolean canContinueToUse() {
-        if (strafeTick > 60 && mob.tickCount % 24 == 0) return false;
+        if (strafeTick > 60 && mob.tickCount % 60 == 0) return false;
         return canUse();
     }
 
     @Override
     public void start() {
+        //todo wolf pack locks up entire goalSelector and prevents strafing
         super.start();
-        flip=mob.tickCount%7==0;
+        flip = mob.tickCount % 7 == 0;
+        strafeX = CombatCircle.rand.nextFloat() * 0.5f-0.25f;
+        strafeZ = CombatCircle.rand.nextFloat() * 0.3f-0.15f;
         strafeTick = 0;
     }
 
     @Override
     public void stop() {
-        strafeTick = 0;
         flip = !flip;
+        mob.getMoveControl().strafe(0, 0);
         super.stop();
     }
 
     @Override
     public void tick() {
         strafeTick++;
-        if (mob.getTarget() != null)
+        if (mob.getTarget() != null) {
+            mob.getLookControl().setLookAt(mob.getTarget());
             mob.lookAt(mob.getTarget(), 30, 30);
-        if (strafeTick > 20) {
-            mob.getMoveControl().strafe(0, flip ? 0.2f : -0.2f);
         }
+        mob.getMoveControl().strafe(strafeZ, strafeX);
         super.tick();
-    }
-
-    @Override
-    public boolean isInterruptable() {
-        return true;
     }
 
     @Override

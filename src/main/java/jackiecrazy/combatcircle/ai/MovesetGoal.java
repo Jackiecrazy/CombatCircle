@@ -1,6 +1,8 @@
-package jackiecrazy.combatcircle.move;
+package jackiecrazy.combatcircle.ai;
 
 import jackiecrazy.combatcircle.capability.MovesetData;
+import jackiecrazy.combatcircle.move.MovesetManager;
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.utils.CombatManager;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -10,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.EnumSet;
 
 public class MovesetGoal extends Goal {
+    static final EnumSet<Flag> mutex = EnumSet.of(Flag.LOOK, Flag.JUMP, Flag.MOVE);//putting target here breaks the mob's innate targeting tasks because this runs on targetSelector
     protected MovesetManager set;
     protected MovesetWrapper wrap;
     protected PathfinderMob mob;
@@ -28,11 +31,16 @@ public class MovesetGoal extends Goal {
         set = mm;
     }
 
+    @Override
+    public EnumSet<Flag> getFlags() {
+        return mutex;
+    }
+
 
     @Override
     public boolean canUse() {
         if (mob.getTarget() == null) return false;
-        if (mob.tickCount % 20 != 0) return false;
+        CombatManager.getManagerFor(mob.getTarget()).addMob(mob);
         wrap = set.selectMove(mob.getTarget(), CombatManager.getManagerFor(mob.getTarget()).getRemainingAttackPower());
         if (wrap == null) return false;
         if (!CombatManager.getManagerFor(mob.getTarget()).addAttacker(mob, this)) return false;
@@ -74,11 +82,6 @@ public class MovesetGoal extends Goal {
     @Override
     public void tick() {
         wrap.tick(mob, target);
-    }
-
-    @Override
-    public void setFlags(@NotNull EnumSet<Flag> flags) {
-        super.setFlags(flags);
     }
 
     public float getWeight() {

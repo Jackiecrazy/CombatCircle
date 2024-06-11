@@ -34,9 +34,6 @@ A mob may be defined with a list of movesets. Condition-less movesets will be ch
  * todo how does this system handle parent timer action ending?
  *  uhhhh when the parent timer expires it's responsible for propagating an expiry to all its children? Kinda messy ngl
  * triggers: fall, on being hit, on take (posture) damage, stun, gain effect, on fire, die, emit sculk event?, entering block?, stab?
- * todo repeat action with delay of x ticks
  * can we categorize this as just a special action?
-
-todo moveset weight, store/read variable, play particle sequence, nbt tag?, name?, wait action resolution order
 
  */

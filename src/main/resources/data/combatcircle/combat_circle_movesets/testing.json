@@ -1,7 +1,9 @@
 {
   "mob": "minecraft:vindicator",
   "mob_size": 1,
-  "encirclement_distance": "3",
+  "encirclement_distance": 5,
+  "pursue_walk_speed": 1.0,
+  "pursue_sprint_speed": 1.0,
   "condition": {
 
   },
@@ -9,7 +11,7 @@
     {
       "starting_weight": 1,
       "weight_change": 0,
-      "size": 4,
+      "size": 1,
       "condition": {
       },
       "move": "combatcircle:testing"

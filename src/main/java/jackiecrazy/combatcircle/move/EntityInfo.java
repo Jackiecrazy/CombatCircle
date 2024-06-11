@@ -4,7 +4,8 @@ import net.minecraft.world.entity.ai.goal.Goal;
 
 public class EntityInfo {
     public float mob_size;
-    public double encirclement_distance;//todo add attribute modifier action
+    public double encirclement_distance;
+    public double pursue_walk_speed = 1.0, pursue_sprint_speed = 1.3;
     public MovesetFactory[] moveset;
     public Class<Goal>[] to_wipe;
 

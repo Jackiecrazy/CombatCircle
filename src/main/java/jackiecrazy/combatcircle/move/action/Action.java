@@ -1,6 +1,5 @@
 package jackiecrazy.combatcircle.move.action;
 
-import com.google.gson.JsonObject;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.condition.Condition;
@@ -16,7 +15,7 @@ import java.util.List;
 public abstract class Action extends Move {
     protected Condition condition = TrueCondition.INSTANCE;
     protected transient boolean triggered = false;
-    protected Condition retrigger = FalseCondition.INSTANCE;
+    protected Condition repeatable = FalseCondition.INSTANCE;
     protected String ID = "(default)";
 
     /**
@@ -26,6 +25,8 @@ public abstract class Action extends Move {
         int returnCode = 0;
         for (Action child : actions) {
             if (child.canRun(wrapper, parent, performer, target)) {
+                if (!child.triggered)
+                    child.start(wrapper, performer, target);//kinda an ugly fix tbh
                 returnCode = child.perform(wrapper, parent, performer, target);
                 if (returnCode > 0) return returnCode;
             }
@@ -47,11 +48,12 @@ public abstract class Action extends Move {
     }
 
     public boolean canRun(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
-        if (triggered && !retrigger.evaluate(null, performer, target)) return false;
+        if (triggered && !repeatable.evaluate(null, performer, target)) return false;
         return condition.evaluate(parent, performer, target);
     }
 
     public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
+        //fixme instant actions do not run start()
         triggered = true;
     }
 

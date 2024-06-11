@@ -17,22 +17,22 @@ public abstract class EntityArgument extends VectorArgument {
 
     public static class Store extends Action {
         private EntityArgument toStore;
-        private String id;
+        private String into;
 
         @Override
         public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
             final Entity vec = toStore.resolveAsEntity(performer, target);
-            performer.getPersistentData().putInt(id, vec.getId());
+            performer.getPersistentData().putInt(into, vec.getId());
             return 0;
         }
     }
 
     public static class Get extends EntityArgument {
-        private String id;
+        private String from;
 
         @Override
         public Entity resolveAsEntity(Entity caster, Entity target) {
-            return caster.level().getEntity(caster.getPersistentData().getInt(id));
+            return caster.level().getEntity(caster.getPersistentData().getInt(from));
         }
     }
 }

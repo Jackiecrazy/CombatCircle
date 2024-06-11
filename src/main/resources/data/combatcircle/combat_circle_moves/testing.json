@@ -2,20 +2,100 @@
   {
     "waiting": [
       {
-        "condition": {
-          "ID": "combatcircle:start_at",
-          "time": 14
+        "ID": "combatcircle:store_vector",
+        "toStore": {
+          "ID": "combatcircle:vector_sum",
+          "min_length": 0.06,
+          "max_length": 0.13,
+          "addends": [
+            {
+              "ID": "combatcircle:eye_position",
+              "reference_point": "combatcircle:target"
+            },
+            {
+              "ID": "combatcircle:foot_position",
+              "scale": -1,
+              "min_length": 0,
+              "max_length": 0,
+              "reference_point": "combatcircle:caster"
+            }
+          ]
         },
-        "ID": "combatcircle:set_aggressive",
-        "toggle": true
+        "into": "target_location"
+      },
+      {
+        "ID": "combatcircle:store_vector",
+        "toStore": {
+          "ID": "combatcircle:get_vector",
+          "from": "target_location"
+        },
+        "into": "increment"
       },
       {
         "condition": {
           "ID": "combatcircle:start_at",
-          "time": 7
+          "time": 5
+        },
+        "ID": "combatcircle:store_vector",
+        "repeatable": true,
+        "toStore": {
+          "ID": "combatcircle:vector_sum",
+          "addends": [
+            {
+              "ID": "combatcircle:get_vector",
+              "from": "target_location"
+            },
+            {
+              "ID": "combatcircle:get_vector",
+              "from": "increment"
+            }
+          ]
+        },
+        "into": "target_location"
+      },
+      {
+        "condition": {
+          "ID": "combatcircle:start_at",
+          "time": 5
+        },
+        "ID": "combatcircle:play_particle",
+        "repeatable": true,
+        "particle": "minecraft:dust",
+        "particle_parameters": "1 0.2 0 1",
+        "position": {
+          "ID": "combatcircle:vector_sum",
+          "addends": [
+            {
+              "ID": "combatcircle:get_vector",
+              "from": "target_location"
+            },
+            {
+              "ID": "combatcircle:eye_position",
+              "reference_point": "combatcircle:caster"
+            }
+          ]
+        },
+        "direction": {
+          "ID": "combatcircle:get_vector",
+          "scale": 10,
+          "from": "target_location"
+        }
+      },
+      {
+        "condition": {
+          "ID": "combatcircle:start_at",
+          "time": 5
         },
         "ID": "combatcircle:look_at",
         "entity_target": "combatcircle:target"
+      },
+      {
+        "condition": {
+          "ID": "combatcircle:start_at",
+          "time": 10
+        },
+        "ID": "combatcircle:set_aggressive",
+        "toggle": true
       }
     ],
     "max_time": 21,
@@ -25,22 +105,10 @@
     "ID": "combatcircle:add_velocity",
     "max_time": 60,
     "direction": {
-      "ID": "combatcircle:vector_sum",
+      "ID": "combatcircle:get_vector",
+      "from": "target_location",
       "min_length": 0.6,
-      "max_length": 1.3,
-      "addends": [
-        {
-          "ID": "combatcircle:eye_position",
-          "reference_point": "combatcircle:target"
-        },
-        {
-          "ID": "combatcircle:foot_position",
-          "scale": -1,
-          "min_length": 0,
-          "max_length": 0,
-          "reference_point": "combatcircle:caster"
-        }
-      ]
+      "max_length": 1.3
     },
     "on_launch": [
     ],
@@ -49,8 +117,8 @@
         "ID": "combatcircle:project_hitbox",
         "selector": {
           "shape": "CIRCLE",
-          "range": 3,
-          "width": 3,
+          "range": 2,
+          "width": 2,
           "filter": {
             "ID": "combatcircle:condition",
             "condition": {
@@ -77,10 +145,6 @@
               "number": 5.5
             },
             "on_hit": [
-              {
-                "ID": "combatcircle:attach_action",
-                "effect": "combatcircle:timeslime"
-              }
             ]
           }
         ]
@@ -106,7 +170,17 @@
     ]
   },
   {
-    "max_time": 120,
+    "waiting": [
+      {
+        "condition": {
+          "ID": "combatcircle:start_at",
+          "time": 14
+        },
+        "ID": "combatcircle:set_aggressive",
+        "toggle": false
+      }
+    ],
+    "max_time": 50,
     "ID": "combatcircle:wait"
   }
 ]

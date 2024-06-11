@@ -48,7 +48,7 @@ public class CombatCircle {
     public static final int CIRCLE_SIZE = 4;
     public static final int MAXIMUM_CHASE_TIME = 100;
     public static final int MOB_LIMIT = 10;//5
-    public static final int ATTACK_LIMIT = 10;
+    public static final int ATTACK_LIMIT = 3;
     public static final TagKey<EntityType<?>> COWARD = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(MODID, "coward"));
 
     // Directly reference a log4j logger.
@@ -105,7 +105,7 @@ public class CombatCircle {
                 if (Movesets.moves.containsKey(mob.getType())) {
                     mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(Movesets.moves.get(mob.getType()).encirclement_distance);
                 }
-                if (mob instanceof RangedAttackMob)
+                else if (mob instanceof RangedAttackMob)
                     mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE + 3);
                 else
                     mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE);
@@ -126,6 +126,7 @@ public class CombatCircle {
                     }
                     mob.targetSelector.addGoal(0, new MovesetGoal(mob, new MovesetManager(mob, sets.moveset)));
                 }
+                else mob.targetSelector.addGoal(0, new RequestSlotGoal(mob));
 
                 /*
                 several types of AI can be made:

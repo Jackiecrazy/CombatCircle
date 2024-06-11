@@ -1,8 +1,7 @@
 package jackiecrazy.combatcircle.utils;
 
 import jackiecrazy.combatcircle.CombatCircle;
-import jackiecrazy.combatcircle.move.MovesetGoal;
-import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.ai.MovesetGoal;
 import jackiecrazy.combatcircle.move.Movesets;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;

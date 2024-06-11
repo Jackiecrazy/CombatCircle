@@ -25,7 +25,7 @@ public abstract class TimerAction extends Action {
         if (triggered) {
             if (!isFinished(wrapper, performer, target))
                 return true;
-            else if (retrigger.evaluate(null, performer, target)) {
+            else if (repeatable.evaluate(null, performer, target)) {
                 triggered = false;
             }
         }

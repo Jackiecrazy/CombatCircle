@@ -22,7 +22,7 @@ public class AddVelocityAction extends TimerAction {
 
     @Override
     public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
-        runActions(wrapper, this, on_launch, performer, target);//fixme doesn't proc continuous tasks
+        runActions(wrapper, this, on_launch, performer, target);
         Vec3 dir = direction.resolveAsVector(performer, target);
         performer.addDeltaMovement(dir);
         if(dir.y>0){

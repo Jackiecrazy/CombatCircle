@@ -16,22 +16,22 @@ public abstract class NumberArgument extends Argument {
 
     public static class Store extends Action {
         private NumberArgument toStore;
-        private String id;
+        private String into;
 
         @Override
         public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
             final double vec = toStore.resolve(performer, target);
-            performer.getPersistentData().putDouble(id, vec);
+            performer.getPersistentData().putDouble(into, vec);
             return 0;
         }
     }
 
     public static class Get extends NumberArgument {
-        private String id;
+        private String from;
 
         @Override
         public double resolve(Entity caster, Entity target) {
-            return caster.getPersistentData().getDouble(id);
+            return caster.getPersistentData().getDouble(from);
         }
     }
 }
