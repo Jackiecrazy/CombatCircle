@@ -1,5 +1,7 @@
 package jackiecrazy.combatcircle.move.argument.vector;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import net.minecraft.world.entity.Entity;
@@ -9,7 +11,7 @@ public class EyePositionVectorArgument extends VectorArgument {
     private EntityArgument reference_point= CasterEntityArgument.INSTANCE;
 
     @Override
-    public Vec3 _resolve(Entity caster, Entity target) {
-        return reference_point.resolveAsEntity(caster, target).getEyePosition();
+    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        return reference_point.resolveAsEntity(wrapper, parent, caster, target).getEyePosition();
     }
 }

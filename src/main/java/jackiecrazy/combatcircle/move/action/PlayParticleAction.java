@@ -37,8 +37,8 @@ public class PlayParticleAction extends Action {
         if (play == null) return 0;
         //type/data, force, pos xyz, quantity, vel xyz, max speed
         ParticleOptions p;
-        Vec3 pos = position.resolveAsVector(performer, target);
-        Vec3 dir = direction.resolveAsVector(performer, target);
+        Vec3 pos = position.resolveAsVector(wrapper, parent, performer, target);
+        Vec3 dir = direction.resolveAsVector(wrapper, parent, performer, target);
         try {
             p = play.getDeserializer().fromCommand(play, new StringReader(" " + particle_parameters));
         } catch (CommandSyntaxException cse) {
@@ -46,8 +46,8 @@ public class PlayParticleAction extends Action {
         }
         if (target.level() instanceof ServerLevel sl) {
             for (ServerPlayer sp : sl.players()) {
-                if (seen_by_player.evaluate(parent, performer, sp)) {
-                    sl.sendParticles(sp, p, force.evaluate(parent, performer, target), pos.x, pos.y, pos.z, (int) quantity.resolve(performer, target), dir.x, dir.y, dir.z, dir.length());
+                if (seen_by_player.evaluate(wrapper, parent, performer, sp)) {
+                    sl.sendParticles(sp, p, force.evaluate(wrapper, parent, performer, target), pos.x, pos.y, pos.z, (int) quantity.resolve(wrapper, parent, performer, target), dir.x, dir.y, dir.z, dir.length());
                 }
             }
         }

@@ -23,8 +23,8 @@ public class AddEffectAction extends Action {
     public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
         if (me == null)
             me = ForgeRegistries.MOB_EFFECTS.getValue(effect);
-        if (me != null && recipient.resolveAsEntity(performer, target) instanceof LivingEntity e) {
-            e.addEffect(new MobEffectInstance(me, (int) (duration.resolve(performer, target)), (int) potency.resolve(performer, target)));
+        if (me != null && recipient.resolveAsEntity(wrapper, parent, performer, target) instanceof LivingEntity e) {
+            e.addEffect(new MobEffectInstance(me, (int) (duration.resolve(wrapper, parent, performer, target)), (int) potency.resolve(wrapper, parent, performer, target)));
         }
         return 0;
     }

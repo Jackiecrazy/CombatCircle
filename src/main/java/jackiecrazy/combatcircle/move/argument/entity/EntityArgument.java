@@ -9,10 +9,10 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class EntityArgument extends VectorArgument {
-    public abstract Entity resolveAsEntity(Entity caster, Entity target);
+    public abstract Entity resolveAsEntity(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target);
 
-    public Vec3 _resolve(Entity caster, Entity target) {
-        return resolveAsEntity(caster, target).position();
+    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        return resolveAsEntity(wrapper, parent, caster, target).position();
     }
 
     public static class Store extends Action {
@@ -21,7 +21,7 @@ public abstract class EntityArgument extends VectorArgument {
 
         @Override
         public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
-            final Entity vec = toStore.resolveAsEntity(performer, target);
+            final Entity vec = toStore.resolveAsEntity(wrapper, parent, performer, target);
             performer.getPersistentData().putInt(into, vec.getId());
             return 0;
         }
@@ -31,7 +31,7 @@ public abstract class EntityArgument extends VectorArgument {
         private String from;
 
         @Override
-        public Entity resolveAsEntity(Entity caster, Entity target) {
+        public Entity resolveAsEntity(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
             return caster.level().getEntity(caster.getPersistentData().getInt(from));
         }
     }

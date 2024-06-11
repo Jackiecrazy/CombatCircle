@@ -9,6 +9,11 @@ import java.util.List;
 
 public class MovesetWrapper {
     private List<TimerAction> actions;
+
+    public TimerAction getCurrentMove() {
+        return currentMove;
+    }
+
     private TimerAction currentMove;
     private Condition canRun;
     private int index = 0;
@@ -54,7 +59,7 @@ public class MovesetWrapper {
     }
 
     public boolean canRun(Entity performer, Entity target) {
-        return canRun.evaluate(null, performer, target);
+        return canRun.evaluate(this, null, performer, target);
     }
 
     public void tick(Entity performer, Entity target) {

@@ -23,11 +23,11 @@ public class LookAtAction extends Action {
 
     @Override
     public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
-        Entity toLook = looker.resolveAsEntity(performer, target);
+        Entity toLook = looker.resolveAsEntity(wrapper, parent, performer, target);
         if (vector_target != null)
-            toLook.lookAt(anchor, vector_target.resolveAsVector(performer, target));
+            toLook.lookAt(anchor, vector_target.resolveAsVector(wrapper, parent, performer, target));
         if (toLook instanceof Mob e && entity_target != null) {
-            e.getLookControl().setLookAt(entity_target.resolveAsEntity(performer, target), (float) head_rotation_x.resolve(performer, target), (float) head_rotation_y.resolve(performer, target));
+            e.getLookControl().setLookAt(entity_target.resolveAsEntity(wrapper, parent, performer, target), (float) head_rotation_x.resolve(wrapper, parent, performer, target), (float) head_rotation_y.resolve(wrapper, parent, performer, target));
         }
         return 0;
     }

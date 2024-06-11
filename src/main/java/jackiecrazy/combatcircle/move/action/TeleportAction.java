@@ -4,11 +4,8 @@ import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
-import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
-import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
 import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,8 +20,8 @@ public class TeleportAction extends Action {
 
     @Override
     public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
-        Vec3 vec=position.resolveAsVector(performer, target);
-        Entity teleporter = subject.resolveAsEntity(performer, target);
+        Vec3 vec=position.resolveAsVector(wrapper, parent, performer, target);
+        Entity teleporter = subject.resolveAsEntity(wrapper, parent, performer, target);
         runActions(wrapper, parent, on_start, performer, teleporter);
         teleporter.teleportTo(vec.x,vec.y, vec.z);
         runActions(wrapper, parent, on_land, performer, teleporter);

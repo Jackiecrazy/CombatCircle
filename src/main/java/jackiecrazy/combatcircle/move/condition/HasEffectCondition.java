@@ -1,5 +1,6 @@
 package jackiecrazy.combatcircle.move.condition;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.TargetEntityArgument;
@@ -19,13 +20,13 @@ public class HasEffectCondition extends Condition {
     private EntityArgument tested = TargetEntityArgument.INSTANCE;
 
     @Override
-    public boolean evaluate(@Nullable TimerAction parent, Entity performer, Entity target) {
+    public boolean evaluate(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
         if (me == null)
             me = ForgeRegistries.MOB_EFFECTS.getValue(effect);
-        if (me != null && tested.resolveAsEntity(performer, target) instanceof LivingEntity e) {
+        if (me != null && tested.resolveAsEntity(wrapper, parent, performer, target) instanceof LivingEntity e) {
             MobEffectInstance inst = e.getEffect(me);
             if (inst != null) {
-                return inst.getDuration() > (minimum_duration.resolve(performer, target)) && inst.getAmplifier() > minimum_potency.resolve(performer, target);
+                return inst.getDuration() > (minimum_duration.resolve(wrapper, parent, performer, target)) && inst.getAmplifier() > minimum_potency.resolve(wrapper, parent, performer, target);
             }
         }
         return false;

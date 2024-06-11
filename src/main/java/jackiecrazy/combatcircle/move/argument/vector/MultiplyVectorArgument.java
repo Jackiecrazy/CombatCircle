@@ -1,5 +1,7 @@
 package jackiecrazy.combatcircle.move.argument.vector;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
@@ -8,7 +10,7 @@ public class MultiplyVectorArgument extends VectorArgument {
     VectorArgument multiply;
 
     @Override
-    public Vec3 _resolve(Entity caster, Entity target) {
-        return base.resolveAsVector(caster, target).multiply(multiply.resolveAsVector(caster, target));
+    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        return base.resolveAsVector(wrapper, parent, caster, target).multiply(multiply.resolveAsVector(wrapper, parent, caster, target));
     }
 }

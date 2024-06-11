@@ -1,5 +1,7 @@
 package jackiecrazy.combatcircle.move.argument.vector;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
 import jackiecrazy.combatcircle.move.condition.Condition;
 import jackiecrazy.combatcircle.move.condition.TrueCondition;
@@ -17,10 +19,10 @@ public class RayTraceVectorArgument extends VectorArgument {
     ClipContext.Fluid fluid_clip = ClipContext.Fluid.NONE;
 
     @Override
-    public Vec3 _resolve(Entity caster, Entity target) {
-        Vec3 start = position.resolveAsVector(caster, target);
-        Vec3 look = direction.resolveAsVector(caster, target);
-        double range = distance.resolve(caster, target);
-        return GeneralUtils.raytraceAnything(caster.level(), start, look, range, scans_entities.evaluate(null, caster, target), block_clip, fluid_clip).getLocation();
+    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        Vec3 start = position.resolveAsVector(wrapper, parent, caster, target);
+        Vec3 look = direction.resolveAsVector(wrapper, parent, caster, target);
+        double range = distance.resolve(wrapper, parent, caster, target);
+        return GeneralUtils.raytraceAnything(caster.level(), start, look, range, scans_entities.evaluate(wrapper, null, caster, target), block_clip, fluid_clip).getLocation();
     }
 }

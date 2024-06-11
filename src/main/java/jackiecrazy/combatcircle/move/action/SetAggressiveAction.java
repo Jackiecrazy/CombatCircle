@@ -14,7 +14,7 @@ public class SetAggressiveAction extends Action {
     @Override
     public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
         if (performer instanceof Mob e) {
-            e.setAggressive(toggle.evaluate(parent, performer, target));
+            e.setAggressive(toggle.evaluate(wrapper, parent, performer, target));
         }
         return 0;
     }

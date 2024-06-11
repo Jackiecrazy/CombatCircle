@@ -23,7 +23,7 @@ public class AttachActionAction extends Action {
     @Override
     public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity perform, Entity target) {
         ArrayList<TimerAction> timers = new ArrayList<>(List.of(JsonAdapters.gson.fromJson(Moves.moves.get(effect), TimerAction[].class)));
-        MovesetData.getCap(recipient.resolveAsEntity(perform, target)).mark(performer.resolveAsEntity(perform, target), new MovesetWrapper(timers));
+        MovesetData.getCap(recipient.resolveAsEntity(wrapper, parent, perform, target)).mark(performer.resolveAsEntity(wrapper, parent, perform, target), new MovesetWrapper(timers));
         return 0;
     }
 }

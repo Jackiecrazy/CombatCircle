@@ -26,7 +26,7 @@ public abstract class Action extends Move {
         for (Action child : actions) {
             if (child.canRun(wrapper, parent, performer, target)) {
                 if (!child.triggered)
-                    child.start(wrapper, performer, target);//kinda an ugly fix tbh
+                    child.start(wrapper, parent, performer, target);//kinda an ugly fix tbh
                 returnCode = child.perform(wrapper, parent, performer, target);
                 if (returnCode > 0) return returnCode;
             }
@@ -48,11 +48,11 @@ public abstract class Action extends Move {
     }
 
     public boolean canRun(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
-        if (triggered && !repeatable.evaluate(null, performer, target)) return false;
-        return condition.evaluate(parent, performer, target);
+        if (triggered && !repeatable.evaluate(wrapper, null, performer, target)) return false;
+        return condition.evaluate(wrapper, parent, performer, target);
     }
 
-    public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
+    public void start(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
         //fixme instant actions do not run start()
         triggered = true;
     }

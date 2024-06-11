@@ -1,5 +1,6 @@
 package jackiecrazy.combatcircle.move.argument.number;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import net.minecraft.world.entity.Entity;
 
@@ -28,9 +29,9 @@ public class OperateArgument extends NumberArgument {
 
 
     @Override
-    public double resolve(Entity performer, Entity target) {
-        double f = first.resolve(performer, target);
-        double s = second.resolve(performer, target);
+    public double resolve(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+        double f = first.resolve(wrapper, parent, performer, target);
+        double s = second.resolve(wrapper, parent, performer, target);
         return switch (comparison) {
             case ADD -> f + s;
             case SUB -> f - s;

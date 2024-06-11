@@ -36,10 +36,10 @@ public class SpawnEntityAction extends Action {
 
     @Override
     public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
-        Entity summoner = this.summoner.resolveAsEntity(performer, target);
-        int toSpawn = (int) quantity.resolve(performer, target);
-        double deviation = spread.resolve(performer, target);
-        Vec3 vec = position.resolveAsVector(performer, target);
+        Entity summoner = this.summoner.resolveAsEntity(wrapper, parent, performer, target);
+        int toSpawn = (int) quantity.resolve(wrapper, parent, performer, target);
+        double deviation = spread.resolve(wrapper, parent, performer, target);
+        Vec3 vec = position.resolveAsVector(wrapper, parent, performer, target);
         Level level = performer.level();
         if (level instanceof ServerLevel serverlevel) {
             for (int x = 0; x < toSpawn; x++) {
@@ -47,7 +47,7 @@ public class SpawnEntityAction extends Action {
                 final Vec3 pos = vec.add(rand);
                 CompoundTag compoundtag = tag == null ? new CompoundTag() : tag.copy();
                 compoundtag.putString("id", entity.toString());
-                Vec3 look = facing.resolveAsVector(performer, target);
+                Vec3 look = facing.resolveAsVector(wrapper, parent, performer, target);
                 Entity summon = EntityType.loadEntityRecursive(compoundtag, serverlevel, (toSummon) -> {
                     double flatDist = Math.sqrt(look.x * look.x + look.z * look.z);
                     toSummon.moveTo(pos.x, pos.y, pos.z, (float) Mth.wrapDegrees(GeneralUtils.deg((float) Mth.atan2(look.z, look.x)) - 90.0F), Mth.wrapDegrees(-GeneralUtils.deg((float) Mth.atan2(look.y, flatDist))));

@@ -1,5 +1,7 @@
 package jackiecrazy.combatcircle.move.argument;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -20,8 +22,8 @@ public class EquipmentArgument extends Argument {
         this.entity = entity;
     }
 
-    public ItemStack resolve(Entity caster, Entity target) {
-        Entity e = entity.resolveAsEntity(caster, target);
+    public ItemStack resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        Entity e = entity.resolveAsEntity(wrapper, parent, caster, target);
         if (e instanceof LivingEntity ent) return ent.getItemBySlot(slot);
         return ItemStack.EMPTY;
     }

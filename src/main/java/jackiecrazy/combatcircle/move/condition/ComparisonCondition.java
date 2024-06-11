@@ -1,10 +1,9 @@
 package jackiecrazy.combatcircle.move.condition;
 
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
 import net.minecraft.world.entity.Entity;
-
-import java.util.List;
 
 public class ComparisonCondition extends Condition {
     public enum COMPARISON {
@@ -31,9 +30,9 @@ public class ComparisonCondition extends Condition {
 
 
     @Override
-    public boolean evaluate(TimerAction parent, Entity performer, Entity target) {
-        double f = first.resolve(performer, target);
-        double s = second.resolve(performer, target);
+    public boolean evaluate(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+        double f = first.resolve(wrapper, parent, performer, target);
+        double s = second.resolve(wrapper, parent, performer, target);
         return switch (comparison) {
             case EQ -> f == s;
             case NEQ -> f != s;

@@ -1,6 +1,6 @@
 package jackiecrazy.combatcircle.move.condition;
 
-import jackiecrazy.combatcircle.move.action.Action;
+import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import net.minecraft.world.entity.Entity;
 
@@ -10,9 +10,9 @@ public class OrCondition extends Condition {
     List<Condition> values;
 
     @Override
-    public boolean evaluate(TimerAction parent, Entity performer, Entity target) {
+    public boolean evaluate(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
         for(Condition c: values){
-            if(c.evaluate(parent, performer, target))return true;
+            if(c.evaluate(wrapper, parent, performer, target))return true;
         }
         return false;
     }

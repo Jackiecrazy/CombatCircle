@@ -11,6 +11,6 @@ public class JumpToAction extends Action {
 
     @Override
     public int perform(MovesetWrapper wrapper, @Nullable TimerAction parent, Entity performer, Entity target) {
-        return (int) instruction.resolve(performer, target);
+        return (int) instruction.resolve(wrapper, parent, performer, target);
     }
 }

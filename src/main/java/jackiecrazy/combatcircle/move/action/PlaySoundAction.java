@@ -1,21 +1,11 @@
 package jackiecrazy.combatcircle.move.action;
 
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
-import jackiecrazy.combatcircle.move.argument.vector.RawVectorArgument;
 import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
-import jackiecrazy.combatcircle.move.condition.Condition;
-import jackiecrazy.combatcircle.move.condition.FalseCondition;
-import jackiecrazy.combatcircle.move.condition.TrueCondition;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
@@ -37,8 +27,8 @@ public class PlaySoundAction extends Action {
             play = ForgeRegistries.SOUND_EVENTS.getValue(sound);
         if (play == null) return 0;
         //type/data, force, pos xyz, quantity, vel xyz, max speed
-        Vec3 pos = position.resolveAsVector(performer, target);
-        performer.level().playSound(null, pos.x, pos.y, pos.z, play, source, (float) volume.resolve(performer, target), (float) pitch.resolve(performer, target));
+        Vec3 pos = position.resolveAsVector(wrapper, parent, performer, target);
+        performer.level().playSound(null, pos.x, pos.y, pos.z, play, source, (float) volume.resolve(wrapper, parent, performer, target), (float) pitch.resolve(wrapper, parent, performer, target));
         return 0;
     }
     //position, type, direction if any
