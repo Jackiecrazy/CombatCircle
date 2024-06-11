@@ -22,6 +22,7 @@ public class MovesetFactory {
             JsonAdapters.gson.fromJson(Moves.moves.get(move), TimerAction[].class);
             JsonAdapters.gson.fromJson(condition, Condition.class);
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
         return true;

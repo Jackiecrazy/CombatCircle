@@ -1,13 +1,9 @@
 package jackiecrazy.combatcircle.move.condition;
 
-import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import net.minecraft.world.entity.Entity;
 
-public class StartAtCondition extends Condition {
-    public StartAtCondition(int at) {
-        time = at;
-    }
+public class TimeWindowCondition extends Condition {
 
     private int time;
 

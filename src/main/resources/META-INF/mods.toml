@@ -32,6 +32,6 @@ Lightweight Encirclement AI and JSON-defined moves coming soon(tm).
 [[dependencies.combatcircle]]
     modId="footwork"
     mandatory=true
-    versionRange="[2.4,)"
+    versionRange="[4.3.8,)"
     ordering="NONE"
     side="BOTH"

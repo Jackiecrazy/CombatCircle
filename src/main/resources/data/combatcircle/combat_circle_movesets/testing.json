@@ -1,12 +1,9 @@
 {
-  "mob": "minecraft:vindicator",
+  "mob": "mymodid:mymob",
   "mob_size": 1,
   "encirclement_distance": 5,
   "pursue_walk_speed": 1.0,
   "pursue_sprint_speed": 1.0,
-  "condition": {
-
-  },
   "moveset": [
     {
       "starting_weight": 1,
