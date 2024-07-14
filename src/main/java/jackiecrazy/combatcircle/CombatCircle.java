@@ -49,7 +49,7 @@ public class CombatCircle {
     public static final int MAXIMUM_CHASE_TIME = 100;
     public static final int MOB_LIMIT = 10;//5
     public static final int ATTACK_LIMIT = 3;
-    public static final TagKey<EntityType<?>> COWARD = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(MODID, "coward"));
+    public static final TagKey<EntityType<?>> IGNORE = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(MODID, "ignore_combat_circle"));
 
     // Directly reference a log4j logger.
     public static final Logger LOGGER = LogManager.getLogger();
@@ -101,16 +101,14 @@ public class CombatCircle {
 
         @SubscribeEvent
         public static void spread(final EntityJoinLevelEvent e) {
-            if (e.getEntity() instanceof PathfinderMob mob) {
+            if (e.getEntity() instanceof PathfinderMob mob && !mob.getType().is(IGNORE)) {
                 if (Movesets.moves.containsKey(mob.getType())) {
                     mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(Movesets.moves.get(mob.getType()).encirclement_distance);
-                }
-                else if (mob instanceof RangedAttackMob)
+                } else if (mob instanceof RangedAttackMob)
                     mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE + 3);
                 else
                     mob.getAttribute(FootworkAttributes.ENCIRCLEMENT_DISTANCE.get()).setBaseValue(CombatCircle.CIRCLE_SIZE);
                 mob.goalSelector.addGoal(0, new WolfPackGoal((PathfinderMob) e.getEntity()));//theoretically as long as it continues to wolfpack it won't attack
-                //mob.getBrain().removeAllBehaviors();
                 mob.goalSelector.addGoal(1, new LookMenacingGoal((PathfinderMob) e.getEntity()));
                 EntityInfo sets = Movesets.moves.get(mob.getType());
                 if (sets != null) {
@@ -125,8 +123,7 @@ public class CombatCircle {
                                 mob.targetSelector.removeGoal(wg.getGoal());
                     }
                     mob.targetSelector.addGoal(0, new MovesetGoal(mob, new MovesetManager(mob, sets.moveset)));
-                }
-                else mob.targetSelector.addGoal(0, new RequestSlotGoal(mob));
+                } else mob.targetSelector.addGoal(0, new RequestSlotGoal(mob));
 
                 /*
                 several types of AI can be made:

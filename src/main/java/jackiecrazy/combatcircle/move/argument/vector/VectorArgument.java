@@ -31,11 +31,11 @@ public abstract class VectorArgument extends Argument {
     public abstract Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target);
 
     public static class Store extends Action{
-        private VectorArgument toStore;
+        private VectorArgument value;
         private String into;
         @Override
         public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
-            final Vec3 vec=toStore.resolveAsVector(wrapper, performer, target);
+            final Vec3 vec=value.resolveAsVector(wrapper, performer, target);
             performer.getPersistentData().putDouble(into +"_x", vec.x);
             performer.getPersistentData().putDouble(into +"_y", vec.y);
             performer.getPersistentData().putDouble(into +"_z", vec.z);

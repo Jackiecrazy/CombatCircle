@@ -33,13 +33,17 @@ public class ComparisonCondition extends Condition {
     public boolean evaluate(MovesetWrapper wrapper, Entity performer, Entity target) {
         double f = first.resolve(wrapper, performer, target);
         double s = second.resolve(wrapper, performer, target);
+        return compare(comparison, f, s);
+    }
+
+    public static boolean compare(COMPARISON comparison, double first, double second) {
         return switch (comparison) {
-            case EQ -> f == s;
-            case NEQ -> f != s;
-            case LE -> f < s;
-            case GE -> f > s;
-            case LEQ -> f <= s;
-            case GEQ -> f >= s;
+            case EQ -> first == second;
+            case NEQ -> first != second;
+            case LE -> first < second;
+            case GE -> first > second;
+            case LEQ -> first <= second;
+            case GEQ -> first >= second;
         };
     }
 }

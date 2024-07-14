@@ -3,7 +3,7 @@
     "waiting": [
       {
         "ID": "combatcircle:store_vector",
-        "toStore": {
+        "value": {
           "ID": "combatcircle:vector_sum",
           "min_length": 0.06,
           "max_length": 0.13,
@@ -25,7 +25,7 @@
       },
       {
         "ID": "combatcircle:store_vector",
-        "toStore": {
+        "value": {
           "ID": "combatcircle:get_vector",
           "from": "target_location"
         },
@@ -38,7 +38,7 @@
         },
         "ID": "combatcircle:store_vector",
         "repeatable": true,
-        "toStore": {
+        "value": {
           "ID": "combatcircle:vector_sum",
           "addends": [
             {

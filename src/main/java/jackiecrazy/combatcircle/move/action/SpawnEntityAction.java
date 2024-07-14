@@ -9,6 +9,7 @@ import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
 import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
 import jackiecrazy.combatcircle.move.argument.vector.LookVectorArgument;
 import jackiecrazy.combatcircle.move.argument.vector.PositionVectorArgument;
+import jackiecrazy.combatcircle.move.argument.vector.RawVectorArgument;
 import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import net.minecraft.nbt.CompoundTag;
@@ -32,6 +33,7 @@ public class SpawnEntityAction extends Action {
     private NumberArgument spread = FixedNumberArgument.ZERO;
     private VectorArgument position = PositionVectorArgument.CASTER;
     private VectorArgument facing = new LookVectorArgument();
+    private VectorArgument velocity = RawVectorArgument.ZERO;
     private List<Action> on_spawn = new ArrayList<>();
 
     @Override
@@ -51,12 +53,13 @@ public class SpawnEntityAction extends Action {
                 Entity summon = EntityType.loadEntityRecursive(compoundtag, serverlevel, (toSummon) -> {
                     double flatDist = Math.sqrt(look.x * look.x + look.z * look.z);
                     toSummon.moveTo(pos.x, pos.y, pos.z, (float) Mth.wrapDegrees(GeneralUtils.deg((float) Mth.atan2(look.z, look.x)) - 90.0F), Mth.wrapDegrees(-GeneralUtils.deg((float) Mth.atan2(look.y, flatDist))));
-                    if(toSummon instanceof Projectile p){
+                    if (toSummon instanceof Projectile p) {
                         p.setOwner(summoner);
                     }
-                    if(toSummon instanceof TamableAnimal p){
+                    if (toSummon instanceof TamableAnimal p) {
                         p.setOwnerUUID(summoner.getUUID());
                     }
+                    toSummon.setDeltaMovement(velocity.resolveAsVector(wrapper, performer, target));
                     return toSummon;
                 });
                 if (summon != null) {

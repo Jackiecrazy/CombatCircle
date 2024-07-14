@@ -16,12 +16,12 @@ public abstract class EntityArgument extends VectorArgument {
     }
 
     public static class Store extends Action {
-        private EntityArgument toStore;
+        private EntityArgument value;
         private String into;
 
         @Override
         public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
-            final Entity vec = toStore.resolveAsEntity(wrapper, performer, target);
+            final Entity vec = value.resolveAsEntity(wrapper, performer, target);
             performer.getPersistentData().putInt(into, vec.getId());
             return 0;
         }

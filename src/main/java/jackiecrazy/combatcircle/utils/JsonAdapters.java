@@ -22,8 +22,15 @@ import net.minecraft.commands.arguments.CompoundTagArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class JsonAdapters {
     public static final Gson gson = new GsonBuilder()
@@ -42,9 +49,45 @@ public class JsonAdapters {
             .setPrettyPrinting()
             .create();
 
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    @interface JsonRequired
+    {
+    }
+
+    private static void testRequired(JsonElement je, Type type) throws JsonParseException
+    {
+        Object pojo = new Gson().fromJson(je, type);
+
+        Field[] fields = pojo.getClass().getDeclaredFields();
+        for (Field f : fields)
+        {
+            if (f.getAnnotation(JsonRequired.class) != null)
+            {
+                try
+                {
+                    f.setAccessible(true);
+                    if (f.get(pojo) == null)
+                    {
+                        throw new JsonParseException("Missing field in JSON: " + f.getName());
+                    }
+                }
+                catch (IllegalArgumentException ex)
+                {
+                    Logger.getLogger(JsonAdapters.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                catch (IllegalAccessException ex)
+                {
+                    Logger.getLogger(JsonAdapters.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }
+
     public static class ClassAdapter implements JsonDeserializer<Class> {
         @Override
         public Class deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+
             try {
                 return Class.forName(json.getAsString());
             } catch (ClassNotFoundException e) {

@@ -15,12 +15,12 @@ public abstract class NumberArgument extends Argument {
 
 
     public static class Store extends Action {
-        private NumberArgument toStore;
+        private NumberArgument value;
         private String into;
 
         @Override
         public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
-            final double vec = toStore.resolve(wrapper, performer, target);
+            final double vec = value.resolve(wrapper, performer, target);
             performer.getPersistentData().putDouble(into, vec);
             return 0;
         }

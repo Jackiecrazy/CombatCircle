@@ -9,11 +9,15 @@ import java.util.List;
 
 public class MovesetWrapper {
     private List<TimerAction> actions;
-    private TimerAction currentMove;
+    private TimerAction currentMove;//todo does this need to be a list of currently executing actions?
     private Condition canRun;
     private int index = 0;
     private int power;
     private int changePer, currentWeight;
+    //TODO triggers, some actions record parameters, block action,
+    // global cooldown, commonly used action components (how parameter?),
+    // deduplicate all movesets, put moveset execution responsibility into capability?
+    // terrain sensitivity for wolf pack, encircle/attack multiple targets with merge/split group mechanics?
     public MovesetWrapper(int power, int initialWeight, int weightChange, List<TimerAction> actions, Condition toRun) {
         this.actions = actions;
         canRun = toRun;
