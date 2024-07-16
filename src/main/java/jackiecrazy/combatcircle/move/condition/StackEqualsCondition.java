@@ -11,7 +11,7 @@ public class StackEqualsCondition extends Condition {
     private ComparisonCondition.COMPARISON count_comparison = ComparisonCondition.COMPARISON.GEQ;
 
     @Override
-    public boolean evaluate(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
+    public boolean resolve(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
         ItemStack stackr = stack.resolve(wrapper, performer, target), comparer = compare.resolve(wrapper, performer, target);
         return stackr.getItem().equals(comparer.getItem())
                 && ComparisonCondition.compare(count_comparison, stackr.getCount(), comparer.getCount())

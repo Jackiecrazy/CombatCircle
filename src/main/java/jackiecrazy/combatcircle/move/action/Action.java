@@ -1,7 +1,6 @@
 package jackiecrazy.combatcircle.move.action;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.condition.Condition;
 import jackiecrazy.combatcircle.move.condition.FalseCondition;
 import jackiecrazy.combatcircle.move.condition.TrueCondition;
@@ -14,7 +13,6 @@ import java.util.List;
 
 public abstract class Action extends Move {
     protected Condition condition = TrueCondition.INSTANCE;
-    protected transient boolean triggered = false;
     protected Condition repeatable = FalseCondition.INSTANCE;
     protected String ID = "(default)";
 
@@ -25,9 +23,7 @@ public abstract class Action extends Move {
         int returnCode = 0;
         for (Action child : actions) {
             if (child.canRun(wrapper, performer, target)) {
-                if (!child.triggered)
-                    child.start(wrapper, performer, target);//kinda an ugly fix tbh
-                returnCode = child.perform(wrapper, performer, target);
+                returnCode = wrapper.trigger(child, performer, target);
                 if (returnCode > 0) return returnCode;
             }
         }
@@ -43,22 +39,16 @@ public abstract class Action extends Move {
         return JsonAdapters.gson.toJson(this);
     }
 
-    public boolean isFinished(MovesetWrapper wrapper, Entity performer, Entity target) {
-        return triggered;
-    }
-
     public boolean canRun(MovesetWrapper wrapper, Entity performer, Entity target) {
-        if (triggered && !repeatable.evaluate(wrapper, performer, target)) return false;
-        return condition.evaluate(wrapper, performer, target);
+        if (wrapper.getGraveyard().contains(this)) return false;
+        return condition.resolve(wrapper, performer, target);
     }
 
-    public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
-        //fixme instant actions do not run start()
-        triggered = true;
+    public boolean repeatable(MovesetWrapper wrapper, Entity performer, Entity target) {
+        return repeatable.resolve(wrapper, performer, target);
     }
 
     public void reset() {
-        triggered = false;
     }
 
     public String toString() {

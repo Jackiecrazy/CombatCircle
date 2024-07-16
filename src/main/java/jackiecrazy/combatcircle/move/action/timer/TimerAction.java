@@ -9,26 +9,15 @@ import javax.annotation.Nullable;
 
 
 public abstract class TimerAction extends Action {
-
-    transient int timer = 0;
     /**
      * on the base action
      */
     private NumberArgument max_time;
 
-    public int getTimer() {
-        return timer;
-    }
-
     @Override
     public boolean canRun(MovesetWrapper wrapper, Entity performer, Entity target) {
-        if (triggered) {
-            if (!isFinished(wrapper, performer, target))
-                return true;
-            else if (repeatable.evaluate(wrapper, performer, target)) {
-                triggered = false;
-            }
-        }
+        if (!isFinished(wrapper, performer, target) && wrapper.getTimer(this) >= 0)//isn't done, but has already started
+            return true;
         return super.canRun(wrapper, performer, target);
     }
 
@@ -36,22 +25,22 @@ public abstract class TimerAction extends Action {
      * @return false if the action ends
      */
     public boolean isFinished(MovesetWrapper wrapper, Entity performer, Entity target) {
-        return timer > max_time.resolve(wrapper, performer, target);
+        return wrapper.getTimer(this) > max_time.resolve(wrapper, performer, target);
     }
 
     public int tick(MovesetWrapper wrapper, Entity performer, Entity target) {
-        timer++;
         return isFinished(wrapper, performer, target) ? -1 : 0;
     }
 
+    public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
+    }
+
     public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
-        if (!triggered) start(wrapper, performer, target);
         return tick(wrapper, performer, target);
     }
 
     @Override
     public void reset() {
         super.reset();
-        timer = 0;
     }
 }

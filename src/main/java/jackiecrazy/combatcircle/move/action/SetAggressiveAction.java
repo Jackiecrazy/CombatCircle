@@ -1,7 +1,6 @@
 package jackiecrazy.combatcircle.move.action;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.condition.Condition;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -14,7 +13,7 @@ public class SetAggressiveAction extends Action {
     @Override
     public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
         if (performer instanceof Mob e) {
-            e.setAggressive(toggle.evaluate(wrapper, performer, target));
+            e.setAggressive(toggle.resolve(wrapper, performer, target));
         }
         return 0;
     }

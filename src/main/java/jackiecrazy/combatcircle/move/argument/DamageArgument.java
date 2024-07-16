@@ -1,7 +1,6 @@
 package jackiecrazy.combatcircle.move.argument;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
@@ -49,10 +48,10 @@ public class DamageArgument extends Argument {
                 .setDamageDealer(equip.resolve(wrapper, caster, target))
                 .setProxy(proxy.resolveAsEntity(wrapper, caster, target))
                 .setDamageTyping(typing)
-                .setProcAttackEffects(proc_attack.evaluate(wrapper, caster, target))
-                .setProcSkillEffects(proc_skill.evaluate(wrapper, caster, target))
-                .setProcNormalEffects(proc_normal.evaluate(wrapper, caster, target))
-                .setCrit(crit.evaluate(wrapper, caster, target))
+                .setProcAttackEffects(proc_attack.resolve(wrapper, caster, target))
+                .setProcSkillEffects(proc_skill.resolve(wrapper, caster, target))
+                .setProcNormalEffects(proc_normal.resolve(wrapper, caster, target))
+                .setCrit(crit.resolve(wrapper, caster, target))
                 .setCritDamage((float) crit_damage.resolve(wrapper, caster, target))
                 .setArmorReductionPercentage((float) armor_pierce_percentage.resolve(wrapper, caster, target))
                 .setKnockbackPercentage((float) knockback_percentage.resolve(wrapper, caster, target))

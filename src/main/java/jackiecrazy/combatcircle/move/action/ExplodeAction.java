@@ -1,7 +1,6 @@
 package jackiecrazy.combatcircle.move.action;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.DamageArgument;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
@@ -35,7 +34,7 @@ public class ExplodeAction extends Action {
     @Override
     public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
         Vec3 pos = position.resolveAsVector(wrapper, performer, target);
-        performer.level().explode(exploder.resolveAsEntity(wrapper, performer, target), damage_source.bake(wrapper, performer, target), null, pos.x, pos.y, pos.z, (float) radius.resolve(wrapper, performer, target), fire.evaluate(wrapper, performer, target), griefing);
+        performer.level().explode(exploder.resolveAsEntity(wrapper, performer, target), damage_source.bake(wrapper, performer, target), null, pos.x, pos.y, pos.z, (float) radius.resolve(wrapper, performer, target), fire.resolve(wrapper, performer, target), griefing);
         return 0;
     }
 }

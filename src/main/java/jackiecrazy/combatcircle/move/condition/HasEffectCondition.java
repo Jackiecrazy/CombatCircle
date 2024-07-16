@@ -20,7 +20,7 @@ public class HasEffectCondition extends Condition {
     private EntityArgument tested = TargetEntityArgument.INSTANCE;
 
     @Override
-    public boolean evaluate(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
+    public boolean resolve(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
         if (me == null)
             me = ForgeRegistries.MOB_EFFECTS.getValue(effect);
         if (me != null && tested.resolveAsEntity(wrapper, performer, target) instanceof LivingEntity e) {

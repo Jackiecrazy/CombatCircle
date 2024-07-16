@@ -8,7 +8,7 @@ public class TrueCondition extends Condition {
     public static final TrueCondition INSTANCE = new TrueCondition();
 
     @Override
-    public boolean evaluate(MovesetWrapper wrapper, Entity performer, Entity target) {
+    public boolean resolve(MovesetWrapper wrapper, Entity performer, Entity target) {
         return true;
     }
 }

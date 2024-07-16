@@ -16,7 +16,7 @@ public class IsTypeCondition extends Condition {
     private MobType type;//fixme not serializable
 
     @Override
-    public boolean evaluate(MovesetWrapper wrapper, Entity performer, Entity target) {
+    public boolean resolve(MovesetWrapper wrapper, Entity performer, Entity target) {
         Entity ref = reference.resolveAsEntity(wrapper, performer, target);
         return ref instanceof Mob mob &&mob.getMobType().equals(type);
     }

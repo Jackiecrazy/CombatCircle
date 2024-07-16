@@ -9,7 +9,7 @@ public class TimeWindowCondition extends Condition {
     private int time;
 
     @Override
-    public boolean evaluate(MovesetWrapper wrapper, Entity performer, Entity target) {
+    public boolean resolve(MovesetWrapper wrapper, Entity performer, Entity target) {
         return wrapper.getCurrentMove().getTimer() >= time;
     }
 }

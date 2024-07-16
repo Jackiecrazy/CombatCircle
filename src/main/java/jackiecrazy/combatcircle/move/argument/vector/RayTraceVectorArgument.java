@@ -1,7 +1,6 @@
 package jackiecrazy.combatcircle.move.argument.vector;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
 import jackiecrazy.combatcircle.move.condition.Condition;
 import jackiecrazy.combatcircle.move.condition.TrueCondition;
@@ -23,6 +22,6 @@ public class RayTraceVectorArgument extends VectorArgument {
         Vec3 start = position.resolveAsVector(wrapper, caster, target);
         Vec3 look = direction.resolveAsVector(wrapper, caster, target);
         double range = distance.resolve(wrapper, caster, target);
-        return GeneralUtils.raytraceAnything(caster.level(), start, look, range, scans_entities.evaluate(wrapper, caster, target), block_clip, fluid_clip).getLocation();
+        return GeneralUtils.raytraceAnything(caster.level(), start, look, range, scans_entities.resolve(wrapper, caster, target), block_clip, fluid_clip).getLocation();
     }
 }

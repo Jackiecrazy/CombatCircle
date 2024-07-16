@@ -15,12 +15,9 @@ public class RawVectorArgument extends VectorArgument {
         }
     };
     NumberArgument x, y, z;
-    transient Vec3 vec;
 
     @Override
     public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
-        if (vec == null)
-            vec = new Vec3(x.resolve(wrapper, caster, target), y.resolve(wrapper, caster, target), z.resolve(wrapper, caster, target));
-        return vec;
+        return new Vec3(x.resolve(wrapper, caster, target), y.resolve(wrapper, caster, target), z.resolve(wrapper, caster, target));
     }
 }

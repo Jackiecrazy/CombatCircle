@@ -3,7 +3,6 @@ package jackiecrazy.combatcircle.move.action;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
 import jackiecrazy.combatcircle.move.argument.vector.RawVectorArgument;
@@ -46,8 +45,8 @@ public class PlayParticleAction extends Action {
         }
         if (target.level() instanceof ServerLevel sl) {
             for (ServerPlayer sp : sl.players()) {
-                if (seen_by_player.evaluate(wrapper, performer, sp)) {
-                    sl.sendParticles(sp, p, force.evaluate(wrapper, performer, target), pos.x, pos.y, pos.z, (int) quantity.resolve(wrapper, performer, target), dir.x, dir.y, dir.z, dir.length());
+                if (seen_by_player.resolve(wrapper, performer, sp)) {
+                    sl.sendParticles(sp, p, force.resolve(wrapper, performer, target), pos.x, pos.y, pos.z, (int) quantity.resolve(wrapper, performer, target), dir.x, dir.y, dir.z, dir.length());
                 }
             }
         }

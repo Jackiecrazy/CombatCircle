@@ -30,7 +30,7 @@ public class ComparisonCondition extends Condition {
 
 
     @Override
-    public boolean evaluate(MovesetWrapper wrapper, Entity performer, Entity target) {
+    public boolean resolve(MovesetWrapper wrapper, Entity performer, Entity target) {
         double f = first.resolve(wrapper, performer, target);
         double s = second.resolve(wrapper, performer, target);
         return compare(comparison, f, s);

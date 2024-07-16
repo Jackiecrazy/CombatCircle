@@ -16,7 +16,7 @@ public class IsTaggedWithCondition extends Condition {
     private ResourceLocation tag;
 
     @Override
-    public boolean evaluate(MovesetWrapper wrapper, Entity performer, Entity target) {
+    public boolean resolve(MovesetWrapper wrapper, Entity performer, Entity target) {
         if (tagg == null) tagg = new TagKey<>(ForgeRegistries.ENTITY_TYPES.getRegistryKey(), tag);
         Entity ref = reference.resolveAsEntity(wrapper, performer, target);
         return ref.getType().is(tagg);
