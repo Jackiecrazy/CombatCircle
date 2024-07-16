@@ -1,7 +1,7 @@
 package jackiecrazy.combatcircle.move.condition;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
+import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.TargetEntityArgument;
 import net.minecraft.resources.ResourceLocation;
@@ -16,9 +16,9 @@ public class IsTaggedWithCondition extends Condition {
     private ResourceLocation tag;
 
     @Override
-    public boolean resolve(MovesetWrapper wrapper, Entity performer, Entity target) {
+    public boolean resolve(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
         if (tagg == null) tagg = new TagKey<>(ForgeRegistries.ENTITY_TYPES.getRegistryKey(), tag);
-        Entity ref = reference.resolveAsEntity(wrapper, performer, target);
+        Entity ref = reference.resolveAsEntity(wrapper, parent, performer, target);
         return ref.getType().is(tagg);
     }
 }

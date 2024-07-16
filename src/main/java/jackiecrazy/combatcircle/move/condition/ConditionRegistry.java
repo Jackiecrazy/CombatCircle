@@ -23,10 +23,14 @@ public class ConditionRegistry {
     public static final RegistryObject<ConditionType> COMPARISON = CONDITIONS.register("compare", () -> (a) -> JsonAdapters.gson.fromJson(a, ComparisonCondition.class));
 
     //entity//
-    public static final RegistryObject<ConditionType> START_AT = CONDITIONS.register("start_at", () -> (a) -> JsonAdapters.gson.fromJson(a, TimeWindowCondition.class));
+    public static final RegistryObject<ConditionType> TIME_WINDOW = CONDITIONS.register("time_window", () -> (a) -> JsonAdapters.gson.fromJson(a, TimeWindowCondition.class));
     public static final RegistryObject<ConditionType> IS_TARGET = CONDITIONS.register("is_target", () -> (a) -> JsonAdapters.gson.fromJson(a, IsTargetCondition.class));
     public static final RegistryObject<ConditionType> CAN_SEE = CONDITIONS.register("can_see", () -> (a) -> JsonAdapters.gson.fromJson(a, CanSeeCondition.class));
     public static final RegistryObject<ConditionType> IS_ALIVE = CONDITIONS.register("is_alive", () -> (a) -> JsonAdapters.gson.fromJson(a, IsAliveCondition.class));
     public static final RegistryObject<ConditionType> HAS_EFFECT = CONDITIONS.register("has_effect", () -> (a) -> JsonAdapters.gson.fromJson(a, HasEffectCondition.class));
     public static final RegistryObject<ConditionType> IS_NAMED = CONDITIONS.register("is_named", () -> (a) -> JsonAdapters.gson.fromJson(a, IsNamedCondition.class));
+    public static final RegistryObject<ConditionType> IS_TAGGED = CONDITIONS.register("is_tagged", () -> (a) -> JsonAdapters.gson.fromJson(a, IsTaggedWithCondition.class));
+
+    //misc//
+    public static final RegistryObject<ConditionType> STACK_EQUALS = CONDITIONS.register("compare_itemstack", () -> (a) -> JsonAdapters.gson.fromJson(a, StackEqualsCondition.class));
 }

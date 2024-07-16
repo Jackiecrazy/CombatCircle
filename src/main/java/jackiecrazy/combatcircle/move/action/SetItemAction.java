@@ -1,6 +1,7 @@
 package jackiecrazy.combatcircle.move.action;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import jackiecrazy.combatcircle.move.argument.stack.ItemStackArgument;
@@ -15,9 +16,9 @@ public class SetItemAction extends Action {
     private EquipmentSlot slot;
 
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
-        if (wielder.resolveAsEntity(wrapper, performer, target) instanceof LivingEntity e)
-            e.setItemSlot(slot, stack.resolve(wrapper, performer, target).copy());
+    public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
+        if (wielder.resolveAsEntity(wrapper, parent, performer, target) instanceof LivingEntity e)
+            e.setItemSlot(slot, stack.resolve(wrapper, parent, performer, target).copy());
         return 0;
     }
 }

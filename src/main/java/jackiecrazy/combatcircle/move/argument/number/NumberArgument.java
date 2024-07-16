@@ -10,8 +10,10 @@ import org.jetbrains.annotations.Nullable;
 public abstract class NumberArgument extends Argument {
     public static final FixedNumberArgument ZERO = new FixedNumberArgument(0);
     public static final FixedNumberArgument ONE = new FixedNumberArgument(1);
+    public static final FixedNumberArgument MAX = new FixedNumberArgument(Integer.MAX_VALUE);
+    public static final FixedNumberArgument MIN = new FixedNumberArgument(Integer.MIN_VALUE);
 
-    public abstract double resolve(MovesetWrapper wrapper, Entity caster, Entity target);
+    public abstract double resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target);
 
 
     public static class Store extends Action {
@@ -19,8 +21,8 @@ public abstract class NumberArgument extends Argument {
         private String into;
 
         @Override
-        public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
-            final double vec = value.resolve(wrapper, performer, target);
+        public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
+            final double vec = value.resolve(wrapper, parent, performer, target);
             performer.getPersistentData().putDouble(into, vec);
             return 0;
         }
@@ -30,7 +32,7 @@ public abstract class NumberArgument extends Argument {
         private String from;
 
         @Override
-        public double resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+        public double resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
             return caster.getPersistentData().getDouble(from);
         }
     }

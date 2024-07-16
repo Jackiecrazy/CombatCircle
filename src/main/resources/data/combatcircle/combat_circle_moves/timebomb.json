@@ -20,8 +20,8 @@
           ]
         },
         "condition": {
-          "ID": "combatcircle:start_at",
-          "time": 99
+          "ID": "combatcircle:time_window",
+          "from": 99
         }
       }
     ],

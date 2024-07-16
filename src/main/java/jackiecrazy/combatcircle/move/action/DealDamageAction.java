@@ -20,14 +20,14 @@ public class DealDamageAction extends Action {
     private List<Action> on_kill = new ArrayList<>();
 
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
-        int ret = runActions(wrapper, on_hit, performer, target);
-        if (target.hurt(damage_source.bake(wrapper, performer, target), (float) amount.resolve(wrapper, performer, target))) {
+    public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
+        int ret = runActions(wrapper, parent, on_hit, performer, target);
+        if (target.hurt(damage_source.bake(wrapper, parent, performer, target), (float) amount.resolve(wrapper, parent, performer, target))) {
             if(!target.isAlive()) {
-                int damageRet = runActions(wrapper, on_kill, performer, target);
+                int damageRet = runActions(wrapper, parent, on_kill, performer, target);
                 if (damageRet != 0) ret = damageRet;
             }
-            int damageRet = runActions(wrapper, on_damage, performer, target);
+            int damageRet = runActions(wrapper, parent, on_damage, performer, target);
             if (damageRet != 0) ret = damageRet;
         }
         return ret;

@@ -10,14 +10,14 @@ public class RawVectorArgument extends VectorArgument {
     public static final VectorArgument ZERO = new VectorArgument() {
 
         @Override
-        public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+        public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
             return Vec3.ZERO;
         }
     };
     NumberArgument x, y, z;
 
     @Override
-    public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
-        return new Vec3(x.resolve(wrapper, caster, target), y.resolve(wrapper, caster, target), z.resolve(wrapper, caster, target));
+    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        return new Vec3(x.resolve(wrapper, parent, caster, target), y.resolve(wrapper, parent, caster, target), z.resolve(wrapper, parent, caster, target));
     }
 }

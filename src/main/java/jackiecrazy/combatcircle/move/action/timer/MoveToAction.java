@@ -19,32 +19,19 @@ public class MoveToAction extends TimerAction {
     private VectorArgument position;
 
     @Override
-    public boolean isFinished(MovesetWrapper wrapper, Entity performer, Entity target) {
-        return super.isFinished(wrapper, performer, target);
-    }
-
-    @Override
     public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
-        runActions(wrapper, on_start, performer, target);//fixme doesn't proc continuous tasks
-        Vec3 dir = position.resolveAsVector(wrapper, performer, target);
+        runActions(wrapper, this, on_start, performer, target);//fixme doesn't proc continuous tasks
+        Vec3 dir = position.resolveAsVector(wrapper, this, performer, target);
         if (performer instanceof Mob m)
-            m.getMoveControl().setWantedPosition(dir.x, dir.y, dir.z, speed_modifier.resolve(wrapper, performer, target));
+            m.getMoveControl().setWantedPosition(dir.x, dir.y, dir.z, speed_modifier.resolve(wrapper, this, performer, target));
         super.start(wrapper, performer, target);
     }
 
     @Override
     public int tick(MovesetWrapper wrapper, Entity performer, Entity target) {
-        int childRet = runActions(wrapper, tick, performer, target);
+        int childRet = runActions(wrapper, this, tick, performer, target);
         if (childRet != 0) return childRet;
         return super.tick(wrapper, performer, target);
     }
 
-    @Override
-    public void reset() {
-        for (Action child : on_start)
-            child.reset();
-        for (Action child : tick)
-            child.reset();
-        super.reset();
-    }
 }

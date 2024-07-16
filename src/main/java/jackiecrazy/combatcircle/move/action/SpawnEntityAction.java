@@ -37,11 +37,11 @@ public class SpawnEntityAction extends Action {
     private List<Action> on_spawn = new ArrayList<>();
 
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
-        Entity summoner = this.summoner.resolveAsEntity(wrapper, performer, target);
-        int toSpawn = (int) quantity.resolve(wrapper, performer, target);
-        double deviation = spread.resolve(wrapper, performer, target);
-        Vec3 vec = position.resolveAsVector(wrapper, performer, target);
+    public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
+        Entity summoner = this.summoner.resolveAsEntity(wrapper, parent, performer, target);
+        int toSpawn = (int) quantity.resolve(wrapper, parent, performer, target);
+        double deviation = spread.resolve(wrapper, parent, performer, target);
+        Vec3 vec = position.resolveAsVector(wrapper, parent, performer, target);
         Level level = performer.level();
         if (level instanceof ServerLevel serverlevel) {
             for (int x = 0; x < toSpawn; x++) {
@@ -49,7 +49,7 @@ public class SpawnEntityAction extends Action {
                 final Vec3 pos = vec.add(rand);
                 CompoundTag compoundtag = tag == null ? new CompoundTag() : tag.copy();
                 compoundtag.putString("id", entity.toString());
-                Vec3 look = facing.resolveAsVector(wrapper, performer, target);
+                Vec3 look = facing.resolveAsVector(wrapper, parent, performer, target);
                 Entity summon = EntityType.loadEntityRecursive(compoundtag, serverlevel, (toSummon) -> {
                     double flatDist = Math.sqrt(look.x * look.x + look.z * look.z);
                     toSummon.moveTo(pos.x, pos.y, pos.z, (float) Mth.wrapDegrees(GeneralUtils.deg((float) Mth.atan2(look.z, look.x)) - 90.0F), Mth.wrapDegrees(-GeneralUtils.deg((float) Mth.atan2(look.y, flatDist))));
@@ -59,7 +59,7 @@ public class SpawnEntityAction extends Action {
                     if (toSummon instanceof TamableAnimal p) {
                         p.setOwnerUUID(summoner.getUUID());
                     }
-                    toSummon.setDeltaMovement(velocity.resolveAsVector(wrapper, performer, target));
+                    toSummon.setDeltaMovement(velocity.resolveAsVector(wrapper, parent, performer, target));
                     return toSummon;
                 });
                 if (summon != null) {
@@ -69,7 +69,7 @@ public class SpawnEntityAction extends Action {
 
                     serverlevel.tryAddFreshEntityWithPassengers(summon);
                     for (Action a : on_spawn) {
-                        a.perform(wrapper, summoner, summon);
+                        a.perform(wrapper, parent, summoner, summon);
                     }
 
                 }

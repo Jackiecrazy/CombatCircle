@@ -7,6 +7,8 @@ import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.SelectorEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.TargetEntityArgument;
 import jackiecrazy.combatcircle.move.argument.number.*;
+import jackiecrazy.combatcircle.move.argument.stack.EquippedItemArgument;
+import jackiecrazy.combatcircle.move.argument.stack.RawItemStackArgument;
 import jackiecrazy.combatcircle.move.argument.vector.*;
 import jackiecrazy.combatcircle.utils.JsonAdapters;
 import net.minecraft.resources.ResourceLocation;
@@ -42,7 +44,7 @@ public class ArgumentRegistry {
 
     //vectors//
     public static final RegistryObject<ArgumentType> RAW = ARGUMENTS.register("vector", () -> (a) -> JsonAdapters.gson.fromJson(a, RawVectorArgument.class));
-    public static final RegistryObject<ArgumentType> SUM = ARGUMENTS.register("vector_sum", () -> (a) -> JsonAdapters.gson.fromJson(a, SumVectorArgument.class));
+    public static final RegistryObject<ArgumentType> SUM = ARGUMENTS.register("sum_vector", () -> (a) -> JsonAdapters.gson.fromJson(a, SumVectorArgument.class));
     public static final RegistryObject<ArgumentType> ZERO = ARGUMENTS.register("zero", () -> (SingletonArgumentType) a -> RawVectorArgument.ZERO);
     public static final RegistryObject<ArgumentType> EYE_HEIGHT = ARGUMENTS.register("eye_height", () -> (a) -> JsonAdapters.gson.fromJson(a, EyeHeightVectorArgument.class));
     public static final RegistryObject<ArgumentType> EYE_POSITION = ARGUMENTS.register("eye_position", () -> (a) -> JsonAdapters.gson.fromJson(a, EyePositionVectorArgument.class));
@@ -52,9 +54,13 @@ public class ArgumentRegistry {
     public static final RegistryObject<ArgumentType> POSITION = ARGUMENTS.register("foot_position", () -> (a) -> JsonAdapters.gson.fromJson(a, PositionVectorArgument.class));
     public static final RegistryObject<ArgumentType> GET_VECTOR = ARGUMENTS.register("get_vector", () -> (a) -> JsonAdapters.gson.fromJson(a, VectorArgument.Get.class));
     public static final RegistryObject<ArgumentType> RAY_TRACE = ARGUMENTS.register("ray_trace", () -> (a) -> JsonAdapters.gson.fromJson(a, RayTraceVectorArgument.class));
+    public static final RegistryObject<ArgumentType> CLAMP = ARGUMENTS.register("clamp_vector", () -> (a) -> JsonAdapters.gson.fromJson(a, ClampedVectorArgument.class));
+
+    //itemstack//
+    public static final RegistryObject<ArgumentType> RAW_ITEM = ARGUMENTS.register("itemstack", () -> (a) -> JsonAdapters.gson.fromJson(a, RawItemStackArgument.class));
+    public static final RegistryObject<ArgumentType> EQUIPPED_ITEM = ARGUMENTS.register("equipped_item", () -> (a) -> JsonAdapters.gson.fromJson(a, EquippedItemArgument.class));
 
     //misc//
     public static final RegistryObject<ArgumentType> DAMAGE = ARGUMENTS.register("damage", () -> (a) -> JsonAdapters.gson.fromJson(a, DamageArgument.class));
-    public static final RegistryObject<ArgumentType> EQUIPMENT = ARGUMENTS.register("equipment", () -> (a) -> JsonAdapters.gson.fromJson(a, EquipmentArgument.class));
     public static final RegistryObject<ArgumentType> SELECTOR = ARGUMENTS.register("selector", () -> (a) -> JsonAdapters.gson.fromJson(a, SelectorArgument.class));
 }

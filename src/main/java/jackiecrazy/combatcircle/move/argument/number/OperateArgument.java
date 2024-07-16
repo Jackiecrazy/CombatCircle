@@ -29,9 +29,9 @@ public class OperateArgument extends NumberArgument {
 
 
     @Override
-    public double resolve(MovesetWrapper wrapper, Entity performer, Entity target) {
-        double f = first.resolve(wrapper, performer, target);
-        double s = second.resolve(wrapper, performer, target);
+    public double resolve(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+        double f = first.resolve(wrapper, parent, performer, target);
+        double s = second.resolve(wrapper, parent, performer, target);
         return switch (comparison) {
             case ADD -> f + s;
             case SUB -> f - s;

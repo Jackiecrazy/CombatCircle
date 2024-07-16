@@ -2,6 +2,7 @@ package jackiecrazy.combatcircle.move.condition;
 
 import com.google.gson.JsonObject;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.utils.JsonAdapters;
 import net.minecraft.world.entity.Entity;
 
@@ -10,7 +11,7 @@ import javax.annotation.Nullable;
 public abstract class Condition {
     private String ID = "(default)";
 
-    public abstract boolean resolve(MovesetWrapper wrapper, @Nullable Entity performer, Entity target);
+    public abstract boolean resolve(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target);
 
     public String serializeToJson(JsonObject to) {
         return JsonAdapters.gson.toJson(this);

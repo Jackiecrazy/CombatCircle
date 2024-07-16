@@ -12,16 +12,31 @@ import java.util.List;
 
 public class MovesetWrapper {
     private final HashMap<TimerAction, Integer> activeTimers = new HashMap<>();
+    private final HashMap<Action, DataWrapper<?>> extraData = new HashMap<>();
     private final List<Action> graveyard = new ArrayList<>();
-    private List<TimerAction> actions;
+    private final List<TimerAction> actions;
     private TimerAction currentMove;
-    private Condition canRun;
+    private final Condition canRun;
     private int index = 0;
-    private int power;
-    private int changePer, currentWeight;
-    //TODO triggers, some actions record parameters, block action,
+    private final int power;
+    private final int changePer;
+    private int currentWeight;
+    public static class DataWrapper<T>{
+        public T getInstance() {
+            return instance;
+        }
+
+        public void setInstance(T instance) {
+            this.instance = instance;
+        }
+        private T instance;
+        public DataWrapper(T item){
+            instance=item;
+        }
+    }
+    //TODO triggers, block action,
     // global cooldown, commonly used action components (how parameter?),
-    // deduplicate all movesets, put moveset execution responsibility into capability?
+    // put moveset execution responsibility into capability?
     // terrain sensitivity for wolf pack, encircle/attack multiple targets with merge/split group mechanics?
     public MovesetWrapper(int power, int initialWeight, int weightChange, List<TimerAction> actions, Condition toRun) {
         this.actions = actions;
@@ -59,37 +74,46 @@ public class MovesetWrapper {
         return index < actions.size() && index >= 0;
     }
 
-    public void start() {
+    public void start(Entity performer, Entity target) {
         currentMove = actions.get(0);
+        trigger(currentMove, null, performer, target);
     }
 
     public void reset() {
-        actions.forEach(TimerAction::reset);
         index = 0;
+        extraData.clear();
         activeTimers.clear();
         graveyard.clear();
     }
 
     public boolean canRun(Entity performer, Entity target) {
-        return canRun.resolve(this, performer, target);
+        return canRun.resolve(this, null, performer, target);
     }
 
     public void tick(Entity performer, Entity target) {
-        TimerAction base = actions.get(index);
         activeTimers.forEach((action, time) -> {
             activeTimers.put(action, time + 1);
         });
-        int ret = currentMove.perform(this, performer, target);
+        int ret = currentMove.perform(this, currentMove, performer, target);
+        activeTimers.entrySet().removeIf((entry)-> {
+            if(entry.getKey().isFinished(this, performer, target)){
+                graveyard.add(entry.getKey());
+                return true;
+            }
+            return false;
+        });
         if (ret < 0) {
             //natural progression//
             index++;
             currentMove = actions.get(index % actions.size());
+            trigger(currentMove, null, performer, target);
         }
         if (ret > 0) {
             //jump, reset everything//
-            actions.forEach(TimerAction::reset);
+            reset();
             index = ret - 1;
             currentMove = actions.get(index % actions.size());
+            trigger(currentMove, null, performer, target);
         }
     }
 
@@ -97,7 +121,7 @@ public class MovesetWrapper {
         return power;
     }
 
-    public int trigger(Action action, Entity performer, Entity target) {
+    public int trigger(Action action, TimerAction parent, Entity performer, Entity target) {
         //if action and not in graveyard, execute. If not repeatable, put in graveyard.
         //if timer action and not in graveyard, if not active, place and start, then if not repeatable, put in graveyard.
         if (graveyard.contains(action)) return 0;
@@ -107,11 +131,19 @@ public class MovesetWrapper {
                 ta.start(this, performer, target);
             }
         }
-        if (!action.repeatable(this, performer, target)) graveyard.add(action);
-        return action.perform(this, performer, target);
+        else if (!action.repeatable(this, parent, performer, target)) graveyard.add(action);
+        return action.perform(this, parent, performer, target);
     }
 
     public int getTimer(TimerAction action) {
         return activeTimers.getOrDefault(action, -1);
+    }
+
+    public <T> T getData(Action a){
+        return (T) (extraData.get(a).instance);
+    }
+
+    public void setData(Action a, Object b){
+        extraData.put(a, new DataWrapper<>(b));
     }
 }

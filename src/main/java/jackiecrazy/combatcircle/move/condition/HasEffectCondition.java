@@ -20,13 +20,13 @@ public class HasEffectCondition extends Condition {
     private EntityArgument tested = TargetEntityArgument.INSTANCE;
 
     @Override
-    public boolean resolve(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
+    public boolean resolve(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
         if (me == null)
             me = ForgeRegistries.MOB_EFFECTS.getValue(effect);
-        if (me != null && tested.resolveAsEntity(wrapper, performer, target) instanceof LivingEntity e) {
+        if (me != null && tested.resolveAsEntity(wrapper, parent, performer, target) instanceof LivingEntity e) {
             MobEffectInstance inst = e.getEffect(me);
             if (inst != null) {
-                return inst.getDuration() > (minimum_duration.resolve(wrapper, performer, target)) && inst.getAmplifier() > minimum_potency.resolve(wrapper, performer, target);
+                return inst.getDuration() > (minimum_duration.resolve(wrapper, parent, performer, target)) && inst.getAmplifier() > minimum_potency.resolve(wrapper, parent, performer, target);
             }
         }
         return false;

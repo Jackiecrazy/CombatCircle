@@ -33,17 +33,17 @@ public class SelectorArgument extends Argument {
         vector = new LookVectorArgument();
     }
 
-    public List<Entity> resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+    public List<Entity> resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
         List<Entity> resolved = new ArrayList<>();
-        Vec3 pos = position.resolveAsVector(wrapper, caster, target);
-        Vec3 look = vector.resolveAsVector(wrapper, caster, target);
-        double ra = range.resolve(wrapper, caster, target);
+        Vec3 pos = position.resolveAsVector(wrapper, parent, caster, target);
+        Vec3 look = vector.resolveAsVector(wrapper, parent, caster, target);
+        double ra = range.resolve(wrapper, parent, caster, target);
         if (shape == CircleEnums.SWEEPTYPE.NONE) {
             if (GeneralUtils.getDistSqCompensated(target, pos) < ra * ra) resolved.add(target);
             return resolved;
         }
-        double radius = width.resolve(wrapper, caster, target);
-        for (Entity ent : filter.filter(wrapper, caster, target, caster.level().getEntities(null, new AABB(pos, pos).inflate(ra * 1.5)))) {
+        double radius = width.resolve(wrapper, parent, caster, target);
+        for (Entity ent : filter.filter(wrapper, parent, caster, target, caster.level().getEntities(null, new AABB(pos, pos).inflate(ra * 1.5)))) {
             //type specific sweep checks
             switch (shape) {
                 case CONE -> {

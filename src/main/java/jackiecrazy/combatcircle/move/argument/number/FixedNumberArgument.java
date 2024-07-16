@@ -15,7 +15,7 @@ public class FixedNumberArgument extends NumberArgument{
     }
 
     @Override
-    public double resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+    public double resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
         return number;
     }
 }

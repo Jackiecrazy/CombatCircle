@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 public class DebugAction extends Action {
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
         System.out.println("here are the performer and target:");
         System.out.println(performer);
         System.out.println(target);

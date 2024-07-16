@@ -6,10 +6,11 @@ import net.minecraft.world.entity.Entity;
 
 public class TimeWindowCondition extends Condition {
 
-    private int time;
+    private int from=0, to=Integer.MAX_VALUE;
 
     @Override
-    public boolean resolve(MovesetWrapper wrapper, Entity performer, Entity target) {
-        return wrapper.getCurrentMove().getTimer() >= time;
+    public boolean resolve(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+        int time = wrapper.getTimer(parent);
+        return time >= from && time < to;
     }
 }

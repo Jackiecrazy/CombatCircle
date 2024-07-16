@@ -3,6 +3,7 @@ package jackiecrazy.combatcircle.move.action;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
 import jackiecrazy.combatcircle.move.argument.vector.RawVectorArgument;
@@ -30,14 +31,14 @@ public class PlayParticleAction extends Action {
     private NumberArgument quantity = NumberArgument.ZERO;
 
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
         if (play == null)
             play = ForgeRegistries.PARTICLE_TYPES.getValue(particle);
         if (play == null) return 0;
         //type/data, force, pos xyz, quantity, vel xyz, max speed
         ParticleOptions p;
-        Vec3 pos = position.resolveAsVector(wrapper, performer, target);
-        Vec3 dir = direction.resolveAsVector(wrapper, performer, target);
+        Vec3 pos = position.resolveAsVector(wrapper, parent, performer, target);
+        Vec3 dir = direction.resolveAsVector(wrapper, parent, performer, target);
         try {
             p = play.getDeserializer().fromCommand(play, new StringReader(" " + particle_parameters));
         } catch (CommandSyntaxException cse) {
@@ -45,8 +46,8 @@ public class PlayParticleAction extends Action {
         }
         if (target.level() instanceof ServerLevel sl) {
             for (ServerPlayer sp : sl.players()) {
-                if (seen_by_player.resolve(wrapper, performer, sp)) {
-                    sl.sendParticles(sp, p, force.resolve(wrapper, performer, target), pos.x, pos.y, pos.z, (int) quantity.resolve(wrapper, performer, target), dir.x, dir.y, dir.z, dir.length());
+                if (seen_by_player.resolve(wrapper, parent, performer, sp)) {
+                    sl.sendParticles(sp, p, force.resolve(wrapper, parent, performer, target), pos.x, pos.y, pos.z, (int) quantity.resolve(wrapper, parent, performer, target), dir.x, dir.y, dir.z, dir.length());
                 }
             }
         }

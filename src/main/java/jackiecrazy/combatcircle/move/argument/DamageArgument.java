@@ -1,10 +1,13 @@
 package jackiecrazy.combatcircle.move.argument;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
 import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
+import jackiecrazy.combatcircle.move.argument.stack.EquippedItemArgument;
+import jackiecrazy.combatcircle.move.argument.stack.ItemStackArgument;
 import jackiecrazy.combatcircle.move.condition.Condition;
 import jackiecrazy.combatcircle.move.condition.FalseCondition;
 import jackiecrazy.combatcircle.move.condition.TrueCondition;
@@ -27,7 +30,7 @@ public class DamageArgument extends Argument {
     private EntityArgument source = new CasterEntityArgument();
     private EntityArgument proxy = new CasterEntityArgument();
     private CombatDamageSource.TYPE typing = CombatDamageSource.TYPE.PHYSICAL;
-    private EquipmentArgument equip = new EquipmentArgument(EquipmentSlot.MAINHAND, source);
+    private ItemStackArgument equip = new EquippedItemArgument();
     private NumberArgument crit_damage = new FixedNumberArgument(1.5);
     private NumberArgument posture_damage = new FixedNumberArgument(-1);
     private NumberArgument armor_pierce_percentage = new FixedNumberArgument(0);
@@ -40,24 +43,23 @@ public class DamageArgument extends Argument {
     private List<ResourceLocation> tags = new ArrayList<>();
     transient Set<TagKey<DamageType>> dtags;
 
-    public CombatDamageSource bake(MovesetWrapper wrapper, @Nullable Entity caster, Entity target) {
+    public CombatDamageSource bake(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity caster, Entity target) {
         if (dtags == null) {
             dtags = tags.stream().map(a -> TagKey.create(Registries.DAMAGE_TYPE, a)).collect(Collectors.toSet());
         }
-        CombatDamageSource ret = new CombatDamageSource(source.resolveAsEntity(wrapper, caster, target))
-                .setDamageDealer(equip.resolve(wrapper, caster, target))
-                .setProxy(proxy.resolveAsEntity(wrapper, caster, target))
+        CombatDamageSource ret = new CombatDamageSource(source.resolveAsEntity(wrapper, parent, caster, target))
+                .setDamageDealer(equip.resolve(wrapper, parent, caster, target))
+                .setProxy(proxy.resolveAsEntity(wrapper, parent, caster, target))
                 .setDamageTyping(typing)
-                .setProcAttackEffects(proc_attack.resolve(wrapper, caster, target))
-                .setProcSkillEffects(proc_skill.resolve(wrapper, caster, target))
-                .setProcNormalEffects(proc_normal.resolve(wrapper, caster, target))
-                .setCrit(crit.resolve(wrapper, caster, target))
-                .setCritDamage((float) crit_damage.resolve(wrapper, caster, target))
-                .setArmorReductionPercentage((float) armor_pierce_percentage.resolve(wrapper, caster, target))
-                .setKnockbackPercentage((float) knockback_percentage.resolve(wrapper, caster, target))
-                .setMultiplier((float) damage_multiplier.resolve(wrapper, caster, target))
-                .setAttackingHand(equip.getSlot().getType() == EquipmentSlot.Type.HAND ? equip.getSlot() == EquipmentSlot.MAINHAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND : null)
-                .setPostureDamage((float) posture_damage.resolve(wrapper, caster, target));
+                .setProcAttackEffects(proc_attack.resolve(wrapper, parent, caster, target))
+                .setProcSkillEffects(proc_skill.resolve(wrapper, parent, caster, target))
+                .setProcNormalEffects(proc_normal.resolve(wrapper, parent, caster, target))
+                .setCrit(crit.resolve(wrapper, parent, caster, target))
+                .setCritDamage((float) crit_damage.resolve(wrapper, parent, caster, target))
+                .setArmorReductionPercentage((float) armor_pierce_percentage.resolve(wrapper, parent, caster, target))
+                .setKnockbackPercentage((float) knockback_percentage.resolve(wrapper, parent, caster, target))
+                .setMultiplier((float) damage_multiplier.resolve(wrapper, parent, caster, target))
+                .setPostureDamage((float) posture_damage.resolve(wrapper, parent, caster, target));
         dtags.forEach(ret::flag);
         return ret;
     }

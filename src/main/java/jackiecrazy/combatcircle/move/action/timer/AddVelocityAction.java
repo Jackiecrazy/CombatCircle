@@ -13,47 +13,32 @@ public class AddVelocityAction extends TimerAction {
     private List<Action> tick;
     private List<Action> on_land;
     private VectorArgument direction;
-    private transient boolean flying;
-
-    @Override
-    public boolean isFinished(MovesetWrapper wrapper, Entity performer, Entity target) {
-        return super.isFinished(wrapper, performer, target);
-    }
 
     @Override
     public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
-        runActions(wrapper, on_launch, performer, target);
-        Vec3 dir = direction.resolveAsVector(wrapper, performer, target);
+        runActions(wrapper, this, on_launch, performer, target);
+        Vec3 dir = direction.resolveAsVector(wrapper, this, performer, target);
         performer.addDeltaMovement(dir);
+        wrapper.setData(this, false);
         if(dir.y>0){
             performer.setOnGround(false);
-            flying=true;
+            wrapper.setData(this, true);
         }
         super.start(wrapper, performer, target);
     }
 
     @Override
     public int tick(MovesetWrapper wrapper, Entity performer, Entity target) {
-        int childRet = runActions(wrapper, tick, performer, target);
+        int childRet = runActions(wrapper, this, tick, performer, target);
         if (childRet != 0) return childRet;
         if(!performer.onGround()){
-            flying=true;
-        }else if(flying){
-            flying=false;
-            childRet = runActions(wrapper, on_land, performer, target);
+            wrapper.setData(this, true);
+        }else if(wrapper.getData(this)){
+            wrapper.setData(this, false);
+            childRet = runActions(wrapper, this, on_land, performer, target);
             if (childRet != 0) return childRet;
         }
         return super.tick(wrapper, performer, target);
     }
 
-    @Override
-    public void reset() {
-        for (Action child : on_launch)
-            child.reset();
-        for (Action child : tick)
-            child.reset();
-        for (Action child : on_land)
-            child.reset();
-        super.reset();
-    }
 }

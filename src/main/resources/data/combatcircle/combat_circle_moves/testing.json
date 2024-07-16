@@ -4,22 +4,26 @@
       {
         "ID": "combatcircle:store_vector",
         "value": {
-          "ID": "combatcircle:vector_sum",
-          "min_length": 0.06,
-          "max_length": 0.13,
-          "addends": [
-            {
-              "ID": "combatcircle:eye_position",
-              "reference_point": "combatcircle:target"
-            },
-            {
-              "ID": "combatcircle:foot_position",
-              "scale": -1,
-              "min_length": 0,
-              "max_length": 0,
-              "reference_point": "combatcircle:caster"
-            }
-          ]
+          "ID": "combatcircle:clamp_vector",
+          "clamp": {
+            "ID": "combatcircle:sum_vector",
+            "addends": [
+              {
+                "ID": "combatcircle:eye_position",
+                "reference_point": "combatcircle:target"
+              },
+              {
+                "ID": "combatcircle:foot_position",
+                "scale": -1,
+                "min_length": 0,
+                "max_length": 0,
+                "reference_point": "combatcircle:caster"
+              }
+            ],
+            "min_length": 0.06,
+            "max_length": 0.13
+          },
+          "max_y": 0.5
         },
         "into": "target_location"
       },
@@ -33,13 +37,13 @@
       },
       {
         "condition": {
-          "ID": "combatcircle:start_at",
-          "time": 5
+          "ID": "combatcircle:time_window",
+          "from": 5
         },
         "ID": "combatcircle:store_vector",
         "repeatable": true,
         "value": {
-          "ID": "combatcircle:vector_sum",
+          "ID": "combatcircle:sum_vector",
           "addends": [
             {
               "ID": "combatcircle:get_vector",
@@ -55,15 +59,15 @@
       },
       {
         "condition": {
-          "ID": "combatcircle:start_at",
-          "time": 5
+          "ID": "combatcircle:time_window",
+          "from": 5
         },
         "ID": "combatcircle:play_particle",
         "repeatable": true,
         "particle": "minecraft:dust",
         "particle_parameters": "1 0.2 0 1",
         "position": {
-          "ID": "combatcircle:vector_sum",
+          "ID": "combatcircle:sum_vector",
           "addends": [
             {
               "ID": "combatcircle:get_vector",
@@ -83,16 +87,16 @@
       },
       {
         "condition": {
-          "ID": "combatcircle:start_at",
-          "time": 5
+          "ID": "combatcircle:time_window",
+          "from": 5
         },
         "ID": "combatcircle:look_at",
         "entity_target": "combatcircle:target"
       },
       {
         "condition": {
-          "ID": "combatcircle:start_at",
-          "time": 10
+          "ID": "combatcircle:time_window",
+          "from": 10
         },
         "ID": "combatcircle:set_aggressive",
         "toggle": true
@@ -136,7 +140,7 @@
           }
         },
         "hit_cooldown": 0,
-        "max_time": 10,
+        "max_time": 99,
         "actions": [
           {
             "ID": "combatcircle:deal_damage",

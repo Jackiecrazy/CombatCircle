@@ -15,17 +15,17 @@ public abstract class TimerAction extends Action {
     private NumberArgument max_time;
 
     @Override
-    public boolean canRun(MovesetWrapper wrapper, Entity performer, Entity target) {
+    public boolean canRun(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
         if (!isFinished(wrapper, performer, target) && wrapper.getTimer(this) >= 0)//isn't done, but has already started
             return true;
-        return super.canRun(wrapper, performer, target);
+        return super.canRun(wrapper, parent, performer, target);
     }
 
     /**
-     * @return false if the action ends
+     * @return false if the action is still running
      */
     public boolean isFinished(MovesetWrapper wrapper, Entity performer, Entity target) {
-        return wrapper.getTimer(this) > max_time.resolve(wrapper, performer, target);
+        return wrapper.getTimer(this) > max_time.resolve(wrapper, this, performer, target);
     }
 
     public int tick(MovesetWrapper wrapper, Entity performer, Entity target) {
@@ -35,12 +35,7 @@ public abstract class TimerAction extends Action {
     public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
     }
 
-    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
         return tick(wrapper, performer, target);
-    }
-
-    @Override
-    public void reset() {
-        super.reset();
     }
 }

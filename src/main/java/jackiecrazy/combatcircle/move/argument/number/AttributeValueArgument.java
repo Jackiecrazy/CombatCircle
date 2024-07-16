@@ -15,10 +15,10 @@ public class AttributeValueArgument extends NumberArgument {
     private Attribute attr;
 
     @Override
-    public double resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+    public double resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
         if (attr == null)
             attr = ForgeRegistries.ATTRIBUTES.getValue(attribute);
-        if (attr != null && reference_point.resolveAsEntity(wrapper, caster, target) instanceof LivingEntity le)
+        if (attr != null && reference_point.resolveAsEntity(wrapper, parent, caster, target) instanceof LivingEntity le)
             return le.getAttributeValue(attr);
         return 0;
     }

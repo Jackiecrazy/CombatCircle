@@ -30,9 +30,9 @@ public class ComparisonCondition extends Condition {
 
 
     @Override
-    public boolean resolve(MovesetWrapper wrapper, Entity performer, Entity target) {
-        double f = first.resolve(wrapper, performer, target);
-        double s = second.resolve(wrapper, performer, target);
+    public boolean resolve(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+        double f = first.resolve(wrapper, parent, performer, target);
+        double s = second.resolve(wrapper, parent, performer, target);
         return compare(comparison, f, s);
     }
 

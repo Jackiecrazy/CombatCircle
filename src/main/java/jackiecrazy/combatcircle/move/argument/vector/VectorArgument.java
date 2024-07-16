@@ -14,11 +14,11 @@ public abstract class VectorArgument extends Argument {
     private NumberArgument min_length = NumberArgument.ZERO;
     private NumberArgument max_length = NumberArgument.ZERO;
 
-    public Vec3 resolveAsVector(MovesetWrapper wrapper, Entity caster, Entity target) {
-        double minLength = min_length.resolve(wrapper, caster, target);
-        double maxLength = max_length.resolve(wrapper, caster, target);
-        double sc = scale.resolve(wrapper, caster, target);
-        Vec3 ret = _resolve(wrapper, caster, target).scale(sc);
+    public Vec3 resolveAsVector(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        double minLength = min_length.resolve(wrapper, parent, caster, target);
+        double maxLength = max_length.resolve(wrapper, parent, caster, target);
+        double sc = scale.resolve(wrapper, parent, caster, target);
+        Vec3 ret = _resolve(wrapper, parent, caster, target).scale(sc);
         if (minLength > 0 && ret.lengthSqr() < minLength * minLength) {
             ret=ret.scale(minLength / ret.length());
         }
@@ -28,14 +28,14 @@ public abstract class VectorArgument extends Argument {
         return ret;
     }
 
-    public abstract Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target);
+    public abstract Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target);
 
     public static class Store extends Action{
         private VectorArgument value;
         private String into;
         @Override
-        public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
-            final Vec3 vec=value.resolveAsVector(wrapper, performer, target);
+        public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
+            final Vec3 vec=value.resolveAsVector(wrapper, parent, performer, target);
             performer.getPersistentData().putDouble(into +"_x", vec.x);
             performer.getPersistentData().putDouble(into +"_y", vec.y);
             performer.getPersistentData().putDouble(into +"_z", vec.z);
@@ -47,7 +47,7 @@ public abstract class VectorArgument extends Argument {
         private String from;
 
         @Override
-        public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+        public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
             return new Vec3(caster.getPersistentData().getDouble(from +"_x"), caster.getPersistentData().getDouble(from +"_y"), caster.getPersistentData().getDouble(from +"_z"));
         }
     }

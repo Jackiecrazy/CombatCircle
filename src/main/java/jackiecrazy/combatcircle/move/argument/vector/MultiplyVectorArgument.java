@@ -10,7 +10,7 @@ public class MultiplyVectorArgument extends VectorArgument {
     VectorArgument multiply;
 
     @Override
-    public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
-        return base.resolveAsVector(wrapper, caster, target).multiply(multiply.resolveAsVector(wrapper, caster, target));
+    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        return base.resolveAsVector(wrapper, parent, caster, target).multiply(multiply.resolveAsVector(wrapper, parent, caster, target));
     }
 }

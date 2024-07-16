@@ -62,7 +62,7 @@ public class MovesetGoal extends Goal {
     public void start() {
         super.start();
         startTime = mob.tickCount;
-        wrap.start();
+        wrap.start(mob, target);
     }
 
     @Override

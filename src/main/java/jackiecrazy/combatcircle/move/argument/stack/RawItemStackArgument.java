@@ -1,6 +1,7 @@
 package jackiecrazy.combatcircle.move.argument.stack;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -13,9 +14,9 @@ public class RawItemStackArgument extends ItemStackArgument{
     private NumberArgument count = NumberArgument.ZERO;
     private CompoundTag tag;
 
-    public ItemStack resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+    public ItemStack resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
         ItemStack ret = new ItemStack(ForgeRegistries.ITEMS.getValue(item));
-        ret.setCount((int) Math.max(count.resolve(wrapper, caster, target), 1));
+        ret.setCount((int) Math.max(count.resolve(wrapper, parent, caster, target), 1));
         if (tag != null)
             ret.setTag(tag.copy());
         return ret;

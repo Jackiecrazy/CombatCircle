@@ -8,8 +8,8 @@
         "spread": 1,
         "tag": "{Size:0}",
         "condition": {
-          "ID": "combatcircle:start_at",
-          "time": 98
+          "ID": "combatcircle:time_window",
+          "from": 98
         },
         "position": {
           "ID": "combatcircle:eye_position",

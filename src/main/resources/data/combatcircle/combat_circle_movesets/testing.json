@@ -1,5 +1,5 @@
 {
-  "mob": "mymod:example_mob",
+  "mob": "minecraft:vindicator",
   "mob_size": 1,
   "encirclement_distance": 5,
   "pursue_walk_speed": 1.0,

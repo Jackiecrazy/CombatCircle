@@ -11,7 +11,7 @@ public class LookVectorArgument extends VectorArgument{
     EntityArgument reference_point=CasterEntityArgument.INSTANCE;
 
     @Override
-    public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
-        return reference_point.resolveAsEntity(wrapper, caster, target).getLookAngle();
+    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        return reference_point.resolveAsEntity(wrapper, parent, caster, target).getLookAngle();
     }
 }

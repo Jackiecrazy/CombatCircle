@@ -9,10 +9,10 @@ public class SumVectorArgument extends VectorArgument{
     VectorArgument[] addends;
 
     @Override
-    public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
+    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
         Vec3 start=Vec3.ZERO;
         for(VectorArgument vec: addends){
-            start=start.add(vec.resolveAsVector(wrapper, caster, target));
+            start=start.add(vec.resolveAsVector(wrapper, parent, caster, target));
         }
         return start;
     }

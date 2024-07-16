@@ -10,7 +10,7 @@ public class CurrentHealthArgument extends NumberArgument {
     private EntityArgument reference_point;
 
     @Override
-    public double resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
-        return reference_point.resolveAsEntity(wrapper, caster, target) instanceof LivingEntity le ? le.getHealth() : 0;
+    public double resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        return reference_point.resolveAsEntity(wrapper, parent, caster, target) instanceof LivingEntity le ? le.getHealth() : 0;
     }
 }

@@ -10,8 +10,8 @@ public class IsNamedCondition extends Condition {
     private EntityArgument reference= CasterEntityArgument.INSTANCE;
     private String name;
     @Override
-    public boolean resolve(MovesetWrapper wrapper, Entity performer, Entity target) {
-        Entity ref=reference.resolveAsEntity(wrapper, performer, target);
+    public boolean resolve(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+        Entity ref=reference.resolveAsEntity(wrapper, parent, performer, target);
         return ref.hasCustomName()&&ref.getCustomName().getString().equals(name);
     }
 }

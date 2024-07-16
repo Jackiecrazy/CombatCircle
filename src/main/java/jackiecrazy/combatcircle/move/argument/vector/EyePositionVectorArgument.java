@@ -11,7 +11,7 @@ public class EyePositionVectorArgument extends VectorArgument {
     private EntityArgument reference_point= CasterEntityArgument.INSTANCE;
 
     @Override
-    public Vec3 _resolve(MovesetWrapper wrapper, Entity caster, Entity target) {
-        return reference_point.resolveAsEntity(wrapper, caster, target).getEyePosition();
+    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        return reference_point.resolveAsEntity(wrapper, parent, caster, target).getEyePosition();
     }
 }

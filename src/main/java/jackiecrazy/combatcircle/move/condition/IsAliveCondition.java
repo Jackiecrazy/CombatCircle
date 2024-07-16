@@ -9,8 +9,8 @@ import net.minecraft.world.entity.Entity;
 public class IsAliveCondition extends Condition {
     private EntityArgument reference= CasterEntityArgument.INSTANCE;
     @Override
-    public boolean resolve(MovesetWrapper wrapper, Entity performer, Entity target) {
-        Entity ref=reference.resolveAsEntity(wrapper, performer, target);
+    public boolean resolve(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+        Entity ref=reference.resolveAsEntity(wrapper, parent, performer, target);
         return ref.isAlive();
     }
 }

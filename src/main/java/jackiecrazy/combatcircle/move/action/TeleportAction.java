@@ -19,12 +19,12 @@ public class TeleportAction extends Action {
     private VectorArgument position;
 
     @Override
-    public int perform(MovesetWrapper wrapper, @Nullable Entity performer, Entity target) {
-        Vec3 vec=position.resolveAsVector(wrapper, performer, target);
-        Entity teleporter = subject.resolveAsEntity(wrapper, performer, target);
-        runActions(wrapper, on_start, performer, teleporter);
+    public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
+        Vec3 vec=position.resolveAsVector(wrapper, parent, performer, target);
+        Entity teleporter = subject.resolveAsEntity(wrapper, parent, performer, target);
+        runActions(wrapper, parent, on_start, performer, teleporter);
         teleporter.teleportTo(vec.x,vec.y, vec.z);
-        runActions(wrapper, on_land, performer, teleporter);
+        runActions(wrapper, parent, on_land, performer, teleporter);
         return 0;
     }
 }
