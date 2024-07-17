@@ -178,6 +178,10 @@
       {
         "ID": "combatcircle:set_aggressive",
         "toggle": false
+      },
+      {
+        "ID": "combatcircle:goto",
+        "instruction": 3
       }
     ]
   },
@@ -185,8 +189,8 @@
     "waiting": [
       {
         "condition": {
-          "ID": "combatcircle:start_at",
-          "time": 14
+          "ID": "combatcircle:time_window",
+          "from": 14
         },
         "ID": "combatcircle:set_aggressive",
         "toggle": false

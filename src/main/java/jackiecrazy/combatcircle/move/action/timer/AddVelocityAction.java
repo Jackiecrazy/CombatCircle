@@ -20,7 +20,7 @@ public class AddVelocityAction extends TimerAction {
         Vec3 dir = direction.resolveAsVector(wrapper, this, performer, target);
         performer.addDeltaMovement(dir);
         wrapper.setData(this, false);
-        if(dir.y>0){
+        if (dir.y > 0) {
             performer.setOnGround(false);
             wrapper.setData(this, true);
         }
@@ -31,9 +31,9 @@ public class AddVelocityAction extends TimerAction {
     public int tick(MovesetWrapper wrapper, Entity performer, Entity target) {
         int childRet = runActions(wrapper, this, tick, performer, target);
         if (childRet != 0) return childRet;
-        if(!performer.onGround()){
+        if (!performer.onGround()) {
             wrapper.setData(this, true);
-        }else if(wrapper.getData(this)){
+        } else if (wrapper.getData(this)) {
             wrapper.setData(this, false);
             childRet = runActions(wrapper, this, on_land, performer, target);
             if (childRet != 0) return childRet;

@@ -34,7 +34,7 @@ public class MovesetWrapper {
             instance=item;
         }
     }
-    //TODO triggers, block action,
+    //TODO triggers, some actions record parameters, block action,
     // global cooldown, commonly used action components (how parameter?),
     // put moveset execution responsibility into capability?
     // terrain sensitivity for wolf pack, encircle/attack multiple targets with merge/split group mechanics?

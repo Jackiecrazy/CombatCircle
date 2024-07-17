@@ -46,7 +46,7 @@ public class CombatCircle {
     public static final int SHORT_DISTANCE = 1;
     public static final int SPREAD_DISTANCE = 7;
     public static final int CIRCLE_SIZE = 4;
-    public static final int MAXIMUM_CHASE_TIME = 100;
+    public static final int MAXIMUM_CHASE_TIME = 200;
     public static final int MOB_LIMIT = 10;//5
     public static final int ATTACK_LIMIT = 3;
     public static final TagKey<EntityType<?>> IGNORE = TagKey.create(Registries.ENTITY_TYPE, new ResourceLocation(MODID, "ignore_combat_circle"));

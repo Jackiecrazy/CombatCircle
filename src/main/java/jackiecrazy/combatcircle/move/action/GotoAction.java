@@ -6,7 +6,7 @@ import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 
-public class JumpToAction extends Action {
+public class GotoAction extends Action {
     private NumberArgument instruction;
 
     @Override
