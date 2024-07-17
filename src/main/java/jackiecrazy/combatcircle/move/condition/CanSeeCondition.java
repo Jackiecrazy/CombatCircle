@@ -1,19 +1,19 @@
 package jackiecrazy.combatcircle.move.condition;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
+import jackiecrazy.combatcircle.move.action.Action;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
-import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import jackiecrazy.footwork.utils.GeneralUtils;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 public class CanSeeCondition extends Condition {
-    private EntityArgument reference= CasterEntityArgument.INSTANCE;
+    private Argument<Entity> reference= CasterEntityArgument.INSTANCE;
     private Condition flimsy=FalseCondition.INSTANCE;
     @Override
-    public boolean resolve(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
-        Entity ref=reference.resolveAsEntity(wrapper, parent, performer, target);
+    public Boolean resolve(MovesetWrapper wrapper, Action parent, Entity performer, Entity target) {
+        Entity ref=reference.resolve(wrapper, parent, performer, target);
         if(ref instanceof LivingEntity looker){
             return looker.hasLineOfSight(target);
         }

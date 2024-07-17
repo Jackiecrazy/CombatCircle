@@ -1,6 +1,5 @@
 package jackiecrazy.combatcircle.move.argument;
 
-import com.google.gson.JsonObject;
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
@@ -10,58 +9,61 @@ import jackiecrazy.combatcircle.move.argument.number.*;
 import jackiecrazy.combatcircle.move.argument.stack.EquippedItemArgument;
 import jackiecrazy.combatcircle.move.argument.stack.RawItemStackArgument;
 import jackiecrazy.combatcircle.move.argument.vector.*;
-import jackiecrazy.combatcircle.utils.JsonAdapters;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryObject;
 
-import java.util.Random;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class ArgumentRegistry {
     public static ResourceLocation REGISTRY_NAME = new ResourceLocation(CombatCircle.MODID, "arguments");
-    public static Supplier<IForgeRegistry<ArgumentType>> SUPPLIER;
-    public static DeferredRegister<ArgumentType> ARGUMENTS = DeferredRegister.create(REGISTRY_NAME, CombatCircle.MODID);
+    public static Supplier<IForgeRegistry<ArgumentType<?>>> SUPPLIER;
+    public static DeferredRegister<ArgumentType<?>> ARGUMENTS = DeferredRegister.create(REGISTRY_NAME, CombatCircle.MODID);
 
     //entity//
-    public static final RegistryObject<ArgumentType> CASTER = ARGUMENTS.register("caster", () -> (SingletonArgumentType) a -> CasterEntityArgument.INSTANCE);
-    public static final RegistryObject<ArgumentType> TARGET = ARGUMENTS.register("target", () -> (SingletonArgumentType) a -> TargetEntityArgument.INSTANCE);
-    public static final RegistryObject<ArgumentType> ENTITY = ARGUMENTS.register("random_entity", () -> (a) -> JsonAdapters.gson.fromJson(a, SelectorEntityArgument.class));
-    public static final RegistryObject<ArgumentType> GET_ENTITY = ARGUMENTS.register("get_entity", () -> (a) -> JsonAdapters.gson.fromJson(a, EntityArgument.Get.class));
+    public static final RegistryObject<ArgumentType<Entity>> CASTER = ARGUMENTS.register("caster", () -> new SingletonArgumentType<>(CasterEntityArgument.class, CasterEntityArgument.INSTANCE));
+    public static final RegistryObject<ArgumentType<Entity>> TARGET = ARGUMENTS.register("target", () -> new SingletonArgumentType<>(TargetEntityArgument.class, TargetEntityArgument.INSTANCE));
+    public static final RegistryObject<ArgumentType<Entity>> ENTITY = ARGUMENTS.register("random_entity", () -> new ArgumentType<>(SelectorEntityArgument.class));
+    public static final RegistryObject<ArgumentType<Entity>> GET_ENTITY = ARGUMENTS.register("get_entity", () -> new ArgumentType<>(EntityArgument.Get.class));
 
     //numbers//
-    public static final RegistryObject<ArgumentType> NUMBER = ARGUMENTS.register("number", () -> (a) -> JsonAdapters.gson.fromJson(a, FixedNumberArgument.class));
-    public static final RegistryObject<ArgumentType> CURRENT_HEALTH = ARGUMENTS.register("current_health", () -> (a) -> JsonAdapters.gson.fromJson(a, CurrentHealthArgument.class));
-    public static final RegistryObject<ArgumentType> HEALTH_PERCENTAGE = ARGUMENTS.register("health_percentage", () -> (a) -> JsonAdapters.gson.fromJson(a, HealthPercArgument.class));
-    public static final RegistryObject<ArgumentType> OPERATION = ARGUMENTS.register("operate", () -> (a) -> JsonAdapters.gson.fromJson(a, OperateArgument.class));
-    public static final RegistryObject<ArgumentType> ATTRIBUTE_VALUE = ARGUMENTS.register("attribute_value", () -> (a) -> JsonAdapters.gson.fromJson(a, AttributeValueArgument.class));
-    public static final RegistryObject<ArgumentType> DOT_PRODUCT = ARGUMENTS.register("dot_product", () -> (a) -> JsonAdapters.gson.fromJson(a, DotProductArgument.class));
-    public static final RegistryObject<ArgumentType> DISTANCE = ARGUMENTS.register("distance", () -> (a) -> JsonAdapters.gson.fromJson(a, DistanceArgument.class));
-    public static final RegistryObject<ArgumentType> GET_NUMBER = ARGUMENTS.register("get_number", () -> (a) -> JsonAdapters.gson.fromJson(a, NumberArgument.Get.class));
-    public static final RegistryObject<ArgumentType> RANDOM = ARGUMENTS.register("random", () -> (a) -> JsonAdapters.gson.fromJson(a, RandomNumberArgument.class));
-    public static final RegistryObject<ArgumentType> PARENT_TIMER = ARGUMENTS.register("parent_timer", () -> (SingletonArgumentType) a -> ParentTimerArgument.INSTANCE);
+    public static final RegistryObject<ArgumentType<Double>> NUMBER = ARGUMENTS.register("number", () -> new ArgumentType<>(FixedNumberArgument.class));
+    public static final RegistryObject<ArgumentType<Double>> CURRENT_HEALTH = ARGUMENTS.register("current_health", () -> new ArgumentType<>(CurrentHealthArgument.class));
+    public static final RegistryObject<ArgumentType<Double>> HEALTH_PERCENTAGE = ARGUMENTS.register("health_percentage", ()  -> new ArgumentType<>(HealthPercArgument.class));
+    public static final RegistryObject<ArgumentType<Double>> OPERATION = ARGUMENTS.register("operate", ()  -> new ArgumentType<>(OperateArgument.class));
+    public static final RegistryObject<ArgumentType<Double>> ATTRIBUTE_VALUE = ARGUMENTS.register("attribute_value", ()  -> new ArgumentType<>(AttributeValueArgument.class));
+    public static final RegistryObject<ArgumentType<Double>> DOT_PRODUCT = ARGUMENTS.register("dot_product", ()  -> new ArgumentType<>(DotProductArgument.class));
+    public static final RegistryObject<ArgumentType<Double>> DISTANCE = ARGUMENTS.register("distance", ()  -> new ArgumentType<>(DistanceArgument.class));
+    public static final RegistryObject<ArgumentType<Double>> GET_NUMBER = ARGUMENTS.register("get_number", ()  -> new ArgumentType<>(NumberArgument.Get.class));
+    public static final RegistryObject<ArgumentType<Double>> RANDOM = ARGUMENTS.register("random", ()  -> new ArgumentType<>(RandomNumberArgument.class));
+    public static final RegistryObject<ArgumentType<Double>> PARENT_TIMER = ARGUMENTS.register("parent_timer", () -> new SingletonArgumentType<>(ParentTimerArgument.class, ParentTimerArgument.INSTANCE));
 
     //vectors//
-    public static final RegistryObject<ArgumentType> RAW = ARGUMENTS.register("vector", () -> (a) -> JsonAdapters.gson.fromJson(a, RawVectorArgument.class));
-    public static final RegistryObject<ArgumentType> SUM = ARGUMENTS.register("sum_vector", () -> (a) -> JsonAdapters.gson.fromJson(a, SumVectorArgument.class));
-    public static final RegistryObject<ArgumentType> ZERO = ARGUMENTS.register("zero", () -> (SingletonArgumentType) a -> RawVectorArgument.ZERO);
-    public static final RegistryObject<ArgumentType> EYE_HEIGHT = ARGUMENTS.register("eye_height", () -> (a) -> JsonAdapters.gson.fromJson(a, EyeHeightVectorArgument.class));
-    public static final RegistryObject<ArgumentType> EYE_POSITION = ARGUMENTS.register("eye_position", () -> (a) -> JsonAdapters.gson.fromJson(a, EyePositionVectorArgument.class));
-    public static final RegistryObject<ArgumentType> LOOK = ARGUMENTS.register("look", () -> (a) -> JsonAdapters.gson.fromJson(a, LookVectorArgument.class));
-    public static final RegistryObject<ArgumentType> MULTIPLY = ARGUMENTS.register("multiply", () -> (a) -> JsonAdapters.gson.fromJson(a, MultiplyVectorArgument.class));
-    public static final RegistryObject<ArgumentType> CROSS_PRODUCT = ARGUMENTS.register("cross_product", () -> (a) -> JsonAdapters.gson.fromJson(a, CrossProductArgument.class));
-    public static final RegistryObject<ArgumentType> POSITION = ARGUMENTS.register("foot_position", () -> (a) -> JsonAdapters.gson.fromJson(a, PositionVectorArgument.class));
-    public static final RegistryObject<ArgumentType> GET_VECTOR = ARGUMENTS.register("get_vector", () -> (a) -> JsonAdapters.gson.fromJson(a, VectorArgument.Get.class));
-    public static final RegistryObject<ArgumentType> RAY_TRACE = ARGUMENTS.register("ray_trace", () -> (a) -> JsonAdapters.gson.fromJson(a, RayTraceVectorArgument.class));
-    public static final RegistryObject<ArgumentType> CLAMP = ARGUMENTS.register("clamp_vector", () -> (a) -> JsonAdapters.gson.fromJson(a, ClampedVectorArgument.class));
+    public static final RegistryObject<ArgumentType<Vec3>> RAW = ARGUMENTS.register("vector", ()  -> new ArgumentType<>(RawVectorArgument.class));
+    public static final RegistryObject<ArgumentType<Vec3>> SUM = ARGUMENTS.register("sum_vector", ()  -> new ArgumentType<>(SumVectorArgument.class));
+    public static final RegistryObject<ArgumentType<Vec3>> ZERO = ARGUMENTS.register("zero", ()  -> new SingletonArgumentType<>(RawVectorArgument.class, RawVectorArgument.ZERO));
+    public static final RegistryObject<ArgumentType<Vec3>> EYE_HEIGHT = ARGUMENTS.register("eye_height", ()  -> new ArgumentType<>(EyeHeightVectorArgument.class));
+    public static final RegistryObject<ArgumentType<Vec3>> EYE_POSITION = ARGUMENTS.register("eye_position", ()  -> new ArgumentType<>(EyePositionVectorArgument.class));
+    public static final RegistryObject<ArgumentType<Vec3>> LOOK = ARGUMENTS.register("look", ()  -> new ArgumentType<>(LookVectorArgument.class));
+    public static final RegistryObject<ArgumentType<Vec3>> MULTIPLY = ARGUMENTS.register("multiply", ()  -> new ArgumentType<>(MultiplyVectorArgument.class));
+    public static final RegistryObject<ArgumentType<Vec3>> CROSS_PRODUCT = ARGUMENTS.register("cross_product", ()  -> new ArgumentType<>(CrossProductArgument.class));
+    public static final RegistryObject<ArgumentType<Vec3>> POSITION = ARGUMENTS.register("foot_position", ()  -> new ArgumentType<>(PositionVectorArgument.class));
+    public static final RegistryObject<ArgumentType<Vec3>> GET_VECTOR = ARGUMENTS.register("get_vector", ()  -> new ArgumentType<>(VectorArgument.Get.class));
+    public static final RegistryObject<ArgumentType<Vec3>> RAY_TRACE = ARGUMENTS.register("ray_trace", ()  -> new ArgumentType<>(RayTraceVectorArgument.class));
+    public static final RegistryObject<ArgumentType<Vec3>> CLAMP = ARGUMENTS.register("clamp_vector", ()  -> new ArgumentType<>(ClampedVectorArgument.class));
 
     //itemstack//
-    public static final RegistryObject<ArgumentType> RAW_ITEM = ARGUMENTS.register("itemstack", () -> (a) -> JsonAdapters.gson.fromJson(a, RawItemStackArgument.class));
-    public static final RegistryObject<ArgumentType> EQUIPPED_ITEM = ARGUMENTS.register("equipped_item", () -> (a) -> JsonAdapters.gson.fromJson(a, EquippedItemArgument.class));
+    public static final RegistryObject<ArgumentType<ItemStack>> RAW_ITEM = ARGUMENTS.register("itemstack", ()  -> new ArgumentType<>(RawItemStackArgument.class));
+    public static final RegistryObject<ArgumentType<ItemStack>> EQUIPPED_ITEM = ARGUMENTS.register("equipped_item", ()  -> new ArgumentType<>(EquippedItemArgument.class));
 
     //misc//
-    public static final RegistryObject<ArgumentType> DAMAGE = ARGUMENTS.register("damage", () -> (a) -> JsonAdapters.gson.fromJson(a, DamageArgument.class));
-    public static final RegistryObject<ArgumentType> SELECTOR = ARGUMENTS.register("selector", () -> (a) -> JsonAdapters.gson.fromJson(a, SelectorArgument.class));
+    public static final RegistryObject<ArgumentType<DamageSource>> DAMAGE = ARGUMENTS.register("damage", ()  -> new ArgumentType<>(DamageArgument.class));
+    public static final RegistryObject<ArgumentType<List<Entity>>> SELECTOR = ARGUMENTS.register("selector", ()  -> new ArgumentType<>(SelectorArgument.class));
+    public static final RegistryObject<ArgumentType<?>> PARENT = ARGUMENTS.register("parent_data", ()  -> new ArgumentType<>(ParentDataArgument.class));
 }

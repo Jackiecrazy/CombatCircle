@@ -2,13 +2,10 @@ package jackiecrazy.combatcircle.move.action.timer;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
-import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
-import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.control.MoveControl;
-import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 
@@ -18,13 +15,13 @@ import java.util.List;
 public class MoveToAction extends TimerAction {
     private List<Action> on_start = new ArrayList<>();
     private List<Action> tick = new ArrayList<>();
-    private NumberArgument speed_modifier = FixedNumberArgument.ONE;
-    private VectorArgument position;
+    private Argument<Double> speed_modifier = FixedNumberArgument.ONE;
+    private Argument<Vec3> position;
 
     @Override
     public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
         runActions(wrapper, this, on_start, performer, target);//fixme doesn't proc continuous tasks
-        Vec3 moveTo = position.resolveAsVector(wrapper, this, performer, target);
+        Vec3 moveTo = position.resolve(wrapper, this, performer, target);
         if (performer instanceof Mob m) {
             Path path = m.getNavigation().createPath(moveTo.x, moveTo.y, moveTo.z, 0);
             if (path != null) {

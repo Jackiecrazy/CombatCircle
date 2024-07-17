@@ -2,7 +2,7 @@ package jackiecrazy.combatcircle.move.action.timer;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
-import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
@@ -12,12 +12,12 @@ public class AddVelocityAction extends TimerAction {
     private List<Action> on_launch;
     private List<Action> tick;
     private List<Action> on_land;
-    private VectorArgument direction;
+    private Argument<Vec3> direction;
 
     @Override
     public void start(MovesetWrapper wrapper, Entity performer, Entity target) {
         runActions(wrapper, this, on_launch, performer, target);
-        Vec3 dir = direction.resolveAsVector(wrapper, this, performer, target);
+        Vec3 dir = direction.resolve(wrapper, this, performer, target);
         performer.addDeltaMovement(dir);
         wrapper.setData(this, false);
         if (dir.y > 0) {

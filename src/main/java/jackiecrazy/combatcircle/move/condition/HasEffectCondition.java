@@ -1,10 +1,10 @@
 package jackiecrazy.combatcircle.move.condition;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
-import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
+import jackiecrazy.combatcircle.move.action.Action;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import jackiecrazy.combatcircle.move.argument.entity.TargetEntityArgument;
-import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
+import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -16,14 +16,14 @@ import org.jetbrains.annotations.Nullable;
 public class HasEffectCondition extends Condition {
     private ResourceLocation effect;
     private transient MobEffect me;
-    private NumberArgument minimum_potency=NumberArgument.ZERO, minimum_duration=NumberArgument.ZERO;
-    private EntityArgument tested = TargetEntityArgument.INSTANCE;
+    private Argument<Double> minimum_potency= FixedNumberArgument.ZERO, minimum_duration= FixedNumberArgument.ZERO;
+    private Argument<Entity> tested = TargetEntityArgument.INSTANCE;
 
     @Override
-    public boolean resolve(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
+    public Boolean resolve(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
         if (me == null)
             me = ForgeRegistries.MOB_EFFECTS.getValue(effect);
-        if (me != null && tested.resolveAsEntity(wrapper, parent, performer, target) instanceof LivingEntity e) {
+        if (me != null && tested.resolve(wrapper, parent, performer, target) instanceof LivingEntity e) {
             MobEffectInstance inst = e.getEffect(me);
             if (inst != null) {
                 return inst.getDuration() > (minimum_duration.resolve(wrapper, parent, performer, target)) && inst.getAmplifier() > minimum_potency.resolve(wrapper, parent, performer, target);

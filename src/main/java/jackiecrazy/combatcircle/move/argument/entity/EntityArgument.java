@@ -2,36 +2,35 @@ package jackiecrazy.combatcircle.move.argument.entity;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
-import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class EntityArgument extends VectorArgument {
-    public abstract Entity resolveAsEntity(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target);
+public abstract class EntityArgument implements Argument<Entity> {
+    public abstract Entity resolve(MovesetWrapper wrapper, Action parent, Entity caster, Entity target);
 
-    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
-        return resolveAsEntity(wrapper, parent, caster, target).position();
+    public Vec3 _resolve(MovesetWrapper wrapper, Action parent, Entity caster, Entity target) {
+        return resolve(wrapper, parent, caster, target).position();
     }
 
     public static class Store extends Action {
-        private EntityArgument value;
+        private Argument<Entity> value;
         private String into;
 
         @Override
-        public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
-            final Entity vec = value.resolveAsEntity(wrapper, parent, performer, target);
+        public int perform(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
+            final Entity vec = value.resolve(wrapper, parent, performer, target);
             performer.getPersistentData().putInt(into, vec.getId());
             return 0;
         }
     }
 
-    public static class Get extends EntityArgument {
+    public static class Get implements Argument<Entity> {
         private String from;
 
         @Override
-        public Entity resolveAsEntity(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
+        public Entity resolve(MovesetWrapper wrapper, Action parent, Entity caster, Entity target) {
             return caster.level().getEntity(caster.getPersistentData().getInt(from));
         }
     }

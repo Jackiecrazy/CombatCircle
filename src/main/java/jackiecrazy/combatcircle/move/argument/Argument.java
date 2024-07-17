@@ -1,21 +1,21 @@
 package jackiecrazy.combatcircle.move.argument;
 
 import com.google.gson.JsonObject;
+import jackiecrazy.combatcircle.move.MovesetWrapper;
+import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.utils.JsonAdapters;
+import net.minecraft.world.entity.Entity;
 
-public abstract class Argument {
-    private String ID="(default)";
+public interface Argument<T> {
 
-    public String serializeToJson(JsonObject to) {
+    default String serializeToJson(JsonObject to) {
         return JsonAdapters.gson.toJson(this);
     }
 
-    public void readFromJson(JsonObject from){
+    default void readFromJson(JsonObject from){
         //chat is this real//
         JsonAdapters.gson.fromJson(from, this.getClass());
     }
 
-    public String toString() {
-        return ID;
-    }
+    T resolve(MovesetWrapper wrapper, Action parent, Entity caster, Entity target);
 }

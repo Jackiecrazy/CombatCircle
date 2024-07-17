@@ -1,11 +1,17 @@
 package jackiecrazy.combatcircle.move.argument;
 
 import com.google.gson.JsonObject;
-import org.codehaus.plexus.util.cli.Arg;
 
 /**
  only implemented in lambdas in ActionRegistry.
  */
-public interface SingletonArgumentType extends ArgumentType {
-    Argument bake(JsonObject from);
+public class SingletonArgumentType<T> extends ArgumentType<T> {
+    Argument<T> inst;
+    public SingletonArgumentType(Class<?> of, Argument<T> instance) {
+        super(of);
+        inst=instance;
+    }
+    public Argument<T> bake(JsonObject from){
+        return inst;
+    }
 }

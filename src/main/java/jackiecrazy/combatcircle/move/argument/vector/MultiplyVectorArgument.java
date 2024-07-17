@@ -1,16 +1,17 @@
 package jackiecrazy.combatcircle.move.argument.vector;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
+import jackiecrazy.combatcircle.move.action.Action;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
 public class MultiplyVectorArgument extends VectorArgument {
-    VectorArgument base;
-    VectorArgument multiply;
+    Argument<Vec3> base;
+    Argument<Vec3> multiply;
 
     @Override
-    public Vec3 _resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
-        return base.resolveAsVector(wrapper, parent, caster, target).multiply(multiply.resolveAsVector(wrapper, parent, caster, target));
+    public Vec3 _resolve(MovesetWrapper wrapper, Action parent, Entity caster, Entity target) {
+        return base.resolve(wrapper, parent, caster, target).multiply(multiply.resolve(wrapper, parent, caster, target));
     }
 }

@@ -3,11 +3,10 @@ package jackiecrazy.combatcircle.move.action;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
-import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
-import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
+import jackiecrazy.combatcircle.move.argument.Argument;
+import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
+import jackiecrazy.combatcircle.move.argument.vector.PositionVectorArgument;
 import jackiecrazy.combatcircle.move.argument.vector.RawVectorArgument;
-import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
 import jackiecrazy.combatcircle.move.condition.Condition;
 import jackiecrazy.combatcircle.move.condition.FalseCondition;
 import jackiecrazy.combatcircle.move.condition.TrueCondition;
@@ -27,18 +26,18 @@ public class PlayParticleAction extends Action {
     private String particle_parameters = "";
     private Condition seen_by_player = TrueCondition.INSTANCE;
     private Condition force = FalseCondition.INSTANCE;
-    private VectorArgument position = CasterEntityArgument.INSTANCE, direction = RawVectorArgument.ZERO;
-    private NumberArgument quantity = NumberArgument.ZERO;
+    private Argument<Vec3> position = PositionVectorArgument.CASTER, direction = RawVectorArgument.ZERO;
+    private Argument<Double> quantity = FixedNumberArgument.ZERO;
 
     @Override
-    public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
         if (play == null)
             play = ForgeRegistries.PARTICLE_TYPES.getValue(particle);
         if (play == null) return 0;
         //type/data, force, pos xyz, quantity, vel xyz, max speed
         ParticleOptions p;
-        Vec3 pos = position.resolveAsVector(wrapper, parent, performer, target);
-        Vec3 dir = direction.resolveAsVector(wrapper, parent, performer, target);
+        Vec3 pos = position.resolve(wrapper, parent, performer, target);
+        Vec3 dir = direction.resolve(wrapper, parent, performer, target);
         try {
             p = play.getDeserializer().fromCommand(play, new StringReader(" " + particle_parameters));
         } catch (CommandSyntaxException cse) {
@@ -47,7 +46,7 @@ public class PlayParticleAction extends Action {
         if (target.level() instanceof ServerLevel sl) {
             for (ServerPlayer sp : sl.players()) {
                 if (seen_by_player.resolve(wrapper, parent, performer, sp)) {
-                    sl.sendParticles(sp, p, force.resolve(wrapper, parent, performer, target), pos.x, pos.y, pos.z, (int) quantity.resolve(wrapper, parent, performer, target), dir.x, dir.y, dir.z, dir.length());
+                    sl.sendParticles(sp, p, force.resolve(wrapper, parent, performer, target), pos.x, pos.y, pos.z, (int) quantity.resolve(wrapper, parent, performer, target).intValue(), dir.x, dir.y, dir.z, dir.length());
                 }
             }
         }

@@ -2,7 +2,6 @@ package jackiecrazy.combatcircle.move;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.utils.JsonAdapters;
 import net.minecraft.resources.ResourceLocation;
@@ -42,6 +41,7 @@ public class Movesets extends SimpleJsonResourceReloadListener {
 //                    if (!msf.validateAndBake())
 //                        throw new JsonParseException(key + " is an invalid moveset factory!");
                 EntityInfo ei = JsonAdapters.gson.fromJson(file, EntityInfo.class);
+                ei.bake();
                 moves.put(et, ei);
             }
         });

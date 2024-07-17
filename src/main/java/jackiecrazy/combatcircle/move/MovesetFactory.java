@@ -20,6 +20,7 @@ public class MovesetFactory {
     transient Condition finalizedCondition;
 
     public boolean validateAndBake() {
+        if (finalized != null && finalizedCondition != null) return true;
         try {
             finalized = new ArrayList<>(List.of(JsonAdapters.gson.fromJson(Moves.moves.get(move), TimerAction[].class)));
             finalizedCondition = JsonAdapters.gson.fromJson(condition, Condition.class);
@@ -30,7 +31,6 @@ public class MovesetFactory {
     }
 
     public MovesetWrapper generateMoveset() {
-        if (finalized == null) validateAndBake();
         return new MovesetWrapper(size, starting_weight, weight_change, finalized, finalizedCondition);
     }
 }

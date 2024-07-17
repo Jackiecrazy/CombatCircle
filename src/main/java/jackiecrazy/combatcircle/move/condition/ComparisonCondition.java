@@ -1,8 +1,8 @@
 package jackiecrazy.combatcircle.move.condition;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
-import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
+import jackiecrazy.combatcircle.move.action.Action;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import net.minecraft.world.entity.Entity;
 
 public class ComparisonCondition extends Condition {
@@ -25,12 +25,12 @@ public class ComparisonCondition extends Condition {
         }
     }
 
-    private NumberArgument first, second;
+    private Argument<Double> first, second;
     private COMPARISON comparison;
 
 
     @Override
-    public boolean resolve(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+    public Boolean resolve(MovesetWrapper wrapper, Action parent, Entity performer, Entity target) {
         double f = first.resolve(wrapper, parent, performer, target);
         double s = second.resolve(wrapper, parent, performer, target);
         return compare(comparison, f, s);

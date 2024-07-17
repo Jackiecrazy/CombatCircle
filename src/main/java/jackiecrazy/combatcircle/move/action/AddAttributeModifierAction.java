@@ -1,10 +1,8 @@
 package jackiecrazy.combatcircle.move.action;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
-import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
-import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,16 +16,16 @@ import java.util.UUID;
 public class AddAttributeModifierAction extends Action {
     private ResourceLocation attribute;
     private transient Attribute attr;
-    private NumberArgument amount;
+    private Argument<Double> amount;
     private AttributeModifier.Operation operation;
     private String name;
     private UUID uuid;
-    private EntityArgument recipient = CasterEntityArgument.INSTANCE;
+    private Argument<Entity> recipient = CasterEntityArgument.INSTANCE;
 
     @Override
-    public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
         if (attr == null) attr = ForgeRegistries.ATTRIBUTES.getValue(attribute);
-        if (attr != null && recipient.resolveAsEntity(wrapper, parent, performer, target) instanceof LivingEntity ent && ent.getAttribute(attr) != null) {
+        if (attr != null && recipient.resolve(wrapper, parent, performer, target) instanceof LivingEntity ent && ent.getAttribute(attr) != null) {
             ent.getAttribute(attr).removeModifier(uuid);
             AttributeModifier am = new AttributeModifier(uuid, name, amount.resolve(wrapper, parent, performer, target), operation);
             ent.getAttribute(attr).addTransientModifier(am);

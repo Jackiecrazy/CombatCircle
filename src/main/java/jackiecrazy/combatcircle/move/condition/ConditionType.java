@@ -1,10 +1,12 @@
 package jackiecrazy.combatcircle.move.condition;
 
-import com.google.gson.JsonObject;
+import jackiecrazy.combatcircle.move.argument.ArgumentType;
 
 /**
  only implemented in lambdas in ActionRegistry.
  */
-public interface ConditionType<T extends Condition> {
-    public T bake(JsonObject from);
+public class ConditionType extends ArgumentType<Boolean> {
+    public ConditionType(Class<?> of) {
+        super(of);
+    }
 }

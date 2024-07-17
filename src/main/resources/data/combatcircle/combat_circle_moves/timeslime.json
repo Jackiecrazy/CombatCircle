@@ -12,7 +12,7 @@
           "from": 98
         },
         "position": {
-          "ID": "combatcircle:eye_position",
+          "ID": "combatcircle:foot_position",
           "reference_point": "combatcircle:target"
         },
         "on_spawn": [

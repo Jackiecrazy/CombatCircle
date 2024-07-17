@@ -1,28 +1,13 @@
 package jackiecrazy.combatcircle.move.condition;
 
-import com.google.gson.JsonObject;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
-import jackiecrazy.combatcircle.utils.JsonAdapters;
+import jackiecrazy.combatcircle.move.action.Action;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nullable;
 
-public abstract class Condition {
-    private String ID = "(default)";
+public abstract class Condition implements Argument<Boolean> {
 
-    public abstract boolean resolve(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target);
-
-    public String serializeToJson(JsonObject to) {
-        return JsonAdapters.gson.toJson(this);
-    }
-
-    public void readFromJson(JsonObject from){
-        //chat is this real//
-        JsonAdapters.gson.fromJson(from, this.getClass());
-    }
-
-    public String toString() {
-        return ID;
-    }
+    public abstract Boolean resolve(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target);
 }

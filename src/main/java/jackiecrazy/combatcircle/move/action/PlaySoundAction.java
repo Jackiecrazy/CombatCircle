@@ -1,10 +1,9 @@
 package jackiecrazy.combatcircle.move.action;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
-import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
-import jackiecrazy.combatcircle.move.argument.number.NumberArgument;
-import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
+import jackiecrazy.combatcircle.move.argument.Argument;
+import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
+import jackiecrazy.combatcircle.move.argument.vector.PositionVectorArgument;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -17,18 +16,18 @@ public class PlaySoundAction extends Action {
     private ResourceLocation sound;
     private transient SoundEvent play;
     private SoundSource source = SoundSource.HOSTILE;
-    private VectorArgument position = CasterEntityArgument.INSTANCE;
-    private NumberArgument volume = NumberArgument.ONE;
-    private NumberArgument pitch = NumberArgument.ONE;
+    private Argument<Vec3> position = PositionVectorArgument.CASTER;
+    private Argument<Double> volume = FixedNumberArgument.ONE;
+    private Argument<Double> pitch = FixedNumberArgument.ONE;
 
     @Override
-    public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
+    public int perform(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
         if (play == null)
             play = ForgeRegistries.SOUND_EVENTS.getValue(sound);
         if (play == null) return 0;
         //type/data, force, pos xyz, quantity, vel xyz, max speed
-        Vec3 pos = position.resolveAsVector(wrapper, parent, performer, target);
-        performer.level().playSound(null, pos.x, pos.y, pos.z, play, source, (float) volume.resolve(wrapper, parent, performer, target), (float) pitch.resolve(wrapper, parent, performer, target));
+        Vec3 pos = position.resolve(wrapper, parent, performer, target);
+        performer.level().playSound(null, pos.x, pos.y, pos.z, play, source, volume.resolve(wrapper, parent, performer, target).floatValue(), pitch.resolve(wrapper, parent, performer, target).floatValue());
         return 0;
     }
     //position, type, direction if any

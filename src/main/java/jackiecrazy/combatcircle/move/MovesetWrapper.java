@@ -9,10 +9,12 @@ import net.minecraft.world.entity.Entity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 public class MovesetWrapper {
     private final HashMap<TimerAction, Integer> activeTimers = new HashMap<>();
     private final HashMap<Action, DataWrapper<?>> extraData = new HashMap<>();
+    public final Stack<DataWrapper<?>> stack=new Stack<>();
     private final List<Action> graveyard = new ArrayList<>();
     private final List<TimerAction> actions;
     private final Condition canRun;
@@ -87,6 +89,13 @@ public class MovesetWrapper {
             int tickResult = action.tick(this, performer, target);
             atomicTemp = Math.max(tickResult, atomicTemp);
         });
+        if (currentMove.isFinished(this, performer, target)) {
+            //natural progression//
+            index++;
+            currentMove = actions.get(index % actions.size());
+            trigger(currentMove, null, performer, target);
+        }
+        //clearing happens after natural progression to prevent clears breaking timers
         activeTimers.entrySet().removeIf((entry) -> {
             if (entry.getKey().isFinished(this, performer, target)) {
                 graveyard.add(entry.getKey());
@@ -95,12 +104,6 @@ public class MovesetWrapper {
             }
             return false;
         });
-        if (currentMove.isFinished(this, performer, target)) {
-            //natural progression//
-            index++;
-            currentMove = actions.get(index % actions.size());
-            trigger(currentMove, null, performer, target);
-        }
         if (atomicTemp > 0) {
             //goto, reset everything//
             reset();
@@ -114,7 +117,7 @@ public class MovesetWrapper {
         return power;
     }
 
-    public int trigger(Action action, TimerAction parent, Entity performer, Entity target) {
+    public int trigger(Action action, Action parent, Entity performer, Entity target) {
         //if action and not in graveyard, execute. If not repeatable, put in graveyard.
         //if timer action and not in graveyard, if not active, place and start, then if not repeatable, put in graveyard.
         if (graveyard.contains(action)) return 0;

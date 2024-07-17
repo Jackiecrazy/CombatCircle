@@ -1,5 +1,6 @@
 package jackiecrazy.combatcircle.move;
 
+import com.google.gson.JsonParseException;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 public class EntityInfo {
@@ -13,5 +14,11 @@ public class EntityInfo {
         this.mob_size = mob_size;
         this.moveset = moveset;
         this.to_wipe = to_wipe;
+    }
+
+    public void bake() throws JsonParseException{
+        for(MovesetFactory mf:moveset){
+            mf.validateAndBake();
+        }
     }
 }

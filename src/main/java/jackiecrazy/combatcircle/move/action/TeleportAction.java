@@ -1,10 +1,8 @@
 package jackiecrazy.combatcircle.move.action;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import jackiecrazy.combatcircle.move.argument.entity.CasterEntityArgument;
-import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
-import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -13,15 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TeleportAction extends Action {
-    private EntityArgument subject= CasterEntityArgument.INSTANCE;
+    private Argument<Entity> subject= CasterEntityArgument.INSTANCE;
     private List<Action> on_start=new ArrayList<>();
     private List<Action> on_land=new ArrayList<>();
-    private VectorArgument position;
+    private Argument<Vec3> position;
 
     @Override
-    public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
-        Vec3 vec=position.resolveAsVector(wrapper, parent, performer, target);
-        Entity teleporter = subject.resolveAsEntity(wrapper, parent, performer, target);
+    public int perform(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
+        Vec3 vec=position.resolve(wrapper, parent, performer, target);
+        Entity teleporter = subject.resolve(wrapper, parent, performer, target);
         runActions(wrapper, parent, on_start, performer, teleporter);
         teleporter.teleportTo(vec.x,vec.y, vec.z);
         runActions(wrapper, parent, on_land, performer, teleporter);

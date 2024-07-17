@@ -1,10 +1,11 @@
 package jackiecrazy.combatcircle.move.argument.number;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
+import jackiecrazy.combatcircle.move.action.Action;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import net.minecraft.world.entity.Entity;
 
-public class OperateArgument extends NumberArgument {
+public class OperateArgument implements Argument<Double> {
     public enum OPERATOR {
         ADD("+"),
         SUB("-"),
@@ -24,12 +25,12 @@ public class OperateArgument extends NumberArgument {
         }
     }
 
-    private NumberArgument first, second;
+    private Argument<Double> first, second;
     private OPERATOR comparison;
 
 
     @Override
-    public double resolve(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
+    public Double resolve(MovesetWrapper wrapper, Action parent, Entity performer, Entity target) {
         double f = first.resolve(wrapper, parent, performer, target);
         double s = second.resolve(wrapper, parent, performer, target);
         return switch (comparison) {

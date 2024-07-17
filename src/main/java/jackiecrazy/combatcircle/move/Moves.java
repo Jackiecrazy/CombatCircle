@@ -2,7 +2,6 @@ package jackiecrazy.combatcircle.move;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import jackiecrazy.combatcircle.CombatCircle;
 import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.utils.JsonAdapters;

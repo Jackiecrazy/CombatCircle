@@ -1,15 +1,16 @@
 package jackiecrazy.combatcircle.move.argument.number;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
-import jackiecrazy.combatcircle.move.action.timer.TimerAction;
-import jackiecrazy.combatcircle.move.argument.vector.VectorArgument;
+import jackiecrazy.combatcircle.move.action.Action;
+import jackiecrazy.combatcircle.move.argument.Argument;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
-public class DotProductArgument extends NumberArgument {
-    private VectorArgument first, second;
+public class DotProductArgument implements Argument<Double> {
+    private Argument<Vec3> first, second;
 
     @Override
-    public double resolve(MovesetWrapper wrapper, TimerAction parent, Entity caster, Entity target) {
-        return first.resolveAsVector(wrapper, parent, caster, target).dot(second.resolveAsVector(wrapper, parent, caster, target));
+    public Double resolve(MovesetWrapper wrapper, Action parent, Entity caster, Entity target) {
+        return first.resolve(wrapper, parent, caster, target).dot(second.resolve(wrapper, parent, caster, target));
     }
 }
