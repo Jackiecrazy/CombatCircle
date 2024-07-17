@@ -13,6 +13,9 @@ public abstract class TimerAction extends Action {
      * on the base action
      */
     private NumberArgument max_time;
+    //on being hit, on take (posture) damage, stun, gain effect, on fire, die
+    //todo where to store damagesource of attack and how to pass it to actions?
+    private Action[] on_being_hit, on_take_damage, on_stunned, on_gain_effect, on_ignited, on_death;
 
     @Override
     public boolean canRun(MovesetWrapper wrapper, TimerAction parent, Entity performer, Entity target) {
@@ -37,5 +40,9 @@ public abstract class TimerAction extends Action {
 
     public int perform(MovesetWrapper wrapper, TimerAction parent, @Nullable Entity performer, Entity target) {
         return tick(wrapper, performer, target);
+    }
+
+    public void stop(MovesetWrapper wrapper, Entity performer, Entity target, boolean recursive) {
+        wrapper.immediatelyExpire(this);
     }
 }

@@ -4,6 +4,7 @@ import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.argument.SelectorArgument;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +35,13 @@ public class ProjectHitboxAction extends TimerAction {
             lastHit.put(e, e.level().getGameTime());
         }
         return super.tick(wrapper, performer, target);
+    }
+
+    public void stop(MovesetWrapper wrapper, Entity performer, Entity target, boolean recursive) {
+        if (recursive) {
+            actions.forEach(a -> a.stop(wrapper, performer, target, true));
+        }
+        super.stop(wrapper, performer, target, recursive);
     }
 
 }

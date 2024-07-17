@@ -41,4 +41,13 @@ public class AddVelocityAction extends TimerAction {
         return super.tick(wrapper, performer, target);
     }
 
+    public void stop(MovesetWrapper wrapper, Entity performer, Entity target, boolean recursive) {
+        if(recursive){
+            on_launch.forEach(a->a.stop(wrapper, performer, target, true));
+            tick.forEach(a->a.stop(wrapper, performer, target, true));
+            on_land.forEach(a->a.stop(wrapper, performer, target, true));
+        }
+        super.stop(wrapper, performer, target, recursive);
+    }
+
 }

@@ -17,4 +17,11 @@ public class WaitAction extends TimerAction {
         return super.tick(wrapper, performer, target);
     }
 
+    public void stop(MovesetWrapper wrapper, Entity performer, Entity target, boolean recursive) {
+        if (recursive) {
+            waiting.forEach(a -> a.stop(wrapper, performer, target, true));
+        }
+        super.stop(wrapper, performer, target, recursive);
+    }
+
 }

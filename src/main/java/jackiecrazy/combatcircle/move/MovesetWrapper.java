@@ -15,26 +15,15 @@ public class MovesetWrapper {
     private final HashMap<Action, DataWrapper<?>> extraData = new HashMap<>();
     private final List<Action> graveyard = new ArrayList<>();
     private final List<TimerAction> actions;
-    private TimerAction currentMove;
     private final Condition canRun;
-    private int index = 0;
     private final int power;
     private final int changePer;
+    int atomicTemp;
+    private TimerAction currentMove;
+    private int index = 0;
     private int currentWeight;
-    public static class DataWrapper<T>{
-        public T getInstance() {
-            return instance;
-        }
 
-        public void setInstance(T instance) {
-            this.instance = instance;
-        }
-        private T instance;
-        public DataWrapper(T item){
-            instance=item;
-        }
-    }
-    //TODO triggers, some actions record parameters, block action,
+    //TODO triggers, some actions record parameters, block actions (get/set/blockstate compare/velocity block collision),
     // global cooldown, commonly used action components (how parameter?),
     // put moveset execution responsibility into capability?
     // terrain sensitivity for wolf pack, encircle/attack multiple targets with merge/split group mechanics?
@@ -91,27 +80,31 @@ public class MovesetWrapper {
     }
 
     public void tick(Entity performer, Entity target) {
+        atomicTemp = 0;
         activeTimers.forEach((action, time) -> {
             activeTimers.put(action, time + 1);
+            //prioritize later gotos
+            int tickResult = action.tick(this, performer, target);
+            atomicTemp = Math.max(tickResult, atomicTemp);
         });
-        int ret = currentMove.perform(this, currentMove, performer, target);
-        activeTimers.entrySet().removeIf((entry)-> {
-            if(entry.getKey().isFinished(this, performer, target)){
+        activeTimers.entrySet().removeIf((entry) -> {
+            if (entry.getKey().isFinished(this, performer, target)) {
                 graveyard.add(entry.getKey());
+                entry.getKey().stop(this, performer, target, false);
                 return true;
             }
             return false;
         });
-        if (ret < 0) {
+        if (currentMove.isFinished(this, performer, target)) {
             //natural progression//
             index++;
             currentMove = actions.get(index % actions.size());
             trigger(currentMove, null, performer, target);
         }
-        if (ret > 0) {
-            //jump, reset everything//
+        if (atomicTemp > 0) {
+            //goto, reset everything//
             reset();
-            index = ret - 1;
+            index = atomicTemp - 1;
             currentMove = actions.get(index % actions.size());
             trigger(currentMove, null, performer, target);
         }
@@ -129,9 +122,12 @@ public class MovesetWrapper {
             if (!activeTimers.containsKey(ta)) {
                 activeTimers.put(ta, 0);
                 ta.start(this, performer, target);
+                ta.tick(this, performer, target);
             }
+            return 0;
         }
-        else if (!action.repeatable(this, parent, performer, target)) graveyard.add(action);
+        if (!action.repeatable(this, parent, performer, target))
+            graveyard.add(action);//continuous tasks are handled by active timers
         return action.perform(this, parent, performer, target);
     }
 
@@ -139,11 +135,31 @@ public class MovesetWrapper {
         return activeTimers.getOrDefault(action, -1);
     }
 
-    public <T> T getData(Action a){
+    public void immediatelyExpire(TimerAction action) {
+        activeTimers.put(action, 99999);
+    }
+
+    public <T> T getData(Action a) {
         return (T) (extraData.get(a).instance);
     }
 
-    public void setData(Action a, Object b){
+    public void setData(Action a, Object b) {
         extraData.put(a, new DataWrapper<>(b));
+    }
+
+    public static class DataWrapper<T> {
+        private T instance;
+
+        public DataWrapper(T item) {
+            instance = item;
+        }
+
+        public T getInstance() {
+            return instance;
+        }
+
+        public void setInstance(T instance) {
+            this.instance = instance;
+        }
     }
 }

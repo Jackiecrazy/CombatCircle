@@ -50,6 +50,10 @@ public abstract class Action extends Move {
         return repeatable.resolve(wrapper, parent, performer, target);
     }
 
+
+    public void stop(MovesetWrapper wrapper, Entity performer, Entity target, boolean recursive) {
+    }
+
     public String toString() {
         return ID;
     }

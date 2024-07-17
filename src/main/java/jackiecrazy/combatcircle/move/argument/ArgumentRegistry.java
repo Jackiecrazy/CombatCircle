@@ -34,6 +34,7 @@ public class ArgumentRegistry {
     //numbers//
     public static final RegistryObject<ArgumentType> NUMBER = ARGUMENTS.register("number", () -> (a) -> JsonAdapters.gson.fromJson(a, FixedNumberArgument.class));
     public static final RegistryObject<ArgumentType> CURRENT_HEALTH = ARGUMENTS.register("current_health", () -> (a) -> JsonAdapters.gson.fromJson(a, CurrentHealthArgument.class));
+    public static final RegistryObject<ArgumentType> HEALTH_PERCENTAGE = ARGUMENTS.register("health_percentage", () -> (a) -> JsonAdapters.gson.fromJson(a, HealthPercArgument.class));
     public static final RegistryObject<ArgumentType> OPERATION = ARGUMENTS.register("operate", () -> (a) -> JsonAdapters.gson.fromJson(a, OperateArgument.class));
     public static final RegistryObject<ArgumentType> ATTRIBUTE_VALUE = ARGUMENTS.register("attribute_value", () -> (a) -> JsonAdapters.gson.fromJson(a, AttributeValueArgument.class));
     public static final RegistryObject<ArgumentType> DOT_PRODUCT = ARGUMENTS.register("dot_product", () -> (a) -> JsonAdapters.gson.fromJson(a, DotProductArgument.class));
