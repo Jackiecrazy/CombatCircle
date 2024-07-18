@@ -21,6 +21,7 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -92,6 +93,13 @@ public class CombatCircle {
     // Event bus for receiving Registry Events)
     @Mod.EventBusSubscriber
     public static class TestEvents {
+        @SubscribeEvent
+        public static void beingAttacked(LivingAttackEvent e) {
+            //grab everything, find and feed them to the currently active moveset wrapper
+            
+            MovesetData.getCap(e.getEntity()).getMovesetManager().getCurrentMove().devilTrigger(e.getEntity(), e);
+        }
+
         @SubscribeEvent
         public static void caps(AttachCapabilitiesEvent<Entity> e) {
             if (e.getObject() instanceof LivingEntity lb) {
@@ -178,16 +186,16 @@ public class CombatCircle {
         }
 
         @SubscribeEvent
-        public static void tick(LivingEvent.LivingTickEvent e) {
-            MovesetData.getCap(e.getEntity()).update();
-        }
-
-        @SubscribeEvent
         public static void tick(TickEvent.ServerTickEvent e) {
             CombatManager.managers.forEach((a, b) -> {
                 if (a.isDeadOrDying()) CombatManager.managers.remove(a);
                 b.tick();
             });
+        }
+
+        @SubscribeEvent
+        public static void tick(LivingEvent.LivingTickEvent e) {
+            MovesetData.getCap(e.getEntity()).update();
         }
     }
 }

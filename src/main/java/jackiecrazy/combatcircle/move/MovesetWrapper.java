@@ -4,7 +4,14 @@ import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.action.timer.TimerAction;
 import jackiecrazy.combatcircle.move.condition.Condition;
 import jackiecrazy.combatcircle.move.condition.TrueCondition;
+import jackiecrazy.footwork.event.ConsumePostureEvent;
+import jackiecrazy.footwork.event.StunEvent;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.MobEffectEvent;
+import net.minecraftforge.eventbus.api.Event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,9 +19,9 @@ import java.util.List;
 import java.util.Stack;
 
 public class MovesetWrapper {
+    public final Stack<DataWrapper<?>> stack = new Stack<>();
     private final HashMap<TimerAction, Integer> activeTimers = new HashMap<>();
     private final HashMap<Action, DataWrapper<?>> extraData = new HashMap<>();
-    public final Stack<DataWrapper<?>> stack=new Stack<>();
     private final List<Action> graveyard = new ArrayList<>();
     private final List<TimerAction> actions;
     private final Condition canRun;
@@ -83,10 +90,12 @@ public class MovesetWrapper {
 
     public void tick(Entity performer, Entity target) {
         atomicTemp = 0;
-        activeTimers.forEach((action, time) -> {
-            activeTimers.put(action, time + 1);
+        activeTimers.forEach((timer, integer) -> {
+            //tuple.setB(tuple.getB()+1);
+            activeTimers.put(timer, integer+1);
             //prioritize later gotos
-            int tickResult = action.tick(this, performer, target);
+            //fixme can no longer interrupt by jumping because hashmap has undefined ordering what do
+            int tickResult = timer.tick(this, performer, target);
             atomicTemp = Math.max(tickResult, atomicTemp);
         });
         if (currentMove.isFinished(this, performer, target)) {
@@ -148,6 +157,126 @@ public class MovesetWrapper {
 
     public void setData(Action a, Object b) {
         extraData.put(a, new DataWrapper<>(b));
+    }
+
+    public void devilTrigger(Entity performer, Event e) {
+        //fixme can't jump from trigger
+        if (e instanceof LivingAttackEvent lae) {
+            final Entity vec = lae.getSource().getDirectEntity();
+            if (vec != null)
+                lae.getEntity().getPersistentData().putInt("damageSourceDirectEntity", vec.getId());
+            lae.getEntity().getPersistentData().putDouble("damageAmount", lae.getAmount());
+            String test = "combatcircle:trigger_on_hit";
+            for (TimerAction ta : activeTimers.keySet()) {
+                ta.getTriggers().forEach(a -> {
+                    if (a.toString().equals(test) && a.canRun(this, ta, performer, lae.getSource().getEntity())) {
+                        setData(a, lae.getSource());
+                        a.perform(this, a, performer, lae.getSource().getEntity());
+                    }
+                });
+            }
+            if (lae.getEntity().getPersistentData().getDouble("damageAmount") <= 0) {
+                lae.setCanceled(true);
+            }
+        }
+        else if (e instanceof LivingHurtEvent lae) {
+            final Entity vec = lae.getSource().getDirectEntity();
+            if (vec != null)
+                lae.getEntity().getPersistentData().putInt("damageSourceDirectEntity", vec.getId());
+            lae.getEntity().getPersistentData().putDouble("damageAmount", lae.getAmount());
+            String test = "combatcircle:trigger_on_hurt";
+            for (TimerAction ta : activeTimers.keySet()) {
+                ta.getTriggers().forEach(a -> {
+                    if (a.toString().equals(test) && a.canRun(this, ta, performer, lae.getSource().getEntity())) {
+                        setData(a, lae.getSource());
+                        a.perform(this, a, performer, lae.getSource().getEntity());
+                    }
+                });
+            }
+            lae.setAmount((float) lae.getEntity().getPersistentData().getDouble("damageAmount"));
+            if (lae.getAmount() <= 0) {
+                lae.setCanceled(true);
+            }
+        }
+        else if (e instanceof LivingDeathEvent lae) {
+            final Entity vec = lae.getSource().getDirectEntity();
+            if (vec != null)
+                lae.getEntity().getPersistentData().putInt("damageSourceDirectEntity", vec.getId());
+            String test = "combatcircle:trigger_on_death";
+            for (TimerAction ta : activeTimers.keySet()) {
+                ta.getTriggers().forEach(a -> {
+                    if (a.toString().equals(test) && a.canRun(this, ta, performer, lae.getSource().getEntity())) {
+                        setData(a, lae.getSource());
+                        a.perform(this, a, performer, lae.getSource().getEntity());
+                    }
+                });
+            }
+            if ( lae.getEntity().getPersistentData().getDouble("deathDenied") != 0) {
+                lae.setCanceled(true);
+            }
+        }
+        else if (e instanceof ConsumePostureEvent lae) {
+            lae.getEntity().getPersistentData().putDouble("damageAmount", lae.getAmount());
+            String test = "combatcircle:trigger_on_posture_damage";
+            for (TimerAction ta : activeTimers.keySet()) {
+                ta.getTriggers().forEach(a -> {
+                    if (a.toString().equals(test) && a.canRun(this, ta, performer, lae.getAttacker())) {
+                        a.perform(this, ta, performer, lae.getAttacker());
+                    }
+                });
+            }
+            lae.setAmount((float) lae.getEntity().getPersistentData().getDouble("damageAmount"));
+            if (lae.getAmount() <= 0) {
+                lae.setCanceled(true);
+            }
+        }
+        else if (e instanceof StunEvent lae) {
+            lae.getEntity().getPersistentData().putDouble("stunTime", lae.getLength());
+            lae.getEntity().getPersistentData().putDouble("knockdown", lae.isKnockdown() ? 1 : 0);
+            String test = "combatcircle:trigger_on_stunned";
+            for (TimerAction ta : activeTimers.keySet()) {
+                ta.getTriggers().forEach(a -> {
+                    if (a.toString().equals(test) && a.canRun(this, ta, performer, lae.getAttacker())) {
+                        a.perform(this, ta, performer, lae.getAttacker());
+                    }
+                });
+            }
+            lae.setKnockdown(lae.getEntity().getPersistentData().getDouble("knockdown") != 0);
+            lae.setLength((int) lae.getEntity().getPersistentData().getDouble("stunTime"));
+            if (lae.getLength() <= 0) {
+                lae.setCanceled(true);
+            }
+        }
+        else if (e instanceof MobEffectEvent.Applicable lae) {
+            lae.getEntity().getPersistentData().putDouble("effectLength", lae.getEffectInstance().getDuration());
+            lae.getEntity().getPersistentData().putDouble("effectPotency", lae.getEffectInstance().getAmplifier());
+            lae.getEntity().getPersistentData().putDouble("effectApplied", lae.getResult() == Event.Result.DENY ? -1 : lae.getResult() == Event.Result.ALLOW ? 1 : 0);
+            String test = "combatcircle:trigger_on_effect_applicable";
+            for (TimerAction ta : activeTimers.keySet()) {
+                ta.getTriggers().forEach(a -> {
+                    if (a.toString().equals(test) && a.canRun(this, ta, performer, null)) {
+                        a.perform(this, ta, performer, null);
+                    }
+                });
+            }
+            switch ((int) lae.getEntity().getPersistentData().getDouble("effectApplied")){
+                case 1->lae.setResult(Event.Result.ALLOW);
+                case -1->lae.setResult(Event.Result.DENY);
+                default->lae.setResult(Event.Result.DEFAULT);
+            }
+        }
+        else if (e instanceof MobEffectEvent.Added lae) {
+            lae.getEntity().getPersistentData().putDouble("effectLength", lae.getEffectInstance().getDuration());
+            lae.getEntity().getPersistentData().putDouble("effectPotency", lae.getEffectInstance().getAmplifier());
+            String test = "combatcircle:trigger_on_effect_applied";
+            for (TimerAction ta : activeTimers.keySet()) {
+                ta.getTriggers().forEach(a -> {
+                    if (a.toString().equals(test) && a.canRun(this, ta, performer, lae.getEffectSource())) {
+                        a.perform(this, ta, performer, lae.getEffectSource());
+                    }
+                });
+            }
+        }
     }
 
     public static class DataWrapper<T> {

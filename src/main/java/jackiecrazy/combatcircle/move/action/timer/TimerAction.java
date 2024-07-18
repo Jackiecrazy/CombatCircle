@@ -2,20 +2,24 @@ package jackiecrazy.combatcircle.move.action.timer;
 
 import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
+import jackiecrazy.combatcircle.move.action.trigger.Trigger;
 import jackiecrazy.combatcircle.move.argument.Argument;
 import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 
 public abstract class TimerAction extends Action {
+    public List<Trigger> getTriggers() {
+        return triggers;
+    }
+
+    private List<Trigger> triggers;
     /**
      * on the base action
      */
     private Argument<Double> max_time;
-    //on being hit, on take (posture) damage, stun, gain effect, on fire, die
-    //todo where to store damagesource of attack and how to pass it to actions?
-    private Action[] on_being_hit, on_take_damage, on_stunned, on_gain_effect, on_ignited, on_death;
 
     @Override
     public boolean canRun(MovesetWrapper wrapper, Action parent, Entity performer, Entity target) {
@@ -45,4 +49,6 @@ public abstract class TimerAction extends Action {
     public void stop(MovesetWrapper wrapper, Entity performer, Entity target, boolean recursive) {
         wrapper.immediatelyExpire(this);
     }
+
+
 }

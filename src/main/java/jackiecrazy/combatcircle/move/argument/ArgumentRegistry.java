@@ -65,5 +65,5 @@ public class ArgumentRegistry {
     //misc//
     public static final RegistryObject<ArgumentType<DamageSource>> DAMAGE = ARGUMENTS.register("damage", ()  -> new ArgumentType<>(DamageArgument.class));
     public static final RegistryObject<ArgumentType<List<Entity>>> SELECTOR = ARGUMENTS.register("selector", ()  -> new ArgumentType<>(SelectorArgument.class));
-    public static final RegistryObject<ArgumentType<?>> PARENT = ARGUMENTS.register("parent_data", ()  -> new ArgumentType<>(ParentDataArgument.class));
+    public static final RegistryObject<ArgumentType<?>> PARENT = ARGUMENTS.register("parent_data", ()  -> new SingletonArgumentType<>(ParentDataArgument.class, ParentDataArgument.INSTANCE));
 }
