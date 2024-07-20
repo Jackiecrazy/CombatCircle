@@ -3,16 +3,18 @@ package jackiecrazy.combatcircle.move.action.timer;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.argument.Argument;
+import jackiecrazy.combatcircle.move.argument.vector.RawVectorArgument;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AddVelocityAction extends TimerAction {
-    private List<Action> on_launch;
-    private List<Action> tick;
-    private List<Action> on_land;
-    private Argument<Vec3> direction;
+    private List<Action> on_launch=new ArrayList<>();
+    private List<Action> tick=new ArrayList<>();
+    private List<Action> on_land=new ArrayList<>();
+    private Argument<Vec3> direction= RawVectorArgument.ZERO;
 
     @Override
     public void start(MovesetWrapper wrapper, Entity performer, Entity target) {

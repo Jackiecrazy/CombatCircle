@@ -66,4 +66,5 @@ public class ActionRegistry {
     //Meta Actions//
     public static final RegistryObject<ActionType> GOTO = ACTIONS.register("goto", () -> (a) -> JsonAdapters.gson.fromJson(a, GotoAction.class));
     public static final RegistryObject<ActionType> STOP = ACTIONS.register("stop", () -> (a) -> JsonAdapters.gson.fromJson(a, StopAction.class));
+    public static final RegistryObject<ActionType> IF_ELSE = ACTIONS.register("if_else", () -> (a) -> JsonAdapters.gson.fromJson(a, IfElseAction.class));
 }

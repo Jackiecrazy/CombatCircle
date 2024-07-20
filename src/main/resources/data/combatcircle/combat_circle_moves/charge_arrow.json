@@ -175,8 +175,18 @@
           "from": "target_location"
         },
         "position": {
-          "ID": "combatcircle:eye_position",
-          "reference_point": "combatcircle:caster"
+          "ID": "combatcircle:sum_vector",
+          "addends": [
+            {
+              "ID": "combatcircle:get_vector",
+              "from": "target_location",
+              "max_length": 0.6
+            },
+            {
+              "ID": "combatcircle:eye_position",
+              "reference_point": "combatcircle:caster"
+            }
+          ]
         },
         "repeatable": true,
         "on_spawn": [
