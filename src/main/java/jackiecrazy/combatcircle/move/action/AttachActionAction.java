@@ -18,11 +18,11 @@ import java.util.List;
 public class AttachActionAction extends Action {
     private Argument<Entity> performer = CasterEntityArgument.INSTANCE;
     private Argument<Entity> recipient = TargetEntityArgument.INSTANCE;
-    private ResourceLocation effect;
+    private Argument<ResourceLocation> effect;
 
     @Override
     public int perform(MovesetWrapper wrapper, Action parent, @Nullable Entity perform, Entity target) {
-        ArrayList<TimerAction> timers = new ArrayList<>(List.of(JsonAdapters.gson.fromJson(Moves.moves.get(effect), TimerAction[].class)));
+        ArrayList<TimerAction> timers = new ArrayList<>(List.of(JsonAdapters.gson.fromJson(Moves.moves.get(effect.resolve(wrapper, parent, perform, target)), TimerAction[].class)));
         MovesetData.getCap(recipient.resolve(wrapper, parent, perform, target)).mark(performer.resolve(wrapper, parent, perform, target), new MovesetWrapper(timers));
         return 0;
     }

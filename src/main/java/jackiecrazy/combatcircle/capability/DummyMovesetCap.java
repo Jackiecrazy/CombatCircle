@@ -5,7 +5,7 @@ import jackiecrazy.combatcircle.move.MovesetWrapper;
 import net.minecraft.world.entity.Entity;
 
 public class DummyMovesetCap implements IMoveset {
-
+    private static final MovesetManager literallyNothing=new MovesetManager(null);
 
     @Override
     public void setMovesetManager(MovesetManager mm) {
@@ -14,7 +14,7 @@ public class DummyMovesetCap implements IMoveset {
 
     @Override
     public MovesetManager getMovesetManager() {
-        return null;
+        return literallyNothing;
     }
 
     @Override

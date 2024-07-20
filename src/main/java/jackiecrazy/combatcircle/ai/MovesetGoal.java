@@ -61,10 +61,10 @@ public class MovesetGoal extends Goal {
     @Override
     public void start() {
         super.start();
+        mob.getLookControl().setLookAt(target);
+        mob.getNavigation().stop();
         startTime = mob.tickCount;
         wrap.start(mob, target);
-        mob.getNavigation().stop();
-        mob.getLookControl().setLookAt(target);
     }
 
     @Override

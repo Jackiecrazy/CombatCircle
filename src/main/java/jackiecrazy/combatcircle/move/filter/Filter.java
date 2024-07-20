@@ -7,11 +7,11 @@ import net.minecraft.world.entity.Entity;
 
 import java.util.List;
 
-public abstract class Filter extends Move {
+public abstract class Filter<T> extends Move {
     protected String ID;
     protected int limit;
 
-    public abstract List<Entity> filter(MovesetWrapper wrapper, Action parent, Entity performer, Entity target, List<Entity> targets);
+    public abstract List<T> filter(MovesetWrapper wrapper, Action parent, Entity performer, Entity target, List<T> targets);
 
     public String toString() {
         return ID;

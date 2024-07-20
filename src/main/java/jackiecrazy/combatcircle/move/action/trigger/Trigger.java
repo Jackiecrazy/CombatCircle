@@ -21,7 +21,6 @@ public class Trigger extends Action {
 
     @Override
     public int perform(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
-        runActions(wrapper, parent, execute, performer, target);
-        return 0;
+        return runActions(wrapper, parent, execute, performer, target);
     }
 }

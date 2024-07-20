@@ -21,7 +21,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 public class PlayParticleAction extends Action {
-    private ResourceLocation particle;
+    private Argument<ResourceLocation> particle;
     private transient ParticleType play;
     private String particle_parameters = "";
     private Condition seen_by_player = TrueCondition.INSTANCE;
@@ -32,7 +32,7 @@ public class PlayParticleAction extends Action {
     @Override
     public int perform(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
         if (play == null)
-            play = ForgeRegistries.PARTICLE_TYPES.getValue(particle);
+            play = ForgeRegistries.PARTICLE_TYPES.getValue(particle.resolve(wrapper, parent, performer, target));
         if (play == null) return 0;
         //type/data, force, pos xyz, quantity, vel xyz, max speed
         ParticleOptions p;

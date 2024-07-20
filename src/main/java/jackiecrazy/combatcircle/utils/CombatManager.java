@@ -28,33 +28,16 @@ public class CombatManager {
     private final ConcurrentHashMap<Mob, Integer> attackList = new ConcurrentHashMap<>();
     private final ConcurrentLinkedQueue<Mob> coolingList = new ConcurrentLinkedQueue<>();
     private final LivingEntity target;
-    /*
-                        The battle circle AI basically works like this (from an enemy's perspective):
-First, walk towards the player until I get within a "danger" radius
-While in "danger" mode, don't get too close to another enemy, unless I am given permission to attack the player.
-Also while in "danger" mode, try to approach the player. If there are too many enemies in my way, I will effectively not be able to reach the player until the enemies move or the player moves.
-When the player is in my "attack" radius (roughly the maximum range of my attack) ask the player if I'm allowed to attack. If so, add me to the list of current attackers on the player object.
-If there are already the maximum allowed number of attackers on the list, I'm denied permission.
-If I'm denied permission, try strafing for a second or two in a random direction until I'm given permission.
-If the player moves out of attack range—even if I'm attacking—remove me from the attacker list.
-If I die, or am stunned or otherwise unable to attack, remove me from the attacker list.
-The maximum allowed number of simultaneous attackers is critical in balancing your battle circle. A higher number causes an exponential increase in pressure. In the example demo I have it set at 2; less twitchy and more "cinematic" games set it at 1. If you put this number too high, you defeat the purpose of the circle, because large groups of enemies become unassailable or can only be defeated with uninteresting poke-and-run tactics.
-Of similar importance is the enemy attack rate. This is not the fastest possible attack rate of the enemy, but how often they will choose to attack when given permission.
-As you would expect, a lower number increases pressure, but you should generally have this be several times higher than the real attack rate. You can make this rate a bit more unpredictable (and thus the amount of pressure slightly less predictable) by increasing attackRateFluctuation, which will increase or decrease the attack rate after each attack.
-Mobs should move into a position that is close to the player, far from allies, and close to them.
-                         */
 
     /*
     HO, YOU'RE APPROACHING ME?
-    get within, say, 4 blocks
-    send request to combat manager to enter list
-    combat manager checks if there is space for mob, and if mob is not on cooling list
+    get within, say, 6 blocks
+    send request to combat manager to enter attacker list with moveset
+    combat manager checks if there is space for mob, if attack limit has been reached, and if mob is not on cooling list
       if so, add to mobs that can approach the player, send slot data to mob
       if not, tell mob continue outer strafing
-    mobs within range will request for attack
-    combat manager checks if attack limit has been reached
-      if so, tell mob to inner strafe
-      if not, allow attack
+    mobs within range will attack when their conditions have been met
+      after attack finish, dead, or took too long, remove from attacker set, mob returns to outer circle after removal
 
     each tick combat manager is pinged,
     > check if any mob is (taking more than 5 second to attack), beyond their move range, has been interrupted, or has finished
@@ -194,7 +177,7 @@ Mobs should move into a position that is close to the player, far from allies, a
         purgeTimer++;
         purge.clear();
         //remove cooling mobs
-        if (purgeTimer > Math.min(currentMob * 5, 20)) {//scales on currentMob to prevent duels being weird
+        if (purgeTimer > Math.min(currentMob * 7, 20)) {//scales on currentMob to prevent duels being weird
             if (!coolingList.isEmpty()) {
 //                Mob m = coolingList.peek();
 //                if (!m.isAlive() || m.distanceToSqr(target) > (CombatCircle.CIRCLE_SIZE * CombatCircle.CIRCLE_SIZE)) {

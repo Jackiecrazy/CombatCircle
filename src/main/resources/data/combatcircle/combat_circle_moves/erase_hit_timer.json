@@ -1,0 +1,30 @@
+[
+  {
+    "ID": "combatcircle:wait",
+    "max_time": 50,
+    "waiting": [
+      {
+        "ID": "combatcircle:project_hitbox",
+        "actions": [
+          {
+            "ID": "combatcircle:reset_hit_timer"
+          }
+        ],
+        "hit_cooldown": 1,
+        "max_time": 99,
+        "selector": {
+          "ID": "combatcircle:selector",
+          "filter": {
+            "ID": "combatcircle:condition",
+            "condition": {
+              "ID": "combatcircle:is_target",
+              "reference_point": "combatcircle:caster"
+            }
+          },
+          "shape": "CIRCLE",
+          "width": 2
+        }
+      }
+    ]
+  }
+]

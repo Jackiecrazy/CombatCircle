@@ -42,18 +42,20 @@ public class LookMenacingGoal extends LookAtPlayerGoal {
 
     @Override
     public void start() {
-        //todo wolf pack locks up entire goalSelector and prevents strafing
         super.start();
         flip = mob.tickCount % 7 == 0;
         strafeX = CombatCircle.rand.nextFloat() * 0.5f-0.25f;
         strafeZ = CombatCircle.rand.nextFloat() * 0.3f-0.15f;
         strafeTick = 0;
+        mob.getMoveControl().strafe(strafeZ, strafeX);
     }
 
     @Override
     public void stop() {
         flip = !flip;
-        mob.getMoveControl().strafe(0, 0);
+        //mob.getMoveControl().strafe(0, 0);
+        mob.setZza(0);
+        mob.setXxa(0);
         super.stop();
     }
 
@@ -64,7 +66,6 @@ public class LookMenacingGoal extends LookAtPlayerGoal {
             mob.getLookControl().setLookAt(mob.getTarget());
             mob.lookAt(mob.getTarget(), 30, 30);
         }
-        mob.getMoveControl().strafe(strafeZ, strafeX);
         super.tick();
     }
 

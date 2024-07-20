@@ -5,6 +5,7 @@ import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.utils.JsonAdapters;
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 
 public interface Argument<T> {
 
@@ -17,5 +18,6 @@ public interface Argument<T> {
         JsonAdapters.gson.fromJson(from, this.getClass());
     }
 
+    @Nullable
     T resolve(MovesetWrapper wrapper, Action parent, Entity caster, Entity target);
 }

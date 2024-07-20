@@ -1,0 +1,82 @@
+[
+  {
+    "ID": "combatcircle:move_to",
+    "max_time": 60,
+    "position": {
+      "ID": "combatcircle:foot_position",
+      "reference_point": "combatcircle:target"
+    },
+    "tick": [
+      {
+        "ID": "combatcircle:stop",
+        "condition": {
+          "ID": "combatcircle:compare_number",
+          "first": {
+            "ID": "combatcircle:distance",
+            "first": "combatcircle:caster",
+            "second": "combatcircle:target"
+          },
+          "comparison": "<=",
+          "second": 1
+        }
+      }
+    ]
+  },
+  {
+    "waiting": [
+      {
+        "ID": "combatcircle:set_aggressive",
+        "condition": {
+          "ID": "combatcircle:time_window",
+          "from": 5
+        },
+        "toggle": true
+      },
+      {
+        "ID": "combatcircle:look_at",
+        "entity_target": "combatcircle:target"
+      },
+      {
+        "ID": "combatcircle:set_aggressive",
+        "condition": {
+          "ID": "combatcircle:time_window",
+          "from": 30
+        },
+        "toggle": false
+      },
+      {
+        "ID": "combatcircle:deal_damage",
+        "condition": {
+          "ID": "combatcircle:and",
+          "values": [
+            {
+              "ID": "combatcircle:time_window",
+              "from": 30
+            },
+            {
+              "ID": "combatcircle:compare_number",
+              "first": {
+                "ID": "combatcircle:distance",
+                "first": "combatcircle:caster",
+                "second": "combatcircle:target"
+              },
+              "comparison": "<=",
+              "second": 3
+            }
+          ]
+        },
+        "damage_source": {
+          "damage_multiplier": 1.2,
+          "posture_damage": 4,
+          "proxy": "combatcircle:caster"
+        },
+        "amount": {
+          "ID": "combatcircle:number",
+          "number": 5.5
+        }
+      }
+    ],
+    "max_time": 50,
+    "ID": "combatcircle:wait"
+  }
+]

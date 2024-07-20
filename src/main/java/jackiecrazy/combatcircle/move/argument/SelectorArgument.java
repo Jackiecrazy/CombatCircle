@@ -3,6 +3,7 @@ package jackiecrazy.combatcircle.move.argument;
 import jackiecrazy.combatcircle.move.CircleEnums;
 import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
+import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
 import jackiecrazy.combatcircle.move.argument.vector.EyePositionVectorArgument;
 import jackiecrazy.combatcircle.move.argument.vector.LookVectorArgument;
 import jackiecrazy.combatcircle.move.filter.Filter;
@@ -18,9 +19,9 @@ import java.util.List;
 public class SelectorArgument implements Argument<List<Entity>> {
     //base point
     private CircleEnums.SWEEPTYPE shape;
-    private Argument<Double> range;
-    private Argument<Double> width;
-    private Filter filter;
+    private Argument<Double> range= FixedNumberArgument.ZERO;
+    private Argument<Double> width= FixedNumberArgument.ZERO;
+    private Filter<Entity> filter;
     private Argument<Vec3> position;
     private Argument<Vec3> vector;
 

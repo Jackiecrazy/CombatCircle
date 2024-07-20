@@ -4,9 +4,11 @@ import jackiecrazy.combatcircle.move.MovesetWrapper;
 import jackiecrazy.combatcircle.move.action.Action;
 import jackiecrazy.combatcircle.move.action.trigger.Trigger;
 import jackiecrazy.combatcircle.move.argument.Argument;
+import jackiecrazy.combatcircle.move.argument.number.FixedNumberArgument;
 import net.minecraft.world.entity.Entity;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -15,15 +17,15 @@ public abstract class TimerAction extends Action {
         return triggers;
     }
 
-    private List<Trigger> triggers;
+    private List<Trigger> triggers=new ArrayList<>();
     /**
      * on the base action
      */
-    private Argument<Double> max_time;
+    private Argument<Double> max_time= FixedNumberArgument.ZERO;
 
     @Override
     public boolean canRun(MovesetWrapper wrapper, Action parent, Entity performer, Entity target) {
-        if (!isFinished(wrapper, performer, target) && wrapper.getTimer(this) >= 0)//isn't done, but has already started
+        if (wrapper.getTimer(this) >= 0 && !isFinished(wrapper, performer, target))//isn't done, but has already started
             return true;
         return super.canRun(wrapper, parent, performer, target);
     }

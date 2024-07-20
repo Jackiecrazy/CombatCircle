@@ -11,13 +11,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class AttributeValueArgument implements Argument<Double> {
     private Argument<Entity> reference_point;
-    private ResourceLocation attribute;
+    private Argument<ResourceLocation> attribute;
     private Attribute attr;
 
     @Override
     public Double resolve(MovesetWrapper wrapper, Action parent, Entity caster, Entity target) {
         if (attr == null)
-            attr = ForgeRegistries.ATTRIBUTES.getValue(attribute);
+            attr = ForgeRegistries.ATTRIBUTES.getValue(attribute.resolve(wrapper, parent, caster, target));
         if (attr != null && reference_point.resolve(wrapper, parent, caster, target) instanceof LivingEntity le)
             return le.getAttributeValue(attr);
         return attr.getDefaultValue();

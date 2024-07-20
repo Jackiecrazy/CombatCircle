@@ -7,9 +7,10 @@ import net.minecraft.world.entity.Entity;
 import java.util.*;
 
 public class Moveset implements IMoveset {
+    private static final MovesetManager literallyNothing = new MovesetManager(null);
     private final Entity tiedTo;
     private final HashMap<Entity, List<MovesetWrapper>> marks = new HashMap<>();
-    private MovesetManager manager;
+    private MovesetManager manager = literallyNothing;
 
     public Moveset(Entity linked) {
         tiedTo = linked;

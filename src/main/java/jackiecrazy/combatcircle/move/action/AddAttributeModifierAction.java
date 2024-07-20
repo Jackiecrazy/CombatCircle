@@ -14,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 public class AddAttributeModifierAction extends Action {
-    private ResourceLocation attribute;
+    private Argument<ResourceLocation> attribute;
     private transient Attribute attr;
     private Argument<Double> amount;
     private AttributeModifier.Operation operation;
@@ -24,7 +24,7 @@ public class AddAttributeModifierAction extends Action {
 
     @Override
     public int perform(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
-        if (attr == null) attr = ForgeRegistries.ATTRIBUTES.getValue(attribute);
+        if (attr == null) attr = ForgeRegistries.ATTRIBUTES.getValue(attribute.resolve(wrapper, parent, performer, target));
         if (attr != null && recipient.resolve(wrapper, parent, performer, target) instanceof LivingEntity ent && ent.getAttribute(attr) != null) {
             ent.getAttribute(attr).removeModifier(uuid);
             AttributeModifier am = new AttributeModifier(uuid, name, amount.resolve(wrapper, parent, performer, target), operation);

@@ -21,11 +21,11 @@ public class IsTaggedWithCondition {
     public static class Mob extends Condition {
         private Argument<Entity> reference = TargetEntityArgument.INSTANCE;
         private transient TagKey<EntityType<?>> tagg;
-        private ResourceLocation tag;
+        private Argument<ResourceLocation> tag;
 
         @Override
         public Boolean resolve(MovesetWrapper wrapper, Action parent, Entity performer, Entity target) {
-            if (tagg == null) tagg = new TagKey<>(ForgeRegistries.ENTITY_TYPES.getRegistryKey(), tag);
+            if (tagg == null) tagg = new TagKey<>(ForgeRegistries.ENTITY_TYPES.getRegistryKey(), tag.resolve(wrapper, parent, performer, target));
             Entity ref = reference.resolve(wrapper, parent, performer, target);
             return ref.getType().is(tagg);
         }
@@ -33,11 +33,11 @@ public class IsTaggedWithCondition {
     public static class Damage extends Condition {
         private Argument<DamageSource> reference;
         private transient TagKey<DamageType> tagg;
-        private ResourceLocation tag;
+        private Argument<ResourceLocation> tag;
 
         @Override
         public Boolean resolve(MovesetWrapper wrapper, Action parent, Entity performer, Entity target) {
-            if (tagg == null) tagg = new TagKey<>(Registries.DAMAGE_TYPE, tag);
+            if (tagg == null) tagg = new TagKey<>(Registries.DAMAGE_TYPE, tag.resolve(wrapper, parent, performer, target));
             DamageSource ref = reference.resolve(wrapper, parent, performer, target);
             return ref.is(tagg);
         }
@@ -45,11 +45,11 @@ public class IsTaggedWithCondition {
     public static class Stack extends Condition {
         private Argument<ItemStack> reference;
         private transient TagKey<Item> tagg;
-        private ResourceLocation tag;
+        private Argument<ResourceLocation> tag;
 
         @Override
         public Boolean resolve(MovesetWrapper wrapper, Action parent, Entity performer, Entity target) {
-            if (tagg == null) tagg = new TagKey<>(ForgeRegistries.ITEMS.getRegistryKey(), tag);
+            if (tagg == null) tagg = new TagKey<>(ForgeRegistries.ITEMS.getRegistryKey(), tag.resolve(wrapper, parent, performer, target));
             ItemStack ref = reference.resolve(wrapper, parent, performer, target);
             return ref.is(tagg);
         }
@@ -57,11 +57,11 @@ public class IsTaggedWithCondition {
     public static class Bloc extends Condition {
         private Argument<BlockState> reference;
         private transient TagKey<Block> tagg;
-        private ResourceLocation tag;
+        private Argument<ResourceLocation> tag;
 
         @Override
         public Boolean resolve(MovesetWrapper wrapper, Action parent, Entity performer, Entity target) {
-            if (tagg == null) tagg = new TagKey<>(ForgeRegistries.BLOCKS.getRegistryKey(), tag);
+            if (tagg == null) tagg = new TagKey<>(ForgeRegistries.BLOCKS.getRegistryKey(), tag.resolve(wrapper, parent, performer, target));
             BlockState ref = reference.resolve(wrapper, parent, performer, target);
             return ref.is(tagg);
         }

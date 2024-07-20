@@ -1,0 +1,228 @@
+[
+  {
+    "ID": "combatcircle:wait",
+    "max_time": 50,
+    "triggers": [
+      {
+        "ID": "combatcircle:trigger_on_hit",
+        "execute": [
+          {
+            "ID": "combatcircle:store_number",
+            "into": "damageAmount",
+            "value": 0
+          },
+          {
+            "ID": "combatcircle:goto",
+            "instruction": 2
+          }
+        ]
+      }
+    ],
+    "waiting": [
+      {
+        "ID": "combatcircle:look_at",
+        "entity_target": "combatcircle:target"
+      },
+      {
+        "ID": "combatcircle:store_vector",
+        "value": {
+          "ID": "combatcircle:sum_vector",
+          "addends": [
+            {
+              "ID": "combatcircle:eye_position",
+              "reference_point": "combatcircle:target"
+            },
+            {
+              "ID": "combatcircle:eye_position",
+              "scale": -1,
+              "min_length": 0,
+              "max_length": 0,
+              "reference_point": "combatcircle:caster"
+            }
+          ],
+          "min_length": 1.6,
+          "max_length": 1.6
+        },
+        "into": "target_location"
+      },
+      {
+        "condition": {
+          "ID": "combatcircle:time_window",
+          "to": 19
+        },
+        "repeatable": true,
+        "ID": "combatcircle:play_particle",
+        "particle": "minecraft:dust",
+        "particle_parameters": "0 1 0 1",
+        "position": {
+          "ID": "combatcircle:sum_vector",
+          "addends": [
+            {
+              "ID": "combatcircle:get_vector",
+              "from": "target_location",
+              "max_length": 0.6
+            },
+            {
+              "ID": "combatcircle:eye_position",
+              "reference_point": "combatcircle:caster"
+            }
+          ]
+        }
+      },
+      {
+        "condition": {
+          "ID": "combatcircle:time_window",
+          "from": 20,
+          "to": 39
+        },
+        "repeatable": true,
+        "ID": "combatcircle:play_particle",
+        "particle": "minecraft:dust",
+        "particle_parameters": "1 1 0 1",
+        "position": {
+          "ID": "combatcircle:sum_vector",
+          "addends": [
+            {
+              "ID": "combatcircle:get_vector",
+              "from": "target_location",
+              "max_length": 0.6
+            },
+            {
+              "ID": "combatcircle:eye_position",
+              "reference_point": "combatcircle:caster"
+            }
+          ]
+        }
+      },
+      {
+        "condition": {
+          "ID": "combatcircle:time_window",
+          "from": 40,
+          "to": 50
+        },
+        "repeatable": true,
+        "ID": "combatcircle:play_particle",
+        "particle": "minecraft:dust",
+        "particle_parameters": "1 0 0 1",
+        "position": {
+          "ID": "combatcircle:sum_vector",
+          "addends": [
+            {
+              "ID": "combatcircle:get_vector",
+              "from": "target_location",
+              "max_length": 0.6
+            },
+            {
+              "ID": "combatcircle:eye_position",
+              "reference_point": "combatcircle:caster"
+            }
+          ]
+        }
+      },
+      {
+        "ID": "combatcircle:store_number",
+        "into": "concentration",
+        "value": 1
+      },
+      {
+        "ID": "combatcircle:store_number",
+        "condition": {
+          "ID": "combatcircle:time_window",
+          "from": 20
+        },
+        "into": "concentration",
+        "value": 2
+      },
+      {
+        "ID": "combatcircle:store_number",
+        "condition": {
+          "ID": "combatcircle:time_window",
+          "from": 40
+        },
+        "into": "concentration",
+        "value": 3
+      }
+    ]
+  },
+  {
+    "ID": "combatcircle:wait",
+    "max_time": 20,
+    "waiting": [
+      {
+        "ID": "combatcircle:spawn_entity",
+        "condition": {
+          "ID": "combatcircle:and",
+          "values": [
+            {
+              "ID": "combatcircle:time_window",
+              "every": 3,
+              "from": 5
+            },
+            {
+              "ID": "combatcircle:compare_number",
+              "comparison": ">",
+              "first": {
+                "ID": "combatcircle:get_number",
+                "from": "concentration"
+              },
+              "second": 0
+            }
+          ]
+        },
+        "entity": "minecraft:arrow",
+        "facing": {
+          "ID": "combatcircle:get_vector",
+          "from": "target_location"
+        },
+        "position": {
+          "ID": "combatcircle:eye_position",
+          "reference_point": "combatcircle:caster"
+        },
+        "repeatable": true,
+        "on_spawn": [
+          {
+            "ID": "combatcircle:attach_action",
+            "effect": "combatcircle:erase_hit_timer"
+          }
+        ],
+        "velocity": {
+          "ID": "combatcircle:get_vector",
+          "from": "target_location"
+        }
+      },
+      {
+        "ID": "combatcircle:store_number",
+        "condition": {
+          "ID": "combatcircle:and",
+          "values": [
+            {
+              "ID": "combatcircle:time_window",
+              "every": 3,
+              "from": 5
+            },
+            {
+              "ID": "combatcircle:compare_number",
+              "comparison": ">",
+              "first": {
+                "ID": "combatcircle:get_number",
+                "from": "concentration"
+              },
+              "second": 0
+            }
+          ]
+        },
+        "into": "concentration",
+        "repeatable": true,
+        "value": {
+          "ID": "combatcircle:operate",
+          "first": {
+            "ID": "combatcircle:get_number",
+            "from": "concentration"
+          },
+          "operation": "-",
+          "second": 1
+        }
+      }
+    ]
+  }
+]

@@ -6,6 +6,8 @@ import jackiecrazy.combatcircle.move.argument.entity.EntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.SelectorEntityArgument;
 import jackiecrazy.combatcircle.move.argument.entity.TargetEntityArgument;
 import jackiecrazy.combatcircle.move.argument.number.*;
+import jackiecrazy.combatcircle.move.argument.resourcelocation.RegistryNameArgument;
+import jackiecrazy.combatcircle.move.argument.resourcelocation.ResourceLocationArgument;
 import jackiecrazy.combatcircle.move.argument.stack.EquippedItemArgument;
 import jackiecrazy.combatcircle.move.argument.stack.RawItemStackArgument;
 import jackiecrazy.combatcircle.move.argument.vector.*;
@@ -45,7 +47,7 @@ public class ArgumentRegistry {
     public static final RegistryObject<ArgumentType<Double>> PARENT_TIMER = ARGUMENTS.register("parent_timer", () -> new SingletonArgumentType<>(ParentTimerArgument.class, ParentTimerArgument.INSTANCE));
 
     //vectors//
-    public static final RegistryObject<ArgumentType<Vec3>> RAW = ARGUMENTS.register("vector", ()  -> new ArgumentType<>(RawVectorArgument.class));
+    public static final RegistryObject<ArgumentType<Vec3>> RAW_VEC = ARGUMENTS.register("vector", ()  -> new ArgumentType<>(RawVectorArgument.class));
     public static final RegistryObject<ArgumentType<Vec3>> SUM = ARGUMENTS.register("sum_vector", ()  -> new ArgumentType<>(SumVectorArgument.class));
     public static final RegistryObject<ArgumentType<Vec3>> ZERO = ARGUMENTS.register("zero", ()  -> new SingletonArgumentType<>(RawVectorArgument.class, RawVectorArgument.ZERO));
     public static final RegistryObject<ArgumentType<Vec3>> EYE_HEIGHT = ARGUMENTS.register("eye_height", ()  -> new ArgumentType<>(EyeHeightVectorArgument.class));
@@ -57,6 +59,11 @@ public class ArgumentRegistry {
     public static final RegistryObject<ArgumentType<Vec3>> GET_VECTOR = ARGUMENTS.register("get_vector", ()  -> new ArgumentType<>(VectorArgument.Get.class));
     public static final RegistryObject<ArgumentType<Vec3>> RAY_TRACE = ARGUMENTS.register("ray_trace", ()  -> new ArgumentType<>(RayTraceVectorArgument.class));
     public static final RegistryObject<ArgumentType<Vec3>> CLAMP = ARGUMENTS.register("clamp_vector", ()  -> new ArgumentType<>(ClampedVectorArgument.class));
+
+    //resource location//
+    public static final RegistryObject<ArgumentType<ResourceLocation>> RAW_RLOC = ARGUMENTS.register("resource_location", ()  -> new ArgumentType<>(ResourceLocationArgument.Raw.class));
+    public static final RegistryObject<ArgumentType<ResourceLocation>> GET_RLOC = ARGUMENTS.register("get_resource_location", ()  -> new ArgumentType<>(ResourceLocationArgument.Get.class));
+    public static final RegistryObject<ArgumentType<ResourceLocation>> REGISTRY = ARGUMENTS.register("registry_name", ()  -> new ArgumentType<>(RegistryNameArgument.class));
 
     //itemstack//
     public static final RegistryObject<ArgumentType<ItemStack>> RAW_ITEM = ARGUMENTS.register("itemstack", ()  -> new ArgumentType<>(RawItemStackArgument.class));

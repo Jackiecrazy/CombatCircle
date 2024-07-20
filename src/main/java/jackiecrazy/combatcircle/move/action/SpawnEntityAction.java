@@ -24,7 +24,7 @@ import java.util.List;
 
 public class SpawnEntityAction extends Action {
     private Argument<Entity> summoner = CasterEntityArgument.INSTANCE;
-    private ResourceLocation entity;
+    private Argument<ResourceLocation> entity;
     private CompoundTag tag;
     private Argument<Double> quantity = FixedNumberArgument.ONE;
     private Argument<Double> spread = FixedNumberArgument.ZERO;
@@ -45,18 +45,20 @@ public class SpawnEntityAction extends Action {
                 Vec3 rand = new Vec3((CombatCircle.rand.nextDouble()) * deviation, (CombatCircle.rand.nextDouble()) * deviation, (CombatCircle.rand.nextDouble()) * deviation);
                 final Vec3 pos = vec.add(rand);
                 CompoundTag compoundtag = tag == null ? new CompoundTag() : tag.copy();
-                compoundtag.putString("id", entity.toString());
+                compoundtag.putString("id", entity.resolve(wrapper, parent, performer, target).toString());
                 Vec3 look = facing.resolve(wrapper, parent, performer, target);
                 Entity summon = EntityType.loadEntityRecursive(compoundtag, serverlevel, (toSummon) -> {
+                    Vec3 velocity = this.velocity.resolve(wrapper, parent, performer, target);
+                    toSummon.setDeltaMovement(velocity);
                     double flatDist = Math.sqrt(look.x * look.x + look.z * look.z);
                     toSummon.moveTo(pos.x, pos.y, pos.z, (float) Mth.wrapDegrees(GeneralUtils.deg((float) Mth.atan2(look.z, look.x)) - 90.0F), Mth.wrapDegrees(-GeneralUtils.deg((float) Mth.atan2(look.y, flatDist))));
                     if (toSummon instanceof Projectile p) {
                         p.setOwner(summoner);
+                        p.shoot(velocity.x, velocity.y, velocity.z, (float) velocity.length(), (float) deviation);
                     }
                     if (toSummon instanceof TamableAnimal p) {
                         p.setOwnerUUID(summoner.getUUID());
                     }
-                    toSummon.setDeltaMovement(velocity.resolve(wrapper, parent, performer, target));
                     return toSummon;
                 });
                 if (summon != null) {

@@ -26,14 +26,14 @@ public class OperateArgument implements Argument<Double> {
     }
 
     private Argument<Double> first, second;
-    private OPERATOR comparison;
+    private OPERATOR operation;
 
 
     @Override
     public Double resolve(MovesetWrapper wrapper, Action parent, Entity performer, Entity target) {
         double f = first.resolve(wrapper, parent, performer, target);
         double s = second.resolve(wrapper, parent, performer, target);
-        return switch (comparison) {
+        return switch (operation) {
             case ADD -> f + s;
             case SUB -> f - s;
             case MUL -> f * s;

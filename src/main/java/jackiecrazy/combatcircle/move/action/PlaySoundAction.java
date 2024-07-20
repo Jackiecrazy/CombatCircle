@@ -13,7 +13,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 public class PlaySoundAction extends Action {
-    private ResourceLocation sound;
+    private Argument<ResourceLocation> sound;
     private transient SoundEvent play;
     private SoundSource source = SoundSource.HOSTILE;
     private Argument<Vec3> position = PositionVectorArgument.CASTER;
@@ -23,7 +23,7 @@ public class PlaySoundAction extends Action {
     @Override
     public int perform(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
         if (play == null)
-            play = ForgeRegistries.SOUND_EVENTS.getValue(sound);
+            play = ForgeRegistries.SOUND_EVENTS.getValue(sound.resolve(wrapper, parent, performer, target));
         if (play == null) return 0;
         //type/data, force, pos xyz, quantity, vel xyz, max speed
         Vec3 pos = position.resolve(wrapper, parent, performer, target);

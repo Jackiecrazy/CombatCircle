@@ -14,7 +14,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 public class HasEffectCondition extends Condition {
-    private ResourceLocation effect;
+    private Argument<ResourceLocation> effect;
     private transient MobEffect me;
     private Argument<Double> minimum_potency= FixedNumberArgument.ZERO, minimum_duration= FixedNumberArgument.ZERO;
     private Argument<Entity> tested = TargetEntityArgument.INSTANCE;
@@ -22,7 +22,7 @@ public class HasEffectCondition extends Condition {
     @Override
     public Boolean resolve(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
         if (me == null)
-            me = ForgeRegistries.MOB_EFFECTS.getValue(effect);
+            me = ForgeRegistries.MOB_EFFECTS.getValue(effect.resolve(wrapper, parent, performer, target));
         if (me != null && tested.resolve(wrapper, parent, performer, target) instanceof LivingEntity e) {
             MobEffectInstance inst = e.getEffect(me);
             if (inst != null) {

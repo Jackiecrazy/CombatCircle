@@ -1,5 +1,5 @@
 {
-  "mob": "minecraft:vindicator",
+  "mob": "minecraft:husk",
   "mob_size": 1,
   "encirclement_distance": 5,
   "pursue_walk_speed": 1.0,
@@ -11,10 +11,11 @@
       "size": 1,
       "condition": {
       },
-      "move": "combatcircle:testing"
+      "move": "combatcircle:charge_arrow"
     }
   ],
   "to_wipe": [
-    "net.minecraft.world.entity.ai.goal.MeleeAttackGoal"
+    "net.minecraft.world.entity.ai.goal.MeleeAttackGoal",
+    "net.minecraft.world.entity.ai.goal.ZombieAttackGoal"
   ]
 }

@@ -12,7 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 public class AddEffectAction extends Action {
-    private ResourceLocation effect;
+    private Argument<ResourceLocation> effect;
     private transient MobEffect me;
     private Argument<Double> potency, duration;
     private Argument<Entity> recipient= TargetEntityArgument.INSTANCE;
@@ -20,7 +20,7 @@ public class AddEffectAction extends Action {
     @Override
     public int perform(MovesetWrapper wrapper, Action parent, @Nullable Entity performer, Entity target) {
         if (me == null)
-            me = ForgeRegistries.MOB_EFFECTS.getValue(effect);
+            me = ForgeRegistries.MOB_EFFECTS.getValue(effect.resolve(wrapper, parent, performer, target));
         if (me != null && recipient.resolve(wrapper, parent, performer, target) instanceof LivingEntity e) {
             e.addEffect(new MobEffectInstance(me, duration.resolve(wrapper, parent, performer, target).intValue(), potency.resolve(wrapper, parent, performer, target).intValue()));
         }

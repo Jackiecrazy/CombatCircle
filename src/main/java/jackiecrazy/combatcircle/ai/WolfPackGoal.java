@@ -172,7 +172,7 @@ public class WolfPackGoal extends Goal {
     }
 
     public void tick() {
-        //can't do anything about facing, what a pain.
+        //todo update facing to client with ClientboundRotateHeadPacket
 //
         if (targetCopy == null) return;
         mob.lookAt(targetCopy, 30, 30);

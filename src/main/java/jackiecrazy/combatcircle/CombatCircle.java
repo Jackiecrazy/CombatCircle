@@ -1,11 +1,17 @@
 package jackiecrazy.combatcircle;
 
-import jackiecrazy.combatcircle.ai.*;
-import jackiecrazy.combatcircle.move.*;
-import jackiecrazy.combatcircle.move.action.ActionRegistry;
-import jackiecrazy.combatcircle.move.argument.ArgumentRegistry;
+import jackiecrazy.combatcircle.ai.LookMenacingGoal;
+import jackiecrazy.combatcircle.ai.MovesetGoal;
+import jackiecrazy.combatcircle.ai.RequestSlotGoal;
+import jackiecrazy.combatcircle.ai.WolfPackGoal;
 import jackiecrazy.combatcircle.capability.Moveset;
 import jackiecrazy.combatcircle.capability.MovesetData;
+import jackiecrazy.combatcircle.move.EntityInfo;
+import jackiecrazy.combatcircle.move.Moves;
+import jackiecrazy.combatcircle.move.MovesetManager;
+import jackiecrazy.combatcircle.move.Movesets;
+import jackiecrazy.combatcircle.move.action.ActionRegistry;
+import jackiecrazy.combatcircle.move.argument.ArgumentRegistry;
 import jackiecrazy.combatcircle.move.condition.ConditionRegistry;
 import jackiecrazy.combatcircle.move.filter.FilterRegistry;
 import jackiecrazy.combatcircle.utils.CombatManager;
@@ -13,15 +19,18 @@ import jackiecrazy.footwork.api.FootworkAttributes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
@@ -87,18 +96,8 @@ public class CombatCircle {
         Movesets.register(event);
     }
 
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
-
-    // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
-    // Event bus for receiving Registry Events)
     @Mod.EventBusSubscriber
     public static class TestEvents {
-        @SubscribeEvent
-        public static void beingAttacked(LivingAttackEvent e) {
-            //grab everything, find and feed them to the currently active moveset wrapper
-            
-            MovesetData.getCap(e.getEntity()).getMovesetManager().getCurrentMove().devilTrigger(e.getEntity(), e);
-        }
 
         @SubscribeEvent
         public static void caps(AttachCapabilitiesEvent<Entity> e) {

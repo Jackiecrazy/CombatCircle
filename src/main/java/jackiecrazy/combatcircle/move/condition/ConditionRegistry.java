@@ -20,7 +20,7 @@ public class ConditionRegistry {
     public static final RegistryObject<ConditionType> AND = CONDITIONS.register("and", () -> new ConditionType(AndCondition.class));
     public static final RegistryObject<ConditionType> OR = CONDITIONS.register("or", () -> new ConditionType(OrCondition.class));
     public static final RegistryObject<ConditionType> NOT = CONDITIONS.register("not", () -> new ConditionType(NotCondition.class));
-    public static final RegistryObject<ConditionType> COMPARISON = CONDITIONS.register("compare_number", () -> new ConditionType(ComparisonCondition.class));
+    public static final RegistryObject<ConditionType> COMPARISON = CONDITIONS.register("compare_number", () -> new ConditionType(ComparisonCondition.Number.class));
 
     //entity//
     public static final RegistryObject<ConditionType> TIME_WINDOW = CONDITIONS.register("time_window", () -> new ConditionType(TimeWindowCondition.class));
@@ -32,8 +32,11 @@ public class ConditionRegistry {
     public static final RegistryObject<ConditionType> MOB_IN_TAG = CONDITIONS.register("mob_in_tag", () -> new ConditionType(IsTaggedWithCondition.Mob.class));
 
     //misc//
-    public static final RegistryObject<ConditionType> STACK_EQUALS = CONDITIONS.register("compare_itemstack", () -> new ConditionType(StackEqualsCondition.class));
-    public static final RegistryObject<ConditionType> DAMAGE_IN_TAG = CONDITIONS.register("mob_in_tag", () -> new ConditionType(IsTaggedWithCondition.Damage.class));
+    public static final RegistryObject<ConditionType> STACK_EQUALS = CONDITIONS.register("compare_itemstack", () -> new ConditionType(ComparisonCondition.Stack.class));
+    public static final RegistryObject<ConditionType> RESOURCE_EQUALS = CONDITIONS.register("compare_resource_location", () -> new ConditionType(ComparisonCondition.ResourceLoc.class));
+    public static final RegistryObject<ConditionType> DAMAGE_IN_TAG = CONDITIONS.register("damage_in_tag", () -> new ConditionType(IsTaggedWithCondition.Damage.class));
     public static final RegistryObject<ConditionType> ITEMSTACK_IN_TAG = CONDITIONS.register("item_in_tag", () -> new ConditionType(IsTaggedWithCondition.Stack.class));
     public static final RegistryObject<ConditionType> BLOCK_IN_TAG = CONDITIONS.register("block_in_tag", () -> new ConditionType(IsTaggedWithCondition.Bloc.class));
+    public static final RegistryObject<ConditionType> BLOCK_IN_RANGE = CONDITIONS.register("block_in_range", () -> new ConditionType(BlockInRangeCondition.class));
+    public static final RegistryObject<ConditionType> ENTITY_IN_RANGE = CONDITIONS.register("entity_in_range", () -> new ConditionType(EntityInRangeCondition.class));
 }
